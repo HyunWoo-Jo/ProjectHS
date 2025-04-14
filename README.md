@@ -12,15 +12,15 @@
 ## 향후 개선방향
 
 ## 기술 스택
-#### - library pakege
+#### library pakege
   - UniTask
   - Addressable
   - DOTween
   - Google Play Games SDK
   - Firebase SDK
-#### - Tool
+#### Tool
   - Github
-#### - Server
+#### Server
   - Firebase
 
 ## Open Sources, Pakage
