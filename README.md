@@ -6,9 +6,9 @@
 
 
 ## 설계
-- [기획](/Doc/Planning.md)
-- [시스템 설계](/Doc/System.md)
-- [테스트](/Doc/Testing.md)
+- [기획](/_Doc/Planning.md)
+- [시스템 설계](/_Doc/System.md)
+- [테스트](/_Doc/Testing.md)
 ## 향후 개선방향
 
 ## 기술 스택
