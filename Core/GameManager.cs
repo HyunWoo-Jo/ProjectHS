@@ -1,3 +1,8 @@
+using Data;
+using GamePlay;
+using System;
+using System.Linq;
+using System.Collections.Generic;   
 using UnityEngine;
 using Utility;
 
@@ -17,6 +22,9 @@ public class GameManager : Singleton<GameManager>
     }
 
     public GameState State {  get; private set; }
+    public MapTema MapTema {  get; private set; }
+
+    private MapGenerator _mapGenerator;
 
     /// <summary>
     /// 게임 상태 변경
@@ -29,7 +37,24 @@ public class GameManager : Singleton<GameManager>
     protected override void Awake() {
         base.Awake();
 
+        var temaList = Enum.GetValues(typeof(MapTema)).Cast<MapTema>().ToList();
+        MapTema = temaList[UnityEngine.Random.Range(0, temaList.Count)];
+
+        _mapGenerator = new MapGenerator();
+        List<MapData> mapDataList = _mapGenerator.GenerateMap(20, 20, out List<Vector2Int> pathWaypointList);
+
+        LoadRoadData(MapTema, mapDataList);
+        
     }
+
+    private void LoadRoadData(MapTema temaType, List<MapData> mapDataList) {
+        TileSpriteMapper tileMapper = new TileSpriteMapper(); // Tile Mapper
+        tileMapper.LoadDataAsync(temaType, () => { // Data Load가 완료 되면
+            _mapGenerator.InstanceMap(mapDataList, tileMapper); // 맵 Instance
+        });
+    }
+
+   
 
 
 

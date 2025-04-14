@@ -2,7 +2,10 @@
     "name": "Core",
     "rootNamespace": "Core",
     "references": [
-        "GUID:08767b281398bcf4f905692575a910e9"
+        "GUID:08767b281398bcf4f905692575a910e9",
+        "GUID:43f884ac021a63f428b5d9347564300e",
+        "GUID:d592b7e4be26a9546b6d5e7899c473dc",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

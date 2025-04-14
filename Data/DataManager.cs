@@ -57,7 +57,7 @@ namespace Data
                         ReleaseAssetInternal(key); // 실패한 요청에 대한 참조 카운트 감소
                         throw existingHandle.OperationException ?? new Exception($"[DataManager] 기존 핸들 '{key}' 작업 대기 후 예기치 않은 실패. 상태: {existingHandle.Status}");
                     }
-                } catch (Exception ex) {
+                } catch {
                     // await 중 예외 발생 (취소 또는 실패)
                     ReleaseAssetInternal(key); // 참조 카운트 감소
                     throw; // 에러 다시 전달
@@ -79,7 +79,7 @@ namespace Data
 
                     // await가 성공적으로 완료되면 결과 반환
                     return result;
-                } catch (Exception ex) {
+                } catch {
                     // 로드 중 예외 발생
                     if (newHandle.IsValid() && _handleDic.ContainsKey(key)) { // 핸들이 유효하고 딕셔너리에 아직 있다면
 
@@ -113,15 +113,15 @@ namespace Data
                             return typedResult;
                         } else {
                             // 로드는 성공했으나 예상치 못한 타입
-                            ReleaseAssetsByLabelInternal(label);
+                            ReleaseAssetsByLabel(label);
                             throw new InvalidCastException($"[DataManager] 레이블 '{label}' 로드는 성공했으나 결과 타입이 IList<{typeof(T)}>가 아닙니다. 실제 타입: {existingHandle.Result?.GetType()}.");
                         }
                     } else {
-                        ReleaseAssetsByLabelInternal(label); // 실패 시 이 요청은 실패, 카운트 감소
+                        ReleaseAssetsByLabel(label); // 실패 시 이 요청은 실패, 카운트 감소
                         throw existingHandle.OperationException ?? new Exception($"[DataManager] 기존 레이블 핸들 '{label}' 작업 대기 후 예기치 않은 실패. 상태: {existingHandle.Status}");
                     }
-                } catch (Exception ex) {
-                    ReleaseAssetsByLabelInternal(label); // 예외 발생 시 이 요청은 실패, 카운트 감소
+                } catch {
+                    ReleaseAssetsByLabel(label); // 예외 발생 시 이 요청은 실패, 카운트 감소
                     throw; // 예외 다시 전달
                 }
             } else { // 레이블 핸들이 존재하지 않으면 새로 로드 시작     
@@ -137,10 +137,10 @@ namespace Data
                     // 새 레이블 핸들의 완료 대기
                     IList<T> result = await newHandle.ToUniTask(cancellationToken: cancellationToken);
                     return result; // 성공 시 결과 리스트 반환
-                } catch (Exception ex) {
+                } catch {
                     // 예외 발생 시 정리
                     if (newHandle.IsValid() && _labelHandleDic.ContainsKey(label)) {
-                        ReleaseAssetsByLabelInternal(label, true); // 강제 제거
+                        ReleaseAssetsByLabel(label, true); // 강제 제거
                     } else {
                         _labelHandleDic.Remove(label);
                         _labelCountDic.Remove(label);
@@ -190,9 +190,9 @@ namespace Data
             }
         }
         /// <summary>
-        /// 내부 로직: 레이블 에셋 참조 카운트 감소 및 조건부 핸들 해제
+        /// 레이블 에셋 참조 카운트 감소 및 조건부 핸들 해제
         /// </summary>
-        private void ReleaseAssetsByLabelInternal(string label, bool forceRemove = false) {
+        public void ReleaseAssetsByLabel(string label, bool forceRemove = false) {
             if (!_labelCountDic.TryGetValue(label, out int count)) {
                 _labelHandleDic.Remove(label); // 카운트 없으면 핸들도 제거 시도
                 return;
