@@ -13,11 +13,15 @@ namespace Data
     /// <summary>
     /// Addressable 컨트롤 클레스
     /// </summary>
-    public class DataManager : Singleton<DataManager> // Assuming Singleton<T> is defined elsewhere
-{
+    public class DataManager : Singleton<DataManager> { 
 
         private readonly Dictionary<string, AsyncOperationHandle> _handleDic = new(); // Address Key , Handle
         private readonly Dictionary<string, int> _countDic = new(); // Address Key, ref count
+
+
+        private readonly Dictionary<string, AsyncOperationHandle> _labelHandleDic = new(); // Key: Addressable Label, Value: 리스트 핸들 (AsyncOperationHandle<IList<T>>)
+        private readonly Dictionary<string, int> _labelCountDic = new(); // Key: Addressable Label, Value: 레이블 참조 카운트
+
 
         #region Addressable Loading
 
@@ -90,6 +94,62 @@ namespace Data
             }
         }
 
+        public async UniTask<IList<T>> LoadAssetsByLabelAsync<T>(string label, CancellationToken cancellationToken = default) where T : UnityEngine.Object {
+            if (string.IsNullOrEmpty(label)) {
+                throw new ArgumentNullException(nameof(label), "Addressable Label은 null이거나 비어 있을 수 없습니다.");
+            }
+
+            // 레이블 핸들이 존재하는지 확인
+            if (_labelHandleDic.TryGetValue(label, out var existingHandle)) {
+                _labelCountDic[label]++; // 레이블 핸들이 존재하면 참조 카운트 증가
+
+                try {
+                    // 기존 레이블 핸들의 완료 대기
+                    await existingHandle.ToUniTask(cancellationToken: cancellationToken);
+
+                    if (existingHandle.Status == AsyncOperationStatus.Succeeded) {
+                        // 결과가 IList<T> 타입인지 확인 (중요: LoadAssetsAsync 핸들의 Result는 IList<T>임)
+                        if (existingHandle.Result is IList<T> typedResult) {
+                            return typedResult;
+                        } else {
+                            // 로드는 성공했으나 예상치 못한 타입
+                            ReleaseAssetsByLabelInternal(label);
+                            throw new InvalidCastException($"[DataManager] 레이블 '{label}' 로드는 성공했으나 결과 타입이 IList<{typeof(T)}>가 아닙니다. 실제 타입: {existingHandle.Result?.GetType()}.");
+                        }
+                    } else {
+                        ReleaseAssetsByLabelInternal(label); // 실패 시 이 요청은 실패, 카운트 감소
+                        throw existingHandle.OperationException ?? new Exception($"[DataManager] 기존 레이블 핸들 '{label}' 작업 대기 후 예기치 않은 실패. 상태: {existingHandle.Status}");
+                    }
+                } catch (Exception ex) {
+                    ReleaseAssetsByLabelInternal(label); // 예외 발생 시 이 요청은 실패, 카운트 감소
+                    throw; // 예외 다시 전달
+                }
+            } else { // 레이블 핸들이 존재하지 않으면 새로 로드 시작     
+                AsyncOperationHandle<IList<T>> newHandle = default;
+                try {
+                    // 중요: LoadAssetsAsync의 두 번째 파라미터는 각 에셋 로드 시 콜백이며, 여기서는 사용하지 않으므로 null 전달
+                    newHandle = Addressables.LoadAssetsAsync<T>(label, null);
+
+                    // 레이블 핸들/카운트 추가 (핸들 타입은 AsyncOperationHandle로 저장해도 무방)
+                    _labelHandleDic.Add(label, newHandle);
+                    _labelCountDic.Add(label, 1);
+
+                    // 새 레이블 핸들의 완료 대기
+                    IList<T> result = await newHandle.ToUniTask(cancellationToken: cancellationToken);
+                    return result; // 성공 시 결과 리스트 반환
+                } catch (Exception ex) {
+                    // 예외 발생 시 정리
+                    if (newHandle.IsValid() && _labelHandleDic.ContainsKey(label)) {
+                        ReleaseAssetsByLabelInternal(label, true); // 강제 제거
+                    } else {
+                        _labelHandleDic.Remove(label);
+                        _labelCountDic.Remove(label);
+                    }
+                    throw; // 예외 다시 전달
+                }
+            }
+        }
+
         #endregion
 
         #region Release
@@ -129,22 +189,50 @@ namespace Data
                 _countDic[key] = count;
             }
         }
-
         /// <summary>
-        /// 모든 Addressable 에셋을 해제
-        /// 주로 씬 전환 직전이나 게임 종료 시 호출
+        /// 내부 로직: 레이블 에셋 참조 카운트 감소 및 조건부 핸들 해제
         /// </summary>
+        private void ReleaseAssetsByLabelInternal(string label, bool forceRemove = false) {
+            if (!_labelCountDic.TryGetValue(label, out int count)) {
+                _labelHandleDic.Remove(label); // 카운트 없으면 핸들도 제거 시도
+                return;
+            }
+            count--;
+
+            if (count <= 0 || forceRemove) {
+                if (_labelHandleDic.TryGetValue(label, out var handle)) {
+                    if (handle.IsValid()) {
+                        // 레이블 핸들 해제 시 해당 레이블로 로드된 모든 에셋이 해제됨
+                        Addressables.Release(handle);
+                    }
+                    _labelHandleDic.Remove(label);
+                }
+                _labelCountDic.Remove(label);
+            } else {
+                _labelCountDic[label] = count;
+            }
+        }
         public void ReleaseAllAssets() {
-            var enumerator = _handleDic.GetEnumerator();
-            while (enumerator.MoveNext()) { // 반복
-                if (enumerator.Current.Value.IsValid()) // 유효한 핸들만 해제 시도
-                {
-                    Addressables.Release(enumerator.Current.Value);
+            // Key 기반 에셋 해제
+            var keyEnumerator = _handleDic.GetEnumerator();
+            while (keyEnumerator.MoveNext()) {
+                if (keyEnumerator.Current.Value.IsValid()) {
+                    Addressables.Release(keyEnumerator.Current.Value);
                 }
             }
-            // 모든 관리 목록 초기화
             _handleDic.Clear();
             _countDic.Clear();
+
+            // Label 기반 에셋 해제
+            var labelEnumerator = _labelHandleDic.GetEnumerator();
+            while (labelEnumerator.MoveNext()) {
+                if (labelEnumerator.Current.Value.IsValid()) {
+                    Addressables.Release(labelEnumerator.Current.Value);
+                }
+            }
+            _labelHandleDic.Clear();
+            _labelCountDic.Clear();
+
         }
 
         #endregion
