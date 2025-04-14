@@ -16,8 +16,8 @@
   - UniTask
   - Addressable
   - DOTween
-  - Google Play Game
-  - 
+  - Google Play Games SDK
+  - Firebase SDK
 #### - Tool
   - Github
 #### - Server
