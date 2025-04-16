@@ -1,4 +1,6 @@
 ## 네임스페이스 설계
+**분리 목적:** 각 모듈의 책임을 명확히 하고, 의존성을 줄여 유지보수성과 재사용성을 높이기 위해 네임스페이스를 분리했습니다.
+### Package Diagram
 ```mermaid
 graph TD
     A[Project] --> Core;
@@ -27,7 +29,7 @@ graph TD
 주요 내용: 타워/적 로직 및 AI, 전투 시스템, 맵 시스템, 플레이어 상태(인게임), 로그라이크 요소, 아이템/스킬 로직.
 
 #### 4. Network
-역할: 외부 서버 통신 및 네트워크 관련 기능.</br> 
+역할: 네트워크 관련 기능.</br> 
 주요 내용: Firebase 연동.
 
 #### 5. UI
@@ -54,4 +56,68 @@ graph TD
 역할: Unity 에디터 환경에서만 사용되는 스크립트. </br>
 주요 내용: 커스텀 에디터.
 
-## 핵심 Class
+---
+
+## UI
+**설계:** UI는 처리해야 할 데이터가 많거나 향후 확장 가능성이 높은 경우, 재사용성과 유지보수성, 테스트 용이성을 높이기 위해 **MVVM(Model-View-ViewModel)** 구조를 채택했습니다.</br>
+반면, 구조가 단순하고 변경 가능성이 낮은 UI는 MonoBehaviour 기반으로 간결하게 설계하여 개발 효율성을 높였습니다.
+### UI Class Diagram
+```mermaid
+classDiagram
+    class View {
+        <<MonoBehaviour>>
+        - UIReference
+        - ViewModel
+
+        - void Awake()
+        - void OnDestroy()
+        - void HandleChanged()
+        - void UpdateUI()
+    }
+
+    class ViewModel {
+        - Data.Model _model
+        + event Action<int> OnDataChanged // View가 구독
+        + Datas // Model의 데이터
+
+        + void ChangeData(data)  // 외부에서 호출
+        - void NotifyViewDataChanged() // View에 알림
+    }
+
+    class Data.Model {
+        + Datas
+        + event Action OnDataChanged // ViewModel이 구독
+
+        + ChangeData(data) // 데이터 변경
+    }
+
+    class MonoBehaviour {
+        <<Unity Engine>>
+    }
+    
+    class Test.UITest {
+        + TestFunc()
+    }
+    class Data.IModelRepo {
+        <<interface>>
+    }
+    class Data.ModelRepo {
+        
+    }
+
+
+    MonoBehaviour <|-- View 
+    View o--> ViewModel
+
+    ViewModel o..> Data.IModelRepo
+    Data.IModelRepo <|-- Data.ModelRepo
+    Data.ModelRepo o--> Data.Model
+    
+    Test.UITest ..> ViewModel : tests
+    
+
+    %% Notes:
+    %% o-- : Composition/Aggregation 
+    %% --|> : Inheritance 상속
+    %% ..> : Dependency / Interaction 
+```
