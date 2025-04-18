@@ -26,3 +26,4 @@
 ## Open Sources, Pakage
 - [UniTask](https://github.com/Cysharp/UniTask) - 유니티 쓰레드 관리
 - [DOTween](https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676) - 연출
+- [Extenject](https://github.com/modesttree/Zenject?tab=readme-ov-file#installation-) - 의존성 주입
