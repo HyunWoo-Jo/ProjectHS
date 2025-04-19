@@ -60,35 +60,33 @@ graph TD
 
 ## UI
 **설계:** UI는 처리해야 할 데이터가 많거나 향후 확장 가능성이 높은 경우, 재사용성과 유지보수성, 테스트 용이성을 높이기 위해 **MVVM(Model-View-ViewModel)** 구조를 채택했습니다.</br>
-반면, 구조가 단순하고 변경 가능성이 낮은 UI는 MonoBehaviour 기반으로 간결하게 설계하여 개발 효율성을 높였습니다.
+반면, 구조가 단순하고 변경 가능성이 낮은 UI는 MonoBehaviour 기반으로 간결하게 설계하였습니다 개발 효율성을 높였습니다.
+
+MVVM 구조에서 Model은 Repository 패턴을 사용하여 데이터를 관리하고, Repository는 DI(Dependency Injection)을 통해 주입받는 방식으로 설계하였습니다.
 ### UI Class Diagram
 ```mermaid
 classDiagram
     class View {
         <<MonoBehaviour>>
-        - UIReference
+        - UnityUIReference
         - ViewModel
 
         - void Awake()
         - void OnDestroy()
-        - void HandleChanged()
-        - void UpdateUI()
+        - void UpdateUI(Data )
     }
 
     class ViewModel {
-        - Data.Model _model
-        + event Action<int> OnDataChanged // View가 구독
-        + Datas // Model의 데이터
+        - IRepository _repo // DI로 Inject
+        + event Action<Data> OnDataChanged // View가 구독
 
-        + void ChangeData(data)  // 외부에서 호출
+        + void SetData(data)  // 외부에서 호출
         - void NotifyViewDataChanged() // View에 알림
     }
 
     class Data.Model {
-        + Datas
-        + event Action OnDataChanged // ViewModel이 구독
-
-        + ChangeData(data) // 데이터 변경
+        + Data
+        + Set(data) // 데이터 변경
     }
 
     class MonoBehaviour {
@@ -98,20 +96,24 @@ classDiagram
     class Test.UITest {
         + TestFunc()
     }
-    class Data.IModelRepo {
+    class Data.IRepository {
         <<interface>>
+        + SetValue(Data)
+        + GetValue() Data
     }
-    class Data.ModelRepo {
-        
+    class Data.Repository {
+        - Model
+        + SetValue(Data)
+        + GetValue() Data
     }
 
 
     MonoBehaviour <|-- View 
     View o--> ViewModel
 
-    ViewModel o..> Data.IModelRepo
-    Data.IModelRepo <|-- Data.ModelRepo
-    Data.ModelRepo o--> Data.Model
+    ViewModel o..> Data.IRepository
+    Data.IRepository <|-- Data.Repository
+    Data.Repository o--> Data.Model
     
     Test.UITest ..> ViewModel : tests
     
