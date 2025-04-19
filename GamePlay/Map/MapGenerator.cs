@@ -200,16 +200,16 @@ namespace GamePlay
         /// </summary>
         public void InstanceMap(List<MapData> mapDataList, TileSpriteMapper tileMapper) {
             Debug.Log("instacnce");
-            DataManager.Instance.LoadAssetAsync<GameObject>("Field.prefab").ContinueWith(fieldPrefab => {
-                var spriteDictionary = tileMapper.GetSpriteDictionary();
-                foreach (MapData mapData in mapDataList) {
-                    GameObject obj = GameObject.Instantiate(fieldPrefab);
-                    var spriteRenderer = obj.GetComponent<SpriteRenderer>();
-                    spriteRenderer.sprite = spriteDictionary[mapData.type];
-                    spriteRenderer.sortingOrder = mapData.orderBy;
-                    obj.transform.position = mapData.position;
-                }
-            });
+            //DataManager.Instance.LoadAssetAsync<GameObject>("Field.prefab").ContinueWith(fieldPrefab => {
+            //    var spriteDictionary = tileMapper.GetSpriteDictionary();
+            //    foreach (MapData mapData in mapDataList) {
+            //        GameObject obj = GameObject.Instantiate(fieldPrefab);
+            //        var spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            //        spriteRenderer.sprite = spriteDictionary[mapData.type];
+            //        spriteRenderer.sortingOrder = mapData.orderBy;
+            //        obj.transform.position = mapData.position;
+            //    }
+            //});
         }
     }
 }

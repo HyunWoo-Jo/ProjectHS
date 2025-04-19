@@ -13,7 +13,7 @@ namespace Data
     /// <summary>
     /// Addressable 컨트롤 클레스
     /// </summary>
-    public class DataManager : Singleton<DataManager> { 
+    public class DataManager : MonoBehaviour { 
 
         private readonly Dictionary<string, AsyncOperationHandle> _handleDic = new(); // Address Key , Handle
         private readonly Dictionary<string, int> _countDic = new(); // Address Key, ref count

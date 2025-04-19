@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
 using System;
+using Zenject;
 
 namespace Data
 {
@@ -43,6 +44,8 @@ namespace Data
     public class TileSpriteMapper {
 
         private Dictionary<TileType, Sprite> _spriteDic;
+        [Inject]
+        private DataManager _dataManager;
 
         public IReadOnlyDictionary<TileType, Sprite> GetSpriteDictionary() { // readonly
             if (_spriteDic == null) {
@@ -62,7 +65,7 @@ namespace Data
             Debug.Log("Load 시작");
 
 
-            DataManager.Instance.LoadAssetsByLabelAsync<Sprite>(label).ContinueWith((spriteList) => {
+            _dataManager.LoadAssetsByLabelAsync<Sprite>(label).ContinueWith((spriteList) => {
                 foreach (Sprite sprite in spriteList) {
                     Match match = Regex.Match(sprite.name, @"\((\d+)\)");
                     if (match.Success) {
@@ -79,11 +82,10 @@ namespace Data
                 Debug.Log("로딩 완료");
             });
         }
-        public static void ReleaseTema(MapTema tema) {
+        public void ReleaseTema(MapTema tema) {
             string label = tema.ToString() + "Sprite";
 
-            DataManager.Instance.ReleaseAssetsByLabel(label);
+            _dataManager.ReleaseAssetsByLabel(label);
         }
-      
     }
 }
