@@ -189,7 +189,10 @@ end
 
 ## DI(Dependency Injection)
 의존 주입 분류 **(모든 Installer는 Core 단에서 초기화)**
-- ManagerInstaller Class: 전역으로 관리해야 되는것들을 AsSingle로 관리 (Project 단위)
-- RepositoryInstaller Class: Data를 Repository 패턴으로 관리, 각 상황에 맞게 Bind (Project 단위)
-- <SceneName>SceneInstaller Class: 각 Scene에서 사용되는 ViewModel을 AsTransient로 Bind (Scene 단위 / 생성을 요청 받았을때만)
-- SceneInstaller Class: 각 씬에 들어가면 새로 Bind하여 관리함 (Scene 단위 / 예: MainCanvas 등)
+#### (Project 단위)
+- Manager Class: 전역으로 관리해야 되는것들을 AsSingle로 관리
+- Repository Class: Data를 Repository 패턴으로 관리, 각 상황에 맞게 Bind
+- Project Class: 전체 UI에서 사용 되는 ViewModel을 Bind 
+#### (Scene 단위)
+- (SceneName)Scene Class: 각 Scene에서 사용되는 ViewModel을 AsTransient로 Bind (생성을 요청 받았을때만)
+- Scene Class: 각 씬에 들어가면 새로 Bind하여 관리함 (예: MainCanvas 등)
