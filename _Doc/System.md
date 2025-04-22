@@ -1,3 +1,64 @@
+## 설계 범위
+### Usecase Diagram
+```mermaid
+graph LR
+  %% Actor
+  User((User))
+
+  %% System Boundary
+
+  subgraph Play 씬 활동
+    direction LR
+    UC_PlayStage([스테이지 플레이])
+    UC_BuildManageTower([타워 건설/관리])
+    UC_UpgradeUnitInGame([게임 중 유닛 업그레이드])
+    UC_TriggerWave(["웨이브 시작 (수동/자동)"]) 
+  end
+
+  subgraph Main Lobby 씬 활동
+    direction LR
+    UC_ManageLobbyUpgrade([로비 업그레이드 관리])
+    UC_StartGame([게임 시작/스테이지 선택])
+  end
+
+  %% User Interactions
+  User -- "게임 시작" --> UC_StartGame
+  User -- "영구 업그레이드" --> UC_ManageLobbyUpgrade
+  User -- "타워 관련 조작" --> UC_BuildManageTower
+  User -- "게임 중 업그레이드" --> UC_UpgradeUnitInGame
+  User -- "웨이브 시작 명령" --> UC_TriggerWave
+
+  %% Relationships between Use Cases (Optional: Use <<include>> or note for clarity)
+  UC_StartGame -- "포함 (includes)" --> LoadingProcess(["리소스 로딩"])
+  UC_StartGame -- "포함 (includes)" --> MapGeneration(["맵 생성"])
+  UC_PlayStage -- "포함 (includes)" --> UC_BuildManageTower
+  UC_PlayStage -- "포함 (includes)" --> UC_UpgradeUnitInGame
+  UC_PlayStage -- "포함 (includes)" --> BattleProcess(["전투 진행 (자동)"])
+  UC_TriggerWave -- "전투 시작/가속" --> BattleProcess
+
+
+  %% Notes for clarification
+  note_PlayStage["목표 달성, 전투 진행 등"]
+  UC_PlayStage --> note_PlayStage
+
+  note_StartGame["로비에서 Play 씬으로 이동<br/> 필요한 초기화 수행<br/> (로딩, 맵 생성 등)"]
+  UC_StartGame --> note_StartGame
+
+  note_LobbyUpgrade["영구적인 능력치/기능 업글"]
+  UC_ManageLobbyUpgrade --> note_LobbyUpgrade
+
+  note_BuildTower["타워 건설<br/> 업그레이드<br/> 판매 등"]
+  UC_BuildManageTower --> note_BuildTower
+
+  %% Internal Processes (Represented as notes or separate nodes for clarity, not primary use cases)
+  style LoadingProcess fill:#lightgrey,stroke:#333,stroke-width:1px
+  style MapGeneration fill:#lightgrey,stroke:#333,stroke-width:1px
+  style BattleProcess fill:#lightgrey,stroke:#333,stroke-width:1px
+  style NetworkMgmt fill:#lightgrey,stroke:#333,stroke-width:1px
+
+  InternalProcesses["내부 처리 (자동)"] -- 네트워크 연결/ 데이터 관리 --> NetworkMgmt(["네트워크 연결/ 데이터 관리"])
+```
+
 ## 네임스페이스 설계
 **분리 목적:** 각 모듈의 책임을 명확히 하고, 의존성을 줄여 유지보수성과 재사용성을 높이기 위해 네임스페이스를 분리했습니다.
 ### Package Diagram
@@ -66,6 +127,14 @@ MVVM 구조에서 Model은 Repository 패턴을 사용하여 데이터를 관리
 ### UI Class Diagram
 ```mermaid
 classDiagram
+    class MonoBehaviour {
+        <<Unity Engine>>
+    }
+
+    class Test.UITest {
+        + TestFunc()
+    }
+subgraph VVM
     class View {
         <<MonoBehaviour>>
         - UnityUIReference
@@ -78,24 +147,13 @@ classDiagram
 
     class ViewModel {
         - IRepository _repo // DI로 Inject
-        + event Action<Data> OnDataChanged // View가 구독
+        + event Action OnDataChanged // View가 구독
 
         + void SetData(data)  // 외부에서 호출
         - void NotifyViewDataChanged() // View에 알림
     }
-
-    class Data.Model {
-        + Data
-        + Set(data) // 데이터 변경
-    }
-
-    class MonoBehaviour {
-        <<Unity Engine>>
-    }
-    
-    class Test.UITest {
-        + TestFunc()
-    }
+end
+subgraph DataAcess
     class Data.IRepository {
         <<interface>>
         + SetValue(Data)
@@ -106,6 +164,11 @@ classDiagram
         + SetValue(Data)
         + GetValue() Data
     }
+    class Data.Model {
+        + Data
+        + Set(data) // 데이터 변경
+    }
+end
 
 
     MonoBehaviour <|-- View 
