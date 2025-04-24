@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Utility { 
+namespace CustomUtility { 
     public class ObjectPoolItem : MonoBehaviour
     {
         private IObjectPool _owner;

@@ -4,7 +4,7 @@ using Zenject;
 using System.ComponentModel;
 namespace Core
 {
-    // 주요 Repo를 바인딩 하는 클레스
+    // 주요 Repo, Data를 바인딩 하는 클레스
     public class ProjectRepoInstaller : MonoInstaller
     {
         public override void InstallBindings() {

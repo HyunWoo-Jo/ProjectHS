@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;   
 using UnityEngine;
-using Utility;
+using CustomUtility;
 
 
 namespace GamePlay {
@@ -36,16 +36,13 @@ namespace GamePlay {
         }
 
         private void Awake() {
+            //var temaList = Enum.GetValues(typeof(MapTema)).Cast<MapTema>().ToList();
+            //MapTema = temaList[UnityEngine.Random.Range(0, temaList.Count)];
 
-            Debug.Log("Hello");
+            //_mapGenerator = new MapGenerator();
+            //List<MapData> mapDataList = _mapGenerator.GenerateMap(20, 20, out List<Vector2Int> pathWaypointList);
 
-            var temaList = Enum.GetValues(typeof(MapTema)).Cast<MapTema>().ToList();
-            MapTema = temaList[UnityEngine.Random.Range(0, temaList.Count)];
-
-            _mapGenerator = new MapGenerator();
-            List<MapData> mapDataList = _mapGenerator.GenerateMap(20, 20, out List<Vector2Int> pathWaypointList);
-
-            LoadRoadData(MapTema, mapDataList);
+            //LoadRoadData(MapTema, mapDataList);
 
         }
 

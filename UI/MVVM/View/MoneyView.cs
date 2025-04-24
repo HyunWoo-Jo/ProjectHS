@@ -1,29 +1,44 @@
+
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-using UnityEngine.Assertions;
+using Zenject;
+
+////////////////////////////////////////////////////////////////////////////////////
+// Auto Generated Code
 namespace UI
 {
     public class MoneyView : MonoBehaviour
     {
-        private MoneyViewModel _moneyViewModel;
+        [Inject] private MoneyViewModel _viewModel;
+
         [SerializeField] private TextMeshPro _text;
-
         private void Awake() {
-#if UNITY_EDITOR
-            Assert.IsNotNull(_text);
-
+#if UNITY_EDITOR // Assertion
+            RefAssert();
 #endif
-
-            _moneyViewModel = new MoneyViewModel();
-            _moneyViewModel.OnDataChanged += UpdateUI;
-        }
-
-
-        public void UpdateUI(long value) {
-            _text.text = value.ToString();
+            // 버튼 초기화
+         
+            _viewModel.OnDataChanged += UpdateUI;
 
         }
+
+        private void OnDestroy() {
+            _viewModel.OnDataChanged -= UpdateUI;
+            _viewModel = null; // 참조 해제
+        }
+
+#if UNITY_EDITOR
+        // 검증
+        private void RefAssert() {
+
+        }
+#endif
+        // UI 갱신
+        private void UpdateUI() {
+            _text.text = _viewModel.GetMoney.ToString();
+        }
+////////////////////////////////////////////////////////////////////////////////////
+        // your logic here
 
     }
 }

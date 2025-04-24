@@ -1,10 +1,10 @@
 {
-    "name": "Utility",
-    "rootNamespace": "CustomUtility",
-    "references": [
-        "Zenject"
+    "name": "Test",
+    "rootNamespace": "Test",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
     ],
-    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

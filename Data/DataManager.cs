@@ -1,5 +1,5 @@
 using UnityEngine;
-using Utility;
+using CustomUtility;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine.AddressableAssets;
@@ -24,7 +24,89 @@ namespace Data
 
 
         #region Addressable Loading
+        public T LoadAssetSync<T>(string key) where T : UnityEngine.Object {
+            if (string.IsNullOrEmpty(key)) {
+                Debug.LogError("LoadAssetSync: 제공된 키가 null이거나 비어 있습니다.");
+                return null;
+            }
 
+            // 이미 이 키를 관리하고 있는지 확인
+            if (_handleDic.TryGetValue(key, out var existingHandle)) {
+                // 기존 핸들이 유효하고 완료되었는지 확인
+                if (!existingHandle.IsValid()) {
+                    // 핸들이 어떤 이유로든 (예: 다른 곳에서 조기 해제됨) 유효하지 않게 됨
+                    // 찾지 못한 것으로 간주하고 오래된 항목 제거
+                    Debug.LogWarning($"LoadAssetSync: 키 '{key}'에 대해 기존 핸들을 찾았지만 유효하지 않습니다. 다시 로드합니다.");
+                    _handleDic.Remove(key);
+                    _countDic.Remove(key);
+                    // 아래에서 새로 로드 진행...
+                } else {
+                    // 만약 아직 실행 중이라면 완료될 때까지 대기 (동기 흐름에서는 드문 경우)
+                    existingHandle.WaitForCompletion();
+
+                    if (existingHandle.Status == AsyncOperationStatus.Succeeded) {
+                        T result = existingHandle.Result as T;
+                        if (result != null) {
+                            // 기존 핸들에서 성공적으로 가져옴
+                            _countDic[key]++;
+                            // Debug.Log($"LoadAssetSync: 에셋 '{key}' 이미 로드됨. 카운트 증가: {_countDic[key]}.");
+                            return result;
+                        } else {
+                            // 핸들이 존재하고 성공적으로 완료되었지만, 결과가 null이거나 잘못된 타입인 경우
+                            Debug.LogError($"LoadAssetSync: 키 '{key}'의 기존 핸들이 성공적으로 완료되었지만 결과가 null이거나 {typeof(T)} 타입이 아닙니다. 저장된 타입: {existingHandle.Result?.GetType()}. 잘못된 핸들을 해제합니다.");
+                            // 문제가 있는 핸들을 해제하고 추적 제거
+                            Addressables.Release(existingHandle);
+                            _handleDic.Remove(key);
+                            _countDic.Remove(key);
+                            // 아래에서 새로 로드 시도...
+                        }
+                    } else {
+                        // 기존 핸들이 이전에 실패했음
+                        Debug.LogError($"LoadAssetSync: 키 '{key}'의 기존 핸들이 이전에 실패했습니다. 상태: {existingHandle.Status}, 오류: {existingHandle.OperationException}. 다시 로드를 시도합니다.");
+                        // 재시도하기 전에 실패한 핸들을 해제하고 추적 제거
+                        Addressables.Release(existingHandle);
+                        _handleDic.Remove(key);
+                        _countDic.Remove(key);
+                        // 아래에서 새로 로드 진행...
+                    }
+                }
+            }
+
+            // 여기까지 도달했다면, 핸들이 존재하지 않았거나, 유효하지 않았거나, 이전에 실패한 경우임. 새로 로드.
+            AsyncOperationHandle<T> newHandle = default;
+            T loadedAsset = null;
+            try {
+                // 로드 작업 시작
+                newHandle = Addressables.LoadAssetAsync<T>(key);
+                // 동기적으로 완료될 때까지 대기 (메인 스레드 블로킹)
+                loadedAsset = newHandle.WaitForCompletion();
+
+                if (newHandle.Status == AsyncOperationStatus.Succeeded && loadedAsset != null) {
+                    // 처음 로드 성공 (또는 이전 실패/무효화 후)
+                    // 핸들을 저장하고 참조 카운트 초기화
+                    _handleDic[key] = newHandle; // 특정 AsyncOperationHandle<T>를 AsyncOperationHandle로 저장
+                    _countDic[key] = 1;
+                    // Debug.Log($"LoadAssetSync: 에셋 '{key}' 로드 성공. 초기 카운트: 1.");
+                    return loadedAsset;
+                } else {
+                    // 로딩 실패
+                    Debug.LogError($"LoadAssetSync: 키 '{key}'로 에셋 로드 실패. 상태: {newHandle.Status}, 오류: {newHandle.OperationException?.Message ?? "N/A"}");
+                    // 실패한 작업 핸들이 유효하다면 해제
+                    if (newHandle.IsValid()) {
+                        Addressables.Release(newHandle);
+                    }
+                    return null;
+                }
+            } catch (Exception ex) {
+                // 로딩 중 발생할 수 있는 예외 처리 (예: 잘못된 키)
+                Debug.LogError($"LoadAssetSync: 키 '{key}'로 에셋 로드 중 예외 발생. 오류: {ex.Message}\n{ex.StackTrace}");
+                // try 블록 내에서 생성된 핸들이 유효하다면 해제 보장
+                if (newHandle.IsValid()) {
+                    Addressables.Release(newHandle);
+                }
+                return null;
+            }
+        }
         /// <summary>
         /// Addressable 에셋을 비동기적으로 로드
         /// 이미 로드되었거나 로딩 중인 경우 참조 카운트를 증가.

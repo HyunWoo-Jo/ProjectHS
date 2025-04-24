@@ -1,7 +1,6 @@
 using UnityEngine;
 
-namespace Utility
-{
+namespace CustomUtility {
    // 이제 사용 안하는 코드
    // Entenject를 사용해 생명주기 대신 관리
 /*

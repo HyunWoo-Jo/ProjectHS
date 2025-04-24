@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Utility {
+namespace CustomUtility { 
     public interface IObjectPool {
         void RepayItem(GameObject item, int index);
 
