@@ -9,7 +9,6 @@ namespace UI
     public class MainLobbyNavigateViewModel
     {
         [Inject] public IUIFactory _uiManager;
-        [Inject] public IMainCanvasTag _mainCanvasTag;
         [Inject] public ILoadManager _loadManager;
 
         public event Action OnDataChanged; // 데이터가 변경될떄 호출될 액션
@@ -43,7 +42,7 @@ namespace UI
         /// Play Button 클릭
         /// </summary>
         public void OnClickPlayButton() {
-            IWipeUI wipeUI = _uiManager.InstanceUI<WipeUI>(_mainCanvasTag.GetMainCanvas().transform, 20); // UI 생성 요청
+            IWipeUI wipeUI = _uiManager.InstanceUI<WipeUI>(20); // UI 생성 요청
             float loadDelay = 0.5f;
             wipeUI.Wipe(WipeDirection.Left, loadDelay, false); // 이펙트 호출
             _loadManager.LoadScene(SceneName.PlayScene, loadDelay); // 다음 씬을 호출

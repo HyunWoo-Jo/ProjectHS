@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.Assertions;
+using Zenject;
 
-namespace Data
+namespace UI
 {
     public interface IMainCanvasTag {
         Canvas GetMainCanvas();
@@ -12,11 +13,13 @@ namespace Data
     {
         private Canvas _canvas;
         private RectTransform _rectTr;
-
+        [Inject] private UIManager _uiManager;
 
         private void Awake() {
             _canvas = GetComponent<Canvas>();
             _rectTr = GetComponent<RectTransform>();
+
+            _uiManager.SetMainCanvas(this); // Main Cavnas·Î µî·Ï
         }
         public Canvas GetMainCanvas() {
             return _canvas;

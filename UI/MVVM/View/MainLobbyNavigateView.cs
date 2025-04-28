@@ -33,6 +33,7 @@ namespace UI
             RefAssert();
 #endif
             // 버튼 초기화
+
             _viewModel.OnDataChanged += UpdateButtonAndPanelUI;
             InitButton();
 

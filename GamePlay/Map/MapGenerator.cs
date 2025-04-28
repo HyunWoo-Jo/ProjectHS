@@ -3,15 +3,22 @@ using UnityEngine;
 using Data;
 using System.Collections.Generic;
 using CustomUtility;
-using UnityEngine.Tilemaps;
 using Cysharp.Threading.Tasks;
-using static Codice.Client.BaseCommands.QueryParser;
-namespace GamePlay
+using GamePlay;
+
+namespace GamePlay22
 {
     /// <summary>
     /// 맵을 생성해주는 클레스
     /// </summary>
     public class MapGenerator {
+        private IPathStrategy _pathStrategy; // Path 생성 규약
+        public MapGenerator(IPathStrategy pathStrategy) {
+            _pathStrategy = pathStrategy;
+        }
+        public void SetPathGenerate(IPathStrategy pathStrategy) {
+            _pathStrategy = pathStrategy;
+        }
 
         private enum TempTileType {
             Ground,     // 땅
@@ -25,8 +32,8 @@ namespace GamePlay
         /// <param name="sizeX">맵의 가로 크기</param>
         /// <param name="sizeY">맵의 세로 크기</param>
         /// <returns>생성된 맵 타일 데이터 리스트</returns>
-        public List<MapData> GenerateMap(int sizeX, int sizeY, out List<Vector2Int> pathWaypointList) {
-            pathWaypointList = new List<Vector2Int>();
+        public List<MapData> GenerateMap(int sizeX, int sizeY, out List<Vector3> pathList) {
+            pathList = new List<Vector3>();
             if (sizeX <= 0 || sizeY <= 0) {
                 return new List<MapData>(); // 빈 리스트 반환
             }
@@ -40,23 +47,9 @@ namespace GamePlay
             }
 
             // 경로 생성을 위한 경유지 정의
+            List<Vector2Int> pathWaypointList = _pathStrategy.CreatePathPoints(sizeX, sizeY);
 
-            pathWaypointList.Add(new Vector2Int(0, sizeY / 2));                 // 시작: 왼쪽 중앙
-            pathWaypointList.Add(new Vector2Int(sizeX / 3, sizeY / 2));         // 오른쪽으로 이동
-            pathWaypointList.Add(new Vector2Int(sizeX / 3, sizeY / 4));         // 아래로 이동
-            pathWaypointList.Add(new Vector2Int(2 * sizeX / 3, sizeY / 4));     // 오른쪽으로 이동
-            pathWaypointList.Add(new Vector2Int(2 * sizeX / 3, 3 * sizeY / 4)); // 위로 이동
-            pathWaypointList.Add(new Vector2Int(sizeX - 1, 3 * sizeY / 4));     // 도착: 오른쪽 위쪽 사분면
-
-            // 혹시 모를 오류를 대비해 경유지 좌표를 맵 경계 내로 제한
-            for (int i = 0; i < pathWaypointList.Count; i++) {
-                pathWaypointList[i] = new Vector2Int(
-                    Mathf.Clamp(pathWaypointList[i].x, 0, sizeX - 1),
-                    Mathf.Clamp(pathWaypointList[i].y, 0, sizeY - 1)
-                );
-            }
-
-            // 경유지 사이를 직선으로 연결
+            // 경로 사이를 직선으로 연결
             for (int i = 0; i < pathWaypointList.Count - 1; i++) {
                 Vector2Int start = pathWaypointList[i];
                 Vector2Int end = pathWaypointList[i + 1];
@@ -83,10 +76,7 @@ namespace GamePlay
                             tempGrid[x, y] = TempTileType.PathMarker;
                         }
                     }
-                } else {
-                    // 대각선 경로 예외
-                    Debug.Log("대각선 경로");
-                }
+                } 
                 // end  최종 구역 설정
                 if (IsInBounds(end.x, end.y, sizeX, sizeY)) {
                     tempGrid[end.x, end.y] = TempTileType.PathMarker;
@@ -125,7 +115,7 @@ namespace GamePlay
                 for (int x = 0; x < sizeX; x++) {
                     int calculatedOrder = BASE_ORDER - (y * ORDER_PER_ROW) + x;
                     MapData data = new() {
-                        position = new Vector3((x * 1.25f) + (y * 1.25f), (y * 0.75f)- (x * 0.75f), 0),
+                        position = MapWorldToObjectPos(x,y),
                         type = finalGrid[x, y],
                         orderBy = calculatedOrder
                     };
@@ -134,7 +124,21 @@ namespace GamePlay
                 }
             }
 
+            // Path를 최종 위치로 변경
+            foreach(Vector2Int pos in pathWaypointList) {
+                pathList.Add(MapWorldToObjectPos(pos.x, pos.y));
+
+            }
+            
+
             return mapDataList; // 완성된 맵 데이터 리스트 반환
+        }
+
+        /// <summary>
+        /// 오브젝트 이미지에 맞춰 위치를 변경해주는 함수
+        /// </summary>
+        public Vector3 MapWorldToObjectPos(int x, int y) {
+            return new Vector3((x * 1.25f) + (y * 1.25f), (y * 0.75f) - (x * 0.75f), 0);
         }
 
 
@@ -195,21 +199,29 @@ namespace GamePlay
             return TileType.Ground; // 오류 발생 시 기본 땅 타일 반환
         }
 
+
         /// <summary>
         /// 맵데이터 기반 맵 Instance
         /// </summary>
-        public void InstanceMap(List<MapData> mapDataList, TileSpriteMapper tileMapper) {
-            Debug.Log("instacnce");
-            //DataManager.Instance.LoadAssetAsync<GameObject>("Field.prefab").ContinueWith(fieldPrefab => {
-            //    var spriteDictionary = tileMapper.GetSpriteDictionary();
-            //    foreach (MapData mapData in mapDataList) {
-            //        GameObject obj = GameObject.Instantiate(fieldPrefab);
-            //        var spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            //        spriteRenderer.sprite = spriteDictionary[mapData.type];
-            //        spriteRenderer.sortingOrder = mapData.orderBy;
-            //        obj.transform.position = mapData.position;
-            //    }
-            //});
+        public List<GameObject> InstanceMap(GameObject fieldPrefab, List<MapData> mapDataList, TileSpriteMapper tileMapper) {
+            List<GameObject> mapObjList = new();
+            var spriteDictionary = tileMapper.GetSpriteDictionary();
+            foreach (MapData mapData in mapDataList) {
+                GameObject obj = GameObject.Instantiate(fieldPrefab);
+                var spriteRenderer = obj.GetComponent<SpriteRenderer>();
+                if (spriteDictionary.TryGetValue(mapData.type, out var sprite)) {
+                    spriteRenderer.sprite = sprite;
+                   
+                } else {
+                    Debug.Log(mapData.type + "Sprite가 존재하지 않음");
+                }
+
+                spriteRenderer.sortingOrder = mapData.orderBy;
+                obj.transform.position = mapData.position;
+                obj.isStatic = true; 
+                mapObjList.Add(obj);
+            }
+            return mapObjList;
         }
     }
 }

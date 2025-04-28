@@ -17,6 +17,7 @@ namespace Core
             // DataManager 바인딩
             Container.Bind<DataManager>().FromNewComponentOn(this.gameObject).AsSingle().NonLazy();
             // UIManager 바인딩
+            Container.Bind<UIEvent>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<UIManager>().FromNewComponentOn(this.gameObject).AsSingle().NonLazy();
             // LoadManager 바인딩
             Container.BindInterfacesAndSelfTo<LoadManager>().FromNewComponentOn(this.gameObject).AsSingle().NonLazy();

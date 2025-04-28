@@ -46,7 +46,6 @@ namespace UI
     public class {_vvmName}View : MonoBehaviour
     {{
         [Inject] private {_vvmName}ViewModel _viewModel;
-
         private void Awake() {{
 #if UNITY_EDITOR // Assertion
             RefAssert();

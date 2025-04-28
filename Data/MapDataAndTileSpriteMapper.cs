@@ -44,8 +44,12 @@ namespace Data
     public class TileSpriteMapper {
 
         private Dictionary<TileType, Sprite> _spriteDic;
-        [Inject]
         private DataManager _dataManager;
+
+
+        public TileSpriteMapper(DataManager dataManager) {
+            _dataManager = dataManager;
+        }
 
         public IReadOnlyDictionary<TileType, Sprite> GetSpriteDictionary() { // readonly
             if (_spriteDic == null) {
@@ -67,7 +71,7 @@ namespace Data
 
             _dataManager.LoadAssetsByLabelAsync<Sprite>(label).ContinueWith((spriteList) => {
                 foreach (Sprite sprite in spriteList) {
-                    Match match = Regex.Match(sprite.name, @"\((\d+)\)");
+                    Match match = Regex.Match(sprite.name, @"\((\d+)\)"); // 이름으로 매핑
                     if (match.Success) {
                         string numberStr = match.Groups[1].Value;
                         int number = int.Parse(numberStr);

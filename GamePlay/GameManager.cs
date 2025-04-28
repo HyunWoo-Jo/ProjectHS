@@ -5,7 +5,9 @@ using System.Linq;
 using System.Collections.Generic;   
 using UnityEngine;
 using CustomUtility;
-
+using Zenject;
+using UI;
+using UnityEngine.SceneManagement;
 
 namespace GamePlay {
     /*
@@ -25,7 +27,11 @@ namespace GamePlay {
         public GameState State { get; private set; }
         public MapTema MapTema { get; private set; }
 
-        private MapGenerator _mapGenerator;
+
+        [Inject] IUIFactory _uiManager;
+        [Inject] ILoadManager _loadManager;
+
+        public Vector2Int MapSize { get; private set; } = new Vector2Int(20, 20);
 
         /// <summary>
         /// 게임 상태 변경
@@ -36,22 +42,28 @@ namespace GamePlay {
         }
 
         private void Awake() {
-            //var temaList = Enum.GetValues(typeof(MapTema)).Cast<MapTema>().ToList();
-            //MapTema = temaList[UnityEngine.Random.Range(0, temaList.Count)];
+            // Scene 전환시 이벤트가 발생되도록 등록
+            SceneManager.sceneLoaded += LoadSceneEffect;
 
-            //_mapGenerator = new MapGenerator();
-            //List<MapData> mapDataList = _mapGenerator.GenerateMap(20, 20, out List<Vector2Int> pathWaypointList);
-
-            //LoadRoadData(MapTema, mapDataList);
+            Application.targetFrameRate = 120; // 타겟 프레임 설정
 
         }
 
-        private void LoadRoadData(MapTema temaType, List<MapData> mapDataList) {
-            TileSpriteMapper tileMapper = new TileSpriteMapper(); // Tile Mapper
-            tileMapper.LoadDataAsync(temaType, () => { // Data Load가 완료 되면
-                _mapGenerator.InstanceMap(mapDataList, tileMapper); // 맵 Instance
-            });
+        /// <summary>
+        /// 씬 전환이 일어날때 이펙트 발생
+        /// </summary>
+        private void LoadSceneEffect(Scene scene, LoadSceneMode mode) {
+            if (SceneManager.GetActiveScene().name != SceneName.LoadScene.ToString()) { // 로드 씬이 아닐경우
+                if(_loadManager.GetPreSceneName() != _loadManager.GetNextSceneName()) { // 처음 로드한 씬이 아닌경우 이펙트 실행
+                    IWipeUI wipeUI = _uiManager.InstanceUI<WipeUI>(20);
+                    wipeUI.Wipe(WipeDirection.FillRight, 0.5f, true);
+                }
+
+            }
         }
+
+  
+       
 
 
 

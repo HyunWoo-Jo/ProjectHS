@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
+using Zenject;
 
 namespace UI
 {
@@ -14,8 +15,9 @@ namespace UI
     public interface IWipeUI {
         void Wipe(WipeDirection direction, float targetTime, bool isAutoActiveClose);
     }
-    public class WipeUI : MonoBehaviour, IWipeUI {
-       
+    public class WipeUI : MonoBehaviour, IWipeUI{
+
+        [Inject] private UIEvent _uiEvent;
 
         [SerializeField] private Image _wipePanel;
         private WipeDirection _direction = WipeDirection.Left;
@@ -32,14 +34,14 @@ namespace UI
         /// </summary>
         /// <param name="direction"> 방향</param>
         /// <param name="targetTime"> 시간 </param>
-        /// <param name="isAutoActiveClose"> 자동 오브젝트 Active 종료 </param>
-        public void Wipe(WipeDirection direction, float targetTime, bool isAutoActiveClose) {
+        /// <param name="isAutoDestroy"> 자동 오브젝트 삭제 </param>
+        public void Wipe(WipeDirection direction, float targetTime, bool isAutoDestroy) {
             _direction = direction;
             _targetTime = targetTime;
-            StartCoroutine(CoroutineWipe(isAutoActiveClose));
+            StartCoroutine(CoroutineWipe(isAutoDestroy));
         }
 
-        private IEnumerator CoroutineWipe(bool isAutoActiveClose) {
+        private IEnumerator CoroutineWipe(bool isAutoDestroy) {
             float start = 0f;
             float end = 0f;
             if (_direction == WipeDirection.Right) {
@@ -62,8 +64,8 @@ namespace UI
                 if (_time >= _targetTime) { break; }
                 yield return null;
             }
-            if (isAutoActiveClose) {
-                gameObject.SetActive(false);
+            if (isAutoDestroy) {
+                Close();
             }
         }
         private void SetMatPro(float value) {
@@ -72,7 +74,7 @@ namespace UI
        
 
         public void Close() {
-            Destroy(this.gameObject);
+            _uiEvent.CloseUI(this.gameObject); // 제거 이벤트 발생
         }
 
        

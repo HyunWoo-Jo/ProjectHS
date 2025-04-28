@@ -11,9 +11,9 @@ namespace Data
 
     public interface ILoadManager {
         void LoadScene(SceneName nextScene, float delay);
-
         float GetLoadingRation();
-
+        SceneName GetPreSceneName();
+        SceneName GetNextSceneName();
     }
 
     /// <summary>
@@ -23,6 +23,7 @@ namespace Data
         private AsyncOperation _operation;
         public SceneName PreScene { get; private set; } = SceneName.MainLobbyScene;
         public SceneName NextScene { get; private set; } = SceneName.MainLobbyScene;
+
 
         public float GetLoadingRation() {
             return _operation != null ? _operation.progress : 0;
@@ -75,6 +76,14 @@ namespace Data
                 }
                 yield return null;
             }
+        }
+
+        public SceneName GetNextSceneName() {
+            return NextScene;
+        }
+
+        public SceneName GetPreSceneName() {
+            return PreScene;
         }
     }
 }
