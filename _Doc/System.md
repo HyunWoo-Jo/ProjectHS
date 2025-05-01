@@ -63,17 +63,35 @@ graph LR
 **분리 목적:** 각 모듈의 책임을 명확히 하고, 의존성을 줄여 유지보수성과 재사용성을 높이기 위해 네임스페이스를 분리했습니다.
 ### Package Diagram
 ```mermaid
-graph TD
-    A[Project] --> Core;
-    A --> Data;
-    A --> GamePlay;
-    A --> Network;
-    A --> UI;
-    A --> Audio;
-    A --> Input;
-    A --> Utility;
-    A --> Test;
-    A --> Editor;
+graph LR
+    Core;
+    Data;
+    GamePlay;
+    Network;
+    UI;
+    Audio;
+    Utility;
+
+UI --> Data
+UI --> Utility
+
+GamePlay --> UI
+GamePlay --> Data
+GamePlay --> Audio
+GamePlay --> Network
+GamePlay --> Utility
+
+Audio --> Data;
+
+Core --> GamePlay
+Core --> UI
+Core --> Network
+Core --> Data
+```
+```mermaid
+graph LR
+ EditorOnly --> Test;
+    EditorOnly --> Editor;
   style Test fill:#f9d,stroke:#333,stroke-width:2px
   style Editor fill:#f9d,stroke:#333,stroke-width:2px
 ```
@@ -87,7 +105,7 @@ graph TD
 
 #### 3. GamePlay
 역할: 실제 인게임 플레이 로직의 대부분. 핵심 게임 메커니즘 구현.</br> 
-주요 내용: 타워/적 로직 및 AI, 전투 시스템, 맵 시스템, 플레이어 상태(인게임), 로그라이크 요소, 아이템/스킬 로직. 게임 상태 관리, 씬 로딩, 핵심 게임 루프 관리.
+주요 내용: 타워/적 로직 및 AI, 전투 시스템, 맵 시스템, 플레이어 상태(인게임), 로그라이크 요소, 아이템/스킬 로직. 게임 상태 관리, 씬 로딩, 핵심 게임 루프 관리, 인풋 관리.
 
 #### 4. Network
 역할: 네트워크 관련 기능.</br> 
@@ -101,19 +119,15 @@ graph TD
 역할: 게임 내 모든 사운드 및 음악 재생 관리. </br>
 주요 내용: AudioManager, BGM/SFX 재생, 오디오 풀링, 믹서/볼륨 조절.
 
-#### 7. Input
-역할: 플레이어 입력(키보드, 마우스, 터치, 패드) 처리 및 해석.</br>
-주요 내용: 입력 감지/이벤트 발행, 입력 매핑, 플랫폼별 입력 처리.
-
-#### 8. Utility
+#### 7. Utility
 역할: 범용 헬퍼 함수, 확장 메소드, 유틸리티 클래스.</br>
 주요 내용: 유틸리티
 
-#### 9. Test
+#### 8. Test
 역할: Unity 에디터 환경에서만 사용되는 스크립트. </br>
 주요 내용: 테스트 코드.
 
-#### 10. Editor
+#### 9. Editor
 역할: Unity 에디터 환경에서만 사용되는 스크립트. </br>
 주요 내용: 커스텀 에디터.
 
