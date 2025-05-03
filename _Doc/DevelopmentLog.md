@@ -1,9 +1,13 @@
 ## 개발 일지
 #### 개발 과정
+#### 25.04
 - [2025.04.19 / 시스템 구조 설계](#전체-시스템-구조-설계)
 - [2025.04.19 / UI 설계 MVVM](#ui-설계)
 - [2025.04.19 / DI 선택](#didependency-injection)
 - [2025.04.24 / 확장성 고려 비지니스 로직](#확장성-고려)
+- [2025.04.28 / Core System 설계](#game-play-system-설계)
+#### 25.05
+
 ---
 #### 2025.04.19
 ### 전체 시스템 구조 설계
@@ -119,6 +123,94 @@ Mobile 환경과 PC 환경에서 다른 Input 처리를 하기 위해 분리했�
     IInputStrategy inputStrategy = new PcInputStrategy();
 #endif
     _inputSystem.SetInputStrategy(inputStrategy); // set 설정
+```
+
+---
+#### 2025.04.28
+### Game Play System 설계
+Game Play에 필요한 핵심 System들을 설계 하였습니다.
+```mermaid
+classDiagram
+class PlaySceneSystemManager {
+    - InitializeSystem()
+}
+class EnemySystem {
+     + ControllEnemys()
+}
+class WaveSystem {
+    + SpawnEnemiesWave()
+}
+class StageSystem {
+    + StartStage()
+    + EndStage()
+}
+class MapSystem {
+    - MapDatas
+    - PathList
+    + GenerateMap(x,y)
+}
+class ScreenClickInputSystem {
+    + UpdateInput()
+}
+class CameraSystem {
+    + HandleCameraMovement()
+}
+class TowerSystem {
+    - TowerList
+    + CreateTower(type)
+    + RemoveTower(type)
+    + SwapTower(p1 : float2, p2: float2)
+}
+class UpgradeSystem {
+    + UpgradeTower()
+}
+
+PlaySceneSystemManager --> ScreenClickInputSystem : manages
+PlaySceneSystemManager --> EnemySystem : manages
+PlaySceneSystemManager --> WaveSystem : manages
+PlaySceneSystemManager --> StageSystem : manages
+PlaySceneSystemManager --> CameraSystem : manages
+PlaySceneSystemManager --> TowerSystem : manages
+PlaySceneSystemManager --> MapSystem : manages
+```
+PlaySceneSystemManager에서 GamePlay에 필요한 System 들을 설계 하였습니다.</br>
+각 System의 역할을 다음과 같습니다.</br>
+- **MapSystem:** 맵 데이터 생성, 맵 오브젝트 생성
+- **ScreenClickInputSystem:** Input 관리
+- **EnemySystem:** Enemy 행동 제어
+- **StageSystem:** 스테이지 시작과 종료
+- **WaveSystem:** 스테이지 Level에 맞는 Wave(enemy) 생성
+- **CameraSystem:** 카메라 제어
+- **TowerSystem:** 타워 생성, 제거, 위치 변경
+- **UpgradeSystem:** 업그레이드
+
+우선 Stage, Input-Camera System의 Flowchart를 구성했습니다.
+```mermaid
+flowchart TD
+
+subgraph Play Scene
+    A[Load Play Scene] --> B(Systems: Initialize)
+end
+
+subgraph Input-Camera
+    IS_Input[InputSystem: UpdateInput] -- Input Data --> CS_Camera[CameraSystem: CameraHandle]
+end
+
+subgraph Stage Logic
+    direction TB
+
+     subgraph Stage End Flow
+        direction TB
+        eSS_End[StageSystem: EndStage] -- ClearEnemyData --> eES_Enemy[EnemySystem: ClearData]
+    end
+    subgraph Stage Start Flow
+        direction TB
+        SS_Start[StageSystem: StartStage] -- Level Data --> WS_Wave[WaveSystem: SpawnEnemiesWave]
+        WS_Wave -- Enemies Data --> ES_Enemy(EnemySystem: SetEnemyData)
+    end
+
+   
+end
 ```
 
 ---
