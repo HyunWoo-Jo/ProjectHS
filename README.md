@@ -7,8 +7,8 @@
 
 ## 설계
 - [기획](/_Doc/Planning.md)
-- [개발 일지](/_Doc/System.md)
-- [시스템 설계](/_Doc/DevelopmentLog.md)
+- [개발일지](/_Doc/DevelopmentLog.md)
+- [시스템 설계](/_Doc/System.md)
 - [테스트](/_Doc/Testing.md)
 ## 향후 개선방향
 
