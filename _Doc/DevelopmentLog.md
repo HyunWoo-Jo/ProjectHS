@@ -8,6 +8,7 @@
 - [2025.04.28 / Core System 설계](#game-play-system-설계)
 #### 25.05
 - [2025.05.06 / Enemy System 설계](#enemy-system-설계dod구조)
+- [2025.05.07 / Wave System - Enemy System 결합 이유](#wave-system---enemy-system-결합-설계-배경)
 ---
 #### 2025.04.19
 ### 전체 시스템 구조 설계
@@ -262,4 +263,41 @@ end
     Done --> SetObjectPosition --> Animation
 ```
 ---
+#### 2025.05.07
+### Wave System - Enemy System 결합 설계 배경
+1. **시스템 기본 원칙 및 개요** </br>
+일반적으로 각 System은 독립성을 유지하며 PlayScene.cs를 통해 연결, 결합 하는것을 지향합니다. </br>
+Wave System과 Enemy System 간의 데이터 전달 방식의 제약으로 인해 예외적인 설계를 적용하게 되었습니다. </br>
+각 시스템의 주요 역할은 다음과 같습니다. </br>
+
+- **Wave System**
+    - 웨이브 단위로 적 생성을 담당합니다.
+    - 생성된 적의 데이터(EnemyData)를 관리합니다. 
+    - Object Pool에서 실제 게임 오브젝트(GameObject)를 가져와 데이터(EnemyData)와 매칭 하여 Enemy System에 전달 하는 역할을 합니다.
+  
+- **Enemy System**
+    - 개별 적들의 행동 상태를 제어합니다.
+    - Wave System으로부터 전달받은 적 데이터를 기반으로 실제 게임 월드에서의 적을 관리합니다.
+   
+2. **결합 결정의 핵심 이유: NativeArray<EnemyData> 전달의 어려움**
+    - 결합 배경은 Wave System에서 생성된 대량의 적 데이터(NativeArray<EnemyData>)를 Enemy System으로 전달하는 것이었습니다. 
+    - 이벤트 시스템의 한계: 표준적인 이벤트 방식(C# event)은 NativeArray와 같은 네이티브 컨테이너를 직접적이고 효율적으로 전달하는 데 적합하지 않습니다. 데이터를 복사하거나 래핑하는 과정에서 성능 저하 또는 관리의 복잡성이 발생할 수 있습니다.
+    - 이러한 이유로, Wave System이 NativeArray<EnemyData>를 생성한 후, 이를 직접 Enemy System에 전달하여 참조를 공유하는 결합 방식을 채택하게 되었습니다.
+3. **결합 방식 및 데이터 흐름**
+    - Wave System은 새로운 웨이브가 시작될 때 적들의 초기 데이터를 담은 NativeArray<EnemyData>를 생성합니다.
+    - 생성된 NativeArray<EnemyData>는 Enemy System의 메소드를 통해 전달됩니다.
+    - Enemy System은 이 NativeArray에 대한 참조를 받아, Job System 등을 활용하여 적들의 움직임, 상태 업데이트 등 실제 컨트롤 로직을 수행합니다.
+    - Wave System은 적 게임 오브젝트 풀링 및 초기 매칭에 집중하고, Enemy System은 전달받은 데이터를 기반으로 실제 게임 로직 처리에 집중함으로써 역할 분담은 유지합니다.
+
+```mermaid
+classDiagram
+class WaveSystem{
+    + SpawnEnemiesWave()
+}
+class EnemySystem{
+    + enemyObjectPoolItemList : List&ltObjectPoolItem&gt
+    + SetEnemy(NativeArray&ltEnemyData&gt)
+}
+WaveSystem --> EnemySystem
+```
 
