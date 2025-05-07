@@ -5,12 +5,15 @@ using Zenject;
 using System.Collections.Generic;
 using System.Collections;
 using Cysharp.Threading.Tasks;
+using Unity.Mathematics;
+using System;
 
 namespace GamePlay
 {
     /// <summary>
     /// 맵 생성을 담당하는 클레스
     /// </summary>
+    [DefaultExecutionOrder(80)]
     public class MapSystem : MonoBehaviour
     {
         [Inject] private DataManager _dataManager; // Addressable 데이터 관리
@@ -28,6 +31,17 @@ namespace GamePlay
 
         // 생성된 맵 오브젝트
         private List<GameObject> _mapObjList;
+        private GameObject _parent;
+
+        public event Action OnMapChanged;
+
+        public IEnumerable<MapData> GetMapData() {
+            return _mapDataList;
+        }
+
+        public IEnumerable<Vector3> GetPath() {
+            return _pathList;
+        }
 
         private void OnDestroy() {
             // 파괴될때 데이터 정리
@@ -66,6 +80,8 @@ namespace GamePlay
             // 맵 생성
             _mapDataList = _mapGenerator.GenerateMap(sizeX, sizeY, out _pathList);
 
+            OnMapChanged?.Invoke();
+
             // Instance 맵
             StartCoroutine(InstanceMapCoroutine());
         }
@@ -103,7 +119,9 @@ namespace GamePlay
         private IEnumerator InstanceMapCoroutine() {
             while (true) {
                 if (_isLoadedTema && _mapDataList != null && _mapDataList.Count > 0 && _fieldPrefab != null) { // 로드 상태 확인
-                     _mapObjList = _mapGenerator.InstanceMap(_fieldPrefab, _mapDataList, _tileSpriteMapper);
+                    _parent = new GameObject();
+                    _parent.name = "Tile Parent";
+                     _mapObjList = _mapGenerator.InstanceMap(_fieldPrefab, _parent.transform, _mapDataList, _tileSpriteMapper);
                     break;
                 }
                 yield return null;

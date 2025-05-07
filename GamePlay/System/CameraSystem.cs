@@ -5,6 +5,7 @@ namespace GamePlay
     /// <summary>
     /// 카메라 제어를 하는 스크립트
     /// </summary>
+    [DefaultExecutionOrder(80)]
     public class CameraSystem : MonoBehaviour
     {
         public struct CameraBoundery {

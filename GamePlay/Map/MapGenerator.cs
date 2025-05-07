@@ -113,7 +113,7 @@ namespace GamePlay22
             // 순회
             for (int y = 0; y < sizeY; y++) {
                 for (int x = 0; x < sizeX; x++) {
-                    int calculatedOrder = BASE_ORDER - (y * ORDER_PER_ROW) + x;
+                    int calculatedOrder = (BASE_ORDER - (y * ORDER_PER_ROW) + x) - (BASE_ORDER + ORDER_PER_ROW); // order이 - 값이 되도록 계산
                     MapData data = new() {
                         position = MapWorldToObjectPos(x,y),
                         type = finalGrid[x, y],
@@ -203,7 +203,7 @@ namespace GamePlay22
         /// <summary>
         /// 맵데이터 기반 맵 Instance
         /// </summary>
-        public List<GameObject> InstanceMap(GameObject fieldPrefab, List<MapData> mapDataList, TileSpriteMapper tileMapper) {
+        public List<GameObject> InstanceMap(GameObject fieldPrefab, Transform parent, List<MapData> mapDataList, TileSpriteMapper tileMapper) {
             List<GameObject> mapObjList = new();
             var spriteDictionary = tileMapper.GetSpriteDictionary();
             foreach (MapData mapData in mapDataList) {
@@ -218,7 +218,9 @@ namespace GamePlay22
 
                 spriteRenderer.sortingOrder = mapData.orderBy;
                 obj.transform.position = mapData.position;
+                obj.transform.SetParent(parent);
                 obj.isStatic = true; 
+                
                 mapObjList.Add(obj);
             }
             return mapObjList;

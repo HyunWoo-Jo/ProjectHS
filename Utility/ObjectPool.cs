@@ -71,8 +71,8 @@ namespace CustomUtility {
 
         internal void CreateItem() {
             GameObject obj = GameObject.Instantiate(itemObj);
-            T t = obj.GetComponent<T>();
             obj.AddComponent<ObjectPoolItem>().Init(this, index++);
+            T t = obj.GetComponent<T>();
             item_que.Enqueue(t);
             index_T_list.Add(t);
             obj.SetActive(false);
