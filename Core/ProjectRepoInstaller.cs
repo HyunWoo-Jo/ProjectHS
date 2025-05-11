@@ -10,6 +10,7 @@ namespace Core
         public override void InstallBindings() {
             // repo »ý¼º
             Container.Bind<IMoneyRepository>().To<MoneyRepository>().AsSingle().NonLazy();
+            Container.Bind<IUserAuthRepository>().To<UserAuthRepositoryFirebase>().AsSingle().NonLazy();
         }
 
 

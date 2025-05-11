@@ -14,34 +14,6 @@ namespace GamePlay
         bool IsComplete();
     }
 
-    /// <summary>
-    /// 시간
-    /// </summary>
-    public class TimerStageEndStrategy : IStageEndStrategy {
-
-        public bool IsComplete() {
-            return false;
-
-        }
-    }
-    /// <summary>
-    /// 일반 스테이지 (모든 적을 처치 했을경우)
-    /// </summary>
-    public class AllEnemiesDefeatedStageEndStrategy : IStageEndStrategy {
-
-        public bool IsComplete() {
-
-            return false;
-        }
-    }
-    /// <summary>
-    /// 보스 스테이지 
-    /// </summary>
-    public class BossStageEndStrategy : IStageEndStrategy {
-
-        public bool IsComplete() {
-
-            return false;
-        }
-    }
+   
+    
 }

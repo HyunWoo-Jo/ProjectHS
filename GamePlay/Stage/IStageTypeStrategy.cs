@@ -10,20 +10,4 @@ namespace GamePlay
         StageType GetStageType(int stageLevel);
     }
 
-    /// <summary>
-    /// 10 스테이지 간격 보스 / 5스테이지 간격 타이머 / 나머지 일반
-    /// </summary>
-    public class StandardStageTypeStrategy : IStageTypeStrategy {
-
-        public StageType GetStageType(int stageLevel) {
-            if (stageLevel % 10 == 0) {
-                return StageType.Boss;
-            } else if (stageLevel % 5 == 0) {
-                return StageType.Timer;
-            } else {
-                return StageType.Standard;
-            }
-
-        }
-    }
 }
