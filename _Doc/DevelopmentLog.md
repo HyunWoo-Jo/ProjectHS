@@ -9,6 +9,7 @@
 #### 25.05
 - [2025.05.06 / Enemy System 설계](#enemy-system-설계dod구조)
 - [2025.05.07 / Wave System - Enemy System 결합 이유](#wave-system---enemy-system-결합-설계-배경)
+- [2025.05.12 / Network 설계](#network-설계)
 ---
 #### 2025.04.19
 ### 전체 시스템 구조 설계
@@ -300,4 +301,65 @@ class EnemySystem{
 }
 WaveSystem --> EnemySystem
 ```
+---
+#### 2025.05.12
+### Network 설계
+네트워크 모듈 설계에서는 인터페이스 기반의 계층화된 아키텍처를 적용하여 유연하고 테스트 가능한 구조를 구성하였습니다.</br> 
+(현재 프로젝트는 Network를 Firebase 기반으로 사용하여 구현체 부분은 Firebase 부분만 구현하였습니다.)
+1. **상위 로직 (OtherClass)** </br>
+INetworkService, IUserService, IUpgradeService 등 다양한 서비스 인터페이스를 통해 네트워크 기능을 호출합니다. 상위 계층은 구체적인 구현체에 의존하지 않고 추상화된 접근을 하도록 구성하였습니다.
 
+2. **중간 관리자 (NetworkManager)** </br>
+NetworkManager는 각 서비스 인터페이스의 구현체 역할을 하며, 내부적으로는 INetworkLogic 인터페이스를 주입받아 외부 네트워크 로직과 연결됩니다. 이를 통해 서비스 로직과 실제 네트워크 처리 로직 간의 명확한 분리를 구현하였습니다.
+
+3. **구현체 (FirebaseLogic 등)** </br>
+실제 데이터 처리 로직은 INetworkLogic을 상속한 구현체(FirebaseLogic, DB, Test 등)에서 담당하며, 추후 변경될 수 있는 로직을 모듈화하여 구현하였습니다.
+
+```mermaid
+classDiagram
+
+class OtherClass {
+    <<Repo, GameLogic...>>
+}
+
+class INetworkService{
+    <<interface>>
+    + LoginAsync()
+    + IsConnectedAsync() bool
+}
+class IUserService{
+     <<interface>>
+    + GetUserData() data
+    + SetUserData(data)
+}
+class IUpgradeService{
+     <<interface>>
+    + GetUpgrade(type)
+    ...
+}
+
+class NetworkManager{
+    - INetworkLogic // Inject
+}
+
+class INetworkLogic {
+    <<interface>>
+    + 네트워크 주요 로직()
+}
+
+class FirebaseLogic {
+    + NetworkLogic
+}
+
+OtherClass --> INetworkService : 호출
+OtherClass --> IUserService : 호출
+OtherClass --> IUpgradeService : 호출
+
+INetworkService <|-- NetworkManager
+IUserService <|-- NetworkManager
+IUpgradeService <|-- NetworkManager
+NetworkManager --> INetworkLogic
+INetworkLogic <|-- FirebaseLogic
+```
+
+---
