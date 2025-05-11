@@ -10,6 +10,7 @@
 - [2025.05.06 / Enemy System 설계](#enemy-system-설계dod구조)
 - [2025.05.07 / Wave System - Enemy System 결합 이유](#wave-system---enemy-system-결합-설계-배경)
 - [2025.05.12 / Network 설계](#network-설계)
+- [2025.05.12 / Tower System 설계](#tower-system-설계)
 ---
 #### 2025.04.19
 ### 전체 시스템 구조 설계
@@ -238,9 +239,10 @@ Enemy System은 다음과 같은 이유를 고려하여 DOD(Data Oriented Design
    - 특정 Enemy 유형만을 위한 예외적인 로직을 처리하기 위해 System 내부에 조건 분기가 많아지면, DOD의 장점인 단순 반복 처리의 이점이 줄어들것으로 예상이 되었습니다.
 
 #### Enemy의 행동
-    - Data 제어(Move, HP, Die)
-    - UI 제어
-    - Animation
+- Data 제어(Move, HP, Die)
+- UI 제어
+- Animation
+
 ```mermaid
 flowchart TD
     Update([Update])
@@ -348,7 +350,7 @@ class INetworkLogic {
 }
 
 class FirebaseLogic {
-    + NetworkLogic
+    + NetworkLogic()
 }
 
 OtherClass --> INetworkService : 호출
@@ -363,3 +365,11 @@ INetworkLogic <|-- FirebaseLogic
 ```
 
 ---
+#### 2025.05.12
+### Tower System 설계
+Tower System의 경우 타워의 위치, 생성, 판매를 담당합니다
+
+Tower를 행동의 컨트롤은 TowerBase를 상속받은 클레스(ArcherTower, MageTower)에서 구현되었습니다.
+
+ 
+ 
