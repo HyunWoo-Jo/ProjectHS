@@ -10,7 +10,7 @@
 - [2025.05.06 / Enemy System 설계](#enemy-system-설계dod구조)
 - [2025.05.07 / Wave System - Enemy System 결합 이유](#wave-system---enemy-system-결합-설계-배경)
 - [2025.05.12 / Network 설계](#network-설계)
-- [2025.05.12 / Tower System 설계](#tower-system-설계)
+- [2025.05.15 / Tower System 설계](#tower-system-설계)
 ---
 #### 2025.04.19
 ### 전체 시스템 구조 설계
@@ -365,11 +365,59 @@ INetworkLogic <|-- FirebaseLogic
 ```
 
 ---
-#### 2025.05.12
+#### 2025.05.15
 ### Tower System 설계
-Tower System의 경우 타워의 위치, 생성, 판매를 담당합니다
+1. **Tower System**
+    - 타워의 위치, 생성, 판매를 담당합니다.
+    - 모든 타워를 중앙에서 집중적으로 관리(생성, 배치, 판매)를 하려고 설계를 하였습니다.
+2. **TowerBase**
+    - 타워의 행동을 정의하는 클레스
+    - 새로운 종류의 타워를 추가할 때 TowerBase를 상속받아 새로운 클래스를 만들기만 하면 되는 구조로 설계 하였습니다.
+- **IEnemyDataGetter**
+    - Tower의 공격 로직을 정의할때 Enemy의 데이터(위치, hp 등)이 필요합니다.
+    - 적 시스템이 변경되더라도 타워 시스템에 미치는 영향을 최소화하기 위해 인터페이스로 분리하였습니다.  
 
-Tower를 행동의 컨트롤은 TowerBase를 상속받은 클레스(ArcherTower, MageTower)에서 구현되었습니다.
+```mermaid
+classDiagram
 
+class PlaySceneSystemManager {
+    - TowerSystem
+}
+
+class TowerSystem {
+    - List&ltTowerBase&gt
+    - IEnemySystem
+}
+class TowerBase {
+    <<abstruct>>
+    - IEnemySystem
+    - TowerData
+    - TargetSearchLogic()
+    - AttackLogic()
+}
+class MageTower {
+    - MageUniqueLogic()
+}
+class ArcherTower {
+     - ArcherUniqueLogic()
+}
+
+class IEnemyDataGetter{
+    + GetEnemyData()
+}
+
+TowerBase <|-- MageTower
+TowerBase <|-- ArcherTower
+
+TowerSystem --> IEnemyDataGetter
+TowerBase --> IEnemyDataGetter
+
+
+PlaySceneSystemManager *--> TowerSystem : IEnemyDataGetter
+TowerSystem o--> TowerBase
+
+```
+
+---
  
  
