@@ -269,7 +269,7 @@ end
 ---
 #### 2025.05.07
 ### ~~Wave System - Enemy System 결합 설계 배경~~
--> **Data Hub를 거쳐 참조하는 방식으로 변경**
+-> [**Data Hub를 거쳐 참조하는 방식으로 변경**](#gamedatahub-도입-배경-및-설계)
 1. **시스템 기본 원칙 및 개요** </br>
 일반적으로 각 `System`은 독립성을 유지하며 `PlayScene.cs`를 통해 연결, 결합 하는것을 지향합니다. </br>
 `Wave System`과 `Enemy System` 간의 데이터 전달 방식의 제약으로 인해 예외적인 설계를 적용하게 되었습니다. </br>
