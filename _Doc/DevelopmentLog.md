@@ -392,8 +392,8 @@ class TowerSystem {
 }
 class TowerBase {
     <<abstruct>>
+    - GameDataHub
     - IEnemySystem
-    - TowerData
     - TargetSearchLogic()
     - AttackLogic()
 }
@@ -408,12 +408,20 @@ class IEnemyDataGetter{
     + GetEnemyData()
 }
 
+class GameDataHub {
+    - TowerData
+    - EnemiesData
+    + Get()
+    + Set(Data)
+}
+
 TowerBase <|-- MageTower
 TowerBase <|-- ArcherTower
 
 TowerSystem --> IEnemyDataGetter
 TowerBase --> IEnemyDataGetter
 
+GameDataHub <-- TowerSystem
 
 PlaySceneSystemManager *--> TowerSystem : IEnemyDataGetter
 TowerSystem o--> TowerBase
