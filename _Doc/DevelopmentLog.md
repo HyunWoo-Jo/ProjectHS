@@ -8,9 +8,10 @@
 - [2025.04.28 / Core System 설계](#game-play-system-설계)
 #### 25.05
 - [2025.05.06 / Enemy System 설계](#enemy-system-설계dod구조)
-- [2025.05.07 / Wave System - Enemy System 결합 이유](#wave-system---enemy-system-결합-설계-배경)
+- [2025.05.07 / ~~Wave System - Enemy System 결합 이유~~ -> Data Hub를 통해 참조하는 방식으로 변경](#wave-system---enemy-system-결합-설계-배경)
 - [2025.05.12 / Network 설계](#network-설계)
 - [2025.05.15 / Tower System 설계](#tower-system-설계)
+- [2025.05.15 / GameDataHub 도입 배경 및 설계](#gamedatahub-도입-배경-및-설계)
 ---
 #### 2025.04.19
 ### 전체 시스템 구조 설계
@@ -68,10 +69,10 @@ graph LR
 ### UI 설계
 UI(User Interface)를 MVVM(Model-View-ViewModel) 구조로 선택한 이유는 다음과 같습니다.
 - **명확한 역할 분리**
-    - **View:** 사용자에게 보여지는 UI 요소(버튼, 텍스트, 이미지 등)와 최소한의 View 관련 로직(애니메이션 등)만 담당합니다.
-    - **ViewModel:** View를 위한 데이터, View로부터의 사용자 입력(커맨드)을 처리합니다. Model로부터 데이터를 가져와 View가 사용하기 쉬운 형태로 가공합니다.
-    - **Model:** 애플리케이션의 데이터와 비즈니스 로직을 담당하며, 독립적 구조를 가지고 있습니다.
-- **테스트 용이성:** ViewModel이 View에 직접 의존하지 않아 결합도가 낮습니다. 덕분에 UI 요소 없이도 ViewModel의 로직을 검증하는 테스트 코드를 작성하기가 훨씬 수월해서 이 패턴을 선택했습니다.
+    - **`View`:** 사용자에게 보여지는 UI 요소(버튼, 텍스트, 이미지 등)와 최소한의 `View` 관련 로직(애니메이션 등)만 담당합니다.
+    - **`ViewModel`:** `View`를 위한 데이터, `View`로부터의 사용자 입력(커맨드)을 처리합니다. `Model`로부터 데이터를 가져와 `View`가 사용하기 쉬운 형태로 가공합니다.
+    - **`Model`:** 애플리케이션의 데이터와 비즈니스 로직을 담당하며, 독립적 구조를 가지고 있습니다.
+- **테스트 용이성:** `ViewModel`이 `View`에 직접 의존하지 않아 결합도가 낮습니다. 덕분에 UI 요소 없이도 `ViewModel`의 로직을 검증하는 테스트 코드를 작성하기가 훨씬 수월해서 이 패턴을 선택했습니다.
 
 ---
 #### 2025.04.19
@@ -83,7 +84,7 @@ DI를 사용한 핵심 이유는 다음과 같습니다.
   
 
 주로 DI로 관리한 항목은 다음과 같습니다.
-- **Manager Class:** Singleton 항목을 관리. (예: DataManager, GameManager ...)
+- **Manager Class:** Singleton 항목을 관리. (예: `DataManager`, `GameManager` ...)
 - **Repo/Data Class:** Repository 패턴, Data를 관리.
 - **Scene Data:** Scene에 핵심적으로 사용되는 Main Canvas, UI 등을 관리
 
@@ -219,15 +220,15 @@ end
 ---
 #### 2025.05.06
 ### Enemy System 설계(DOD구조)
-Enemy System은 Enemies의 행동을 컨트롤 하는 클레스 입니다.</br> 
-Enemy System은 다음과 같은 이유를 고려하여 DOD(Data Oriented Design) 구조를 선택하였습니다.
+`Enemy System`은 Enemies의 행동을 컨트롤 하는 클레스 입니다.</br> 
+`Enemy System`은 다음과 같은 이유를 고려하여 DOD(Data Oriented Design) 구조를 선택하였습니다.
 - **DOD 구조 선택 이유**
 1. **동일 연산의 높은 반복성 및 병렬 처리 잠재력**
-    - Enemy System의 핵심 기능 중 하나는 지정된 Path를 따라 Enemy들을 이동시키는 것입니다.
+    - `Enemy System`의 핵심 기능 중 하나는 지정된 Path를 따라 Enemy들을 이동시키는 것입니다.
     - 이 Path 로직은 각 Enemy에게 거의 동일하게 적용됩니다.
     - 이처럼 동일한 연산을 다수의 데이터에 반복 적용하는 것은 DOD의 강점과 잘 부합합니다.
     - 동일 연산의 반복은 SIMD(Single Instruction Multiple Data) 명령어 활용이나 멀티스레딩 기반의 병렬 처리에 매우 유리합니다.
-    - Job System 등을 활용하여 여러 Enemy의 이동 연산을 동시에 처리함으로써 대규모 Enemy 처리에 필요한 연산 시간을 크게 단축할 수 있을 것으로 기대하였습니다.
+    - `Job System` 등을 활용하여 여러 Enemy의 이동 연산을 동시에 처리함으로써 대규모 Enemy 처리에 필요한 연산 시간을 크게 단축할 수 있을 것으로 기대하였습니다.
 2. **대규모 Enemy 처리 효율성**
     - 게임 기획 상 수백, 수천 개의 Enemy가 동시에 화면에 등장하고 활동해야 할 수 있습니다.
     - OOP 방식에서는 각 Enemy가 객체로 존재하며, 각 객체의 메모리 위치 캐시 미스, 가상 함수 호출 등의 오버헤드가 많이 발생될것으로 예상이 되었습니다.
@@ -267,30 +268,31 @@ end
 ```
 ---
 #### 2025.05.07
-### Wave System - Enemy System 결합 설계 배경
+### ~~Wave System - Enemy System 결합 설계 배경~~
+-> **Data Hub를 거쳐 참조하는 방식으로 변경**
 1. **시스템 기본 원칙 및 개요** </br>
-일반적으로 각 System은 독립성을 유지하며 PlayScene.cs를 통해 연결, 결합 하는것을 지향합니다. </br>
-Wave System과 Enemy System 간의 데이터 전달 방식의 제약으로 인해 예외적인 설계를 적용하게 되었습니다. </br>
+일반적으로 각 `System`은 독립성을 유지하며 `PlayScene.cs`를 통해 연결, 결합 하는것을 지향합니다. </br>
+`Wave System`과 `Enemy System` 간의 데이터 전달 방식의 제약으로 인해 예외적인 설계를 적용하게 되었습니다. </br>
 각 시스템의 주요 역할은 다음과 같습니다. </br>
 
 - **Wave System**
     - 웨이브 단위로 적 생성을 담당합니다.
-    - 생성된 적의 데이터(EnemyData)를 관리합니다. 
-    - Object Pool에서 실제 게임 오브젝트(GameObject)를 가져와 데이터(EnemyData)와 매칭 하여 Enemy System에 전달 하는 역할을 합니다.
+    - 생성된 적의 데이터 `EnemyData`를 관리합니다. 
+    - `Object Pool`에서 실제 게임 오브젝트 `GameObject`를 가져와 데이터 `EnemyData`와 매칭 하여 `Enemy System`에 전달 하는 역할을 합니다.
   
 - **Enemy System**
     - 개별 적들의 행동 상태를 제어합니다.
     - Wave System으로부터 전달받은 적 데이터를 기반으로 실제 게임 월드에서의 적을 관리합니다.
    
-2. **결합 결정의 핵심 이유: NativeArray<EnemyData> 전달의 어려움**
-    - 결합 배경은 Wave System에서 생성된 대량의 적 데이터(NativeArray<EnemyData>)를 Enemy System으로 전달하는 것이었습니다. 
-    - 이벤트 시스템의 한계: 표준적인 이벤트 방식(C# event)은 NativeArray와 같은 네이티브 컨테이너를 직접적이고 효율적으로 전달하는 데 적합하지 않습니다. 데이터를 복사하거나 래핑하는 과정에서 성능 저하 또는 관리의 복잡성이 발생할 수 있습니다.
-    - 이러한 이유로, Wave System이 NativeArray<EnemyData>를 생성한 후, 이를 직접 Enemy System에 전달하여 참조를 공유하는 결합 방식을 채택하게 되었습니다.
+2. **결합 결정의 핵심 이유: `NativeArray<EnemyData>` 전달의 어려움**
+    - 결합 배경은 `Wave System`에서 생성된 대량의 적 데이터(`NativeArray<EnemyData>`)를 `Enemy System`으로 전달하는 것이었습니다. 
+    - 이벤트 시스템의 한계: 표준적인 이벤트 방식(C# event)은 `NativeArray`와 같은 네이티브 컨테이너를 직접적이고 효율적으로 전달하는 데 적합하지 않습니다. 데이터를 복사하거나 래핑하는 과정에서 성능 저하 또는 관리의 복잡성이 발생할 수 있습니다.
+    - 이러한 이유로, `Wave System`이 `NativeArray<EnemyData>`를 생성한 후, 이를 직접 `Enemy System`에 전달하여 참조를 공유하는 결합 방식을 채택하게 되었습니다.
 3. **결합 방식 및 데이터 흐름**
-    - Wave System은 새로운 웨이브가 시작될 때 적들의 초기 데이터를 담은 NativeArray<EnemyData>를 생성합니다.
-    - 생성된 NativeArray<EnemyData>는 Enemy System의 메소드를 통해 전달됩니다.
-    - Enemy System은 이 NativeArray에 대한 참조를 받아, Job System 등을 활용하여 적들의 움직임, 상태 업데이트 등 실제 컨트롤 로직을 수행합니다.
-    - Wave System은 적 게임 오브젝트 풀링 및 초기 매칭에 집중하고, Enemy System은 전달받은 데이터를 기반으로 실제 게임 로직 처리에 집중함으로써 역할 분담은 유지합니다.
+    - `Wave System`은 새로운 웨이브가 시작될 때 적들의 초기 데이터를 담은 `NativeArray<EnemyData>`를 생성합니다.
+    - 생성된 `NativeArray<EnemyData>`는 `Enemy System`의 메소드를 통해 전달됩니다.
+    - `Enemy System`은 이 `NativeArray`에 대한 참조를 받아, `Job System` 등을 활용하여 적들의 움직임, 상태 업데이트 등 실제 컨트롤 로직을 수행합니다.
+    - `Wave System`은 적 게임 오브젝트 풀링 및 초기 매칭에 집중하고, `Enemy System`은 전달받은 데이터를 기반으로 실제 게임 로직 처리에 집중함으로써 역할 분담은 유지합니다.
 
 ```mermaid
 classDiagram
@@ -308,14 +310,14 @@ WaveSystem --> EnemySystem
 ### Network 설계
 네트워크 모듈 설계에서는 인터페이스 기반의 계층화된 아키텍처를 적용하여 유연하고 테스트 가능한 구조를 구성하였습니다.</br> 
 (현재 프로젝트는 Network를 Firebase 기반으로 사용하여 구현체 부분은 Firebase 부분만 구현하였습니다.)
-1. **상위 로직 (OtherClass)** </br>
-INetworkService, IUserService, IUpgradeService 등 다양한 서비스 인터페이스를 통해 네트워크 기능을 호출합니다. 상위 계층은 구체적인 구현체에 의존하지 않고 추상화된 접근을 하도록 구성하였습니다.
+1. **상위 로직 (``OtherClass``)** </br>
+`INetworkService`, `IUserService`, `IUpgradeService` 등 다양한 서비스 인터페이스를 통해 네트워크 기능을 호출합니다. 상위 계층은 구체적인 구현체에 의존하지 않고 추상화된 접근을 하도록 구성하였습니다.
 
-2. **중간 관리자 (NetworkManager)** </br>
-NetworkManager는 각 서비스 인터페이스의 구현체 역할을 하며, 내부적으로는 INetworkLogic 인터페이스를 주입받아 외부 네트워크 로직과 연결됩니다. 이를 통해 서비스 로직과 실제 네트워크 처리 로직 간의 명확한 분리를 구현하였습니다.
+2. **중간 관리자 (``NetworkManager``)** </br>
+`NetworkManager`는 각 서비스 인터페이스의 구현체 역할을 하며, 내부적으로는 `INetworkLogic` 인터페이스를 주입받아 외부 네트워크 로직과 연결됩니다. 이를 통해 서비스 로직과 실제 네트워크 처리 로직 간의 명확한 분리를 구현하였습니다.
 
-3. **구현체 (FirebaseLogic 등)** </br>
-실제 데이터 처리 로직은 INetworkLogic을 상속한 구현체(FirebaseLogic, DB, Test 등)에서 담당하며, 추후 변경될 수 있는 로직을 모듈화하여 구현하였습니다.
+3. **구현체 (``FirebaseLogic`` 등)** </br>
+실제 데이터 처리 로직은 `INetworkLogic`을 상속한 구현체(FirebaseLogic, DB, Test 등)에서 담당하며, 추후 변경될 수 있는 로직을 모듈화하여 구현하였습니다.
 
 ```mermaid
 classDiagram
@@ -372,9 +374,9 @@ INetworkLogic <|-- FirebaseLogic
     - 모든 타워를 중앙에서 집중적으로 관리(생성, 배치, 판매)를 하려고 설계를 하였습니다.
 2. **TowerBase**
     - 타워의 행동을 정의하는 클레스
-    - 새로운 종류의 타워를 추가할 때 TowerBase를 상속받아 새로운 클래스를 만들기만 하면 되는 구조로 설계 하였습니다.
+    - 새로운 종류의 타워를 추가할 때 `TowerBase`를 상속받아 새로운 클래스를 만들기만 하면 되는 구조로 설계 하였습니다.
 - **IEnemyDataGetter**
-    - Tower의 공격 로직을 정의할때 Enemy의 데이터(위치, hp 등)이 필요합니다.
+    - `Tower`의 공격 로직을 정의할때 `Enemy`의 데이터(위치, hp 등)이 필요합니다.
     - 적 시스템이 변경되더라도 타워 시스템에 미치는 영향을 최소화하기 위해 인터페이스로 분리하였습니다.  
 
 ```mermaid
@@ -419,5 +421,50 @@ TowerSystem o--> TowerBase
 ```
 
 ---
- 
+#### 2025.05.15
+### GameDataHub 도입 배경 및 설계
+1. **문제 배경: 시스템 간 데이터 공유의 필요성**
+현재 프로젝트는 **PlaySceneSystemManager를 통해 각 시스템을 초기화하고 연결**하는 구조를 따르며,  
+각 시스템은 서로의 존재를 직접 참조하지 않고 독립적으로 동작하도록 설계되었습니다.
+
+하지만 다음과 같은 데이터 공유 요구가 발생했습니다:
+- `TowerSystem` 혹은 개별 타워 객체 `TowerBase`는 적을 타겟팅하기 위해 **`EnemyData`에 접근**해야 합니다.
+- 반면, **`EnemyData`는 `EnemySystem`에서 관리되고 생성**됩니다.
+- 시스템 간 직접 참조를 피하면서도 성능을 저해하지 않고 `EnemyData`를 공유해야 하는 상황이 발생했습니다.
+
+2. **기존 접근 방식의 한계**
+- 직접 참조
+- `TowerSystem`이 `EnemySystem`을 직접 참조하는 방식은 **결합도가 증가**하며, 향후 유지보수 및 확장 시 문제를 유발합니다.
+
+- 이벤트 전달 방식
+- `EnemyData`는 `NativeArray<T>` 기반으로 관리되며,  
+  일반 C# 이벤트나 메시지 시스템을 통해 전달하기에는 **Burst, JobSystem과의 호환성**, **복사 비용**, **GC 부하** 등의 문제가 발생합니다.
+  
+3. **해결 방식: `GameDataHub` 도입**
+이 문제를 해결하기 위해 **시스템 간 공유 데이터를 관리하는 전용 클래스인 `GameDataHub`를 도입**하였습니다.
+
+4. **설계 원칙**
+- `GameDataHub`는 실제 데이터를 **생성하거나 소유하지 않습니다.**
+- 각 시스템에서 생성한 데이터를 참조 형태로 등록하고,
+  다른 시스템은 이 참조를 통해 데이터를 읽을 수 있도록 합니다.
+- 각 시스템은 Init 단계에서 필요한 데이터를 `GameDataHub`를 통해 받아, 내부에서는 **직접 참조로 접근**합니다.
+- `Dispose` 타이밍은 내부에서 (Set, 소멸) 타이밍에 관리합니다.
+
+ex)
+```c#
+// GameDataHub.cs
+public class GameDataHub : IEnemyDataProvider
+{
+    private NativeArray<EnemyData> _enemyData;
+    ~GameDataHub() {
+        if(_enemyData.IsCreated) _enemyData.Dispose();    
+    }
+    public void SetEnemyData(NativeArray<EnemyData> data) {
+        if(_enemyData.IsCreated) _enemyData.Dispose();
+        _enemyData = data;
+    }
+    public NativeArray<EnemyData> GetEnemyData() => _enemyData;
+}
+```
+---
  
