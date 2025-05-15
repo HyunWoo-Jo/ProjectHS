@@ -442,13 +442,13 @@ TowerSystem o--> TowerBase
 
 2. **기존 접근 방식의 한계**
 - 직접 참조
-- `TowerSystem`이 `EnemySystem`을 직접 참조하는 방식은 **결합도가 증가**하며, 향후 유지보수 및 확장 시 문제를 유발합니다.
+    - `TowerSystem`이 `EnemySystem`을 직접 참조하는 방식은 **결합도가 증가**하며, 향후 유지보수 및 확장 시 문제를 유발합니다.
 
 - 이벤트 전달 방식
-- `EnemyData`는 `NativeArray<T>` 기반으로 관리되며,  
+    - `EnemyData`는 `NativeArray<T>` 기반으로 관리되며,  
   일반 C# 이벤트나 메시지 시스템을 통해 전달하기에는 **Burst, JobSystem과의 호환성**, **복사 비용**, **GC 부하** 등의 문제가 발생합니다.
   
-3. **해결 방식: `GameDataHub` 도입**
+3. **해결 방식: `GameDataHub` 도입**</br>
 이 문제를 해결하기 위해 **시스템 간 공유 데이터를 관리하는 전용 클래스인 `GameDataHub`를 도입**하였습니다.
 
 4. **설계 원칙**
