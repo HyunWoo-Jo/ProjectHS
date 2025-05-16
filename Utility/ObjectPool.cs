@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace CustomUtility { 
     public interface IObjectPool {
-        void RepayItem(GameObject item, int index);
+        internal void RepayItem(GameObject item, int index);
 
     }
     public static class ObjectPoolExtensions { 
@@ -16,6 +16,10 @@ namespace CustomUtility {
         }
         public static ObjectPoolBuilder<T> Static<T>(this ObjectPoolBuilder<T> builder) where T : MonoBehaviour {
             builder.pool.isStatic = true;
+            return builder;
+        }
+        public static ObjectPoolBuilder<T> AutoActivate<T>(this ObjectPoolBuilder<T> builder, bool isActivation) where T: MonoBehaviour {
+            builder.pool.isAutoActivateOnBorrow = isActivation;
             return builder;
         }
 
@@ -48,10 +52,10 @@ namespace CustomUtility {
         internal GameObject ownerObj;
         internal GameObject itemObj;
         internal Queue<T> item_que;
-        internal List<T> index_T_list; // Get Component를 줄이고 빠르게 반환하기위한 캐시데이터
+        internal List<T> index_T_list; // Get Component를 줄이고 빠르게 반환하기위한 데이터
         public bool isStatic;
         internal bool isDontDestroy;
-
+        internal bool isAutoActivateOnBorrow = false; // 자동 온오프 여부
         private int index = 0;
         
         // Builder를 통해 생성
@@ -85,10 +89,12 @@ namespace CustomUtility {
             if (item_que.Count <= 0) {
                 CreateItem();   
             }
-            return item_que.Dequeue();
+            var item = item_que.Dequeue();
+            if (isAutoActivateOnBorrow) item.gameObject.SetActive(true);
+            return item;
         }
 
-        public void RepayItem(GameObject item, int index) {
+        void IObjectPool.RepayItem(GameObject item, int index) {
             if (!isStatic) {
                 item.gameObject.transform.SetParent(ownerObj.transform);
                 item.gameObject.SetActive(false);
@@ -106,5 +112,6 @@ namespace CustomUtility {
         public IEnumerable<T> AllObjects() {
             return index_T_list;
         }
+
     }
 }

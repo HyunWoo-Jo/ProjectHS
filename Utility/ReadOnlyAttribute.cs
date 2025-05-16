@@ -2,10 +2,10 @@ using UnityEngine;
 using UnityEditor;
 namespace CustomUtility { 
 
-    public class ReadOnlyAttribute : PropertyAttribute { }
+    public class ReadEditorAttribute : PropertyAttribute { }
 
 #if UNITY_EDITOR
-    [CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
+    [CustomPropertyDrawer(typeof(ReadEditorAttribute))]
     public class ReadOnlyGUI : PropertyDrawer {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             bool wasEnabled = GUI.enabled;

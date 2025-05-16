@@ -17,7 +17,7 @@ namespace CustomUtility
            public string methodName;
         }
 
-        [ReadOnly] [SerializeField] private List<EventTracker> _eventList = new ();
+        [ReadEditor] [SerializeField] private List<EventTracker> _eventList = new ();
 
         public void AddEvent(string className, string methodName) {
             _eventList.Add(new EventTracker { className = className, methodName = methodName });

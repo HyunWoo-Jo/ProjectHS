@@ -9,40 +9,38 @@ using Unity.Mathematics;
 using UnityEngine.Jobs;
 using System.IO;
 using System.Linq;
-using System.ComponentModel;
+using Zenject;
 namespace GamePlay
 {
     /// <summary>
     /// Enemy를 컨트롤 하는 클레스
     /// </summary>
-    [BurstCompile]
     [DefaultExecutionOrder(80)]
     public class EnemySystem : MonoBehaviour {
         // DOD(data oriented design) 구조
-        private NativeArray<EnemyData> _enemyDatas;
-        public readonly List<ObjectPoolItem> enemyObjectPoolItemList = new();
-        private NativeArray<float3> _paths;
+        [Inject] private GameDataHub _gameDataHub;
 
         private void Update() {
-            if (_enemyDatas.Length <= 0 || _paths.Length <= 0) return;
-
-
+            var enemiesData = _gameDataHub.GetEnemiesData();
+            var paths = _gameDataHub.GetPath();
+            if (enemiesData.Length <= 0 || paths.Length <= 0) return;
             /// 이동 처리
-            var moveJob = new MoveJob{
-                enemyDatas = _enemyDatas,
-                paths = _paths,
+            var moveJob = new MoveJob {
+                enemiesData = enemiesData,
+                paths = paths,
                 deltaTime = Time.deltaTime
             };
 
-            JobHandle moveJobHandle = moveJob.Schedule(_enemyDatas.Length, 32);
+            JobHandle moveJobHandle = moveJob.Schedule(enemiesData.Length, 32);
             moveJobHandle.Complete(); // 완료 대기
 
 
             // Position Setting
+            List<ObjectPoolItem> enemyObjectPoolItemList = _gameDataHub.enemyPoolItemList;
             for (int i = 0; i < enemyObjectPoolItemList.Count; i++) {
-                if (!_enemyDatas[i].isSpawn) return;
-                if (_enemyDatas[i].isDead) continue;
-                enemyObjectPoolItemList[i].transform.position = _enemyDatas[i].position;
+                if (!enemiesData[i].isSpawn) return;
+                if (enemiesData[i].isDead || enemiesData[i].isObj) continue;
+                enemyObjectPoolItemList[i].transform.position = enemiesData[i].position;
                 
             }
         }
@@ -53,12 +51,11 @@ namespace GamePlay
         /// </summary>
         [BurstCompile]
         struct MoveJob : IJobParallelFor {
-            public NativeArray<EnemyData> enemyDatas;
+            public NativeArray<EnemyData> enemiesData;
             [Unity.Collections.ReadOnly] public NativeArray<float3> paths;
             public float deltaTime;
-            [BurstCompile]
             public void Execute(int index) {
-                EnemyData curEnemyData = enemyDatas[index];
+                EnemyData curEnemyData = enemiesData[index];
                 if (!curEnemyData.isSpawn || curEnemyData.isDead) return; // 생성 되지 않았거나 죽었으면 연산하지 않음
                 // 경로 데이터가 없거나, 현재 경로 인덱스가 유효하지 않으면 이동하지 않음
                 if (paths.Length == 0 || curEnemyData.currentPathIndex < 0 || curEnemyData.currentPathIndex >= paths.Length) return;
@@ -96,42 +93,10 @@ namespace GamePlay
                         curEnemyData.position += movement;
                     }
                 }
-                enemyDatas[index] = curEnemyData;
+                enemiesData[index] = curEnemyData;
             }
 
         }
 
-        /// <summary>
-        /// Path가 변경되면 호출
-        /// </summary>
-        /// <param name="pathList"></param>
-        public void SetPath(IEnumerable<Vector3> pathList) {
-            if(_paths.IsCreated) _paths.Dispose();
-
-            //// float3로 변환
-            IEnumerable<float3> pathsFloat3 = pathList.Select(v => new float3(v.x, v.y, v.z));
-
-            _paths = new NativeArray<float3>(pathsFloat3.ToArray(), Allocator.Persistent);
-        }
-
-
-        /// <summary>
-        /// Wave System에서 할당
-        /// </summary>
-        /// <param name="enemyDatas"></param>
-        /// <param name="enemyTrList"></param>
-        public void SetEnemy(NativeArray<EnemyData> enemyDatas) {
-            // enemyDatas 할당
-            _enemyDatas = enemyDatas;
-        }
-
-        /// <summary>
-        /// 메모리 정리
-        /// </summary>
-        public void Dispose() {
-            _enemyDatas.Dispose(); // Native Array 정리
-            enemyObjectPoolItemList.Clear();
-        }
-    
     }
 }

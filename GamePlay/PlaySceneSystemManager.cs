@@ -1,6 +1,7 @@
 using UnityEngine;
 using Data;
 using System.Linq;
+using Zenject;
 namespace GamePlay
 {
     /// <summary>
@@ -15,6 +16,8 @@ namespace GamePlay
     [RequireComponent (typeof(EnemySystem))]
     public class PlaySceneSystemManager : MonoBehaviour
     {
+        [Inject] private GameDataHub _gameDataHub;
+
         private MapSystem _mapSystem;
         private ScreenClickInputSystem _inputSystem;
         private CameraSystem _cameraSystem;
@@ -74,7 +77,7 @@ namespace GamePlay
 
             // EnemySystem
             _mapSystem.OnMapChanged += () => {
-                _enemySystem.SetPath(_mapSystem.GetPath());
+                _gameDataHub.SetPath(_mapSystem.GetPath());
             };
 
 

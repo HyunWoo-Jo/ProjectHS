@@ -21,8 +21,15 @@ namespace Network
         public async Task GuestLoginAsync() {
             try {
                 // Email, Password 로그인 시도
-                string systemUID = SystemInfo.deviceUniqueIdentifier;
+                string systemUID;
+                if (PlayerPrefs.HasKey("uid")) {
+                    systemUID = PlayerPrefs.GetString("uid");
+                } else {
+                    systemUID = SystemInfo.deviceUniqueIdentifier;
+                    PlayerPrefs.SetString("uid", systemUID);
+                }
                 string guestEmail = systemUID + "@Guest.com";
+                
                 // 로그인 시도
                 await _auth.SignInWithEmailAndPasswordAsync(guestEmail, systemUID).ContinueWith(task => {
                     // 로그인 실패
@@ -30,10 +37,12 @@ namespace Network
                         // 실패시 다음 로직 수행
                     } else { // 성공
                         _user = task.Result.User;
-                        return;
                     }
                 });
-                ///////// 전부 실패시 호출되는 영역 등록 시도
+                if (await IsConnectedAsync()) {
+                    return;
+                }
+                /////////// 전부 실패시 호출되는 영역 등록 시도
                 // 생성 시도
                 await _auth.CreateUserWithEmailAndPasswordAsync(guestEmail, systemUID).ContinueWith(task => {
                     // 등록 실패 // 네트워크 오류
@@ -42,7 +51,6 @@ namespace Network
                     } else {
                         // 등록 성공
                         _user = task.Result.User;
-                        return;
                     }
                 });
             } catch {

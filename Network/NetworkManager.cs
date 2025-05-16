@@ -10,11 +10,14 @@ namespace Network
     public class NetworkManager : MonoBehaviour, IUserService, IUpgradeService, INetworkService
     {
         [Inject] private INetworkLogic _networkLogic;
-
+        private bool isClosed = false;
         private void Awake() { // 시작시 네트워크 접속 시도
             _networkLogic.Initialize(); // 초기화
             LoginAsync(); // 로그인 시도
 
+        }
+        private void OnDestroy() {
+            isClosed = true;
         }
 
         public async void LoginAsync() {
@@ -24,6 +27,7 @@ namespace Network
             } catch  {
                 // 로그인 실패 네트워크 문제일 확률이 높음
                 await Task.Delay(1000); // 1초 마다 재접속 시도
+                if (isClosed) return;
                 LoginAsync();
                 return;
             }
