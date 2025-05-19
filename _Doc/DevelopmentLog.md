@@ -12,6 +12,7 @@
 - [2025.05.12 / Network 설계](#network-설계)
 - [2025.05.15 / Tower System 설계](#tower-system-설계)
 - [2025.05.15 / GameDataHub 도입 배경 및 설계](#gamedatahub-도입-배경-및-설계)
+- [2025.05.19 / GameObjectPoolManager 도입 배경 및 설계](#gameobjectpoolmanager-도입-배경-및-설계)
 ---
 #### 2025.04.19
 ### 전체 시스템 구조 설계
@@ -475,4 +476,18 @@ public class GameDataHub : IEnemyDataProvider
 }
 ```
 ---
- 
+#### 2025.05.19
+### GameObjectPoolManager 도입 배경 및 설계
+1. **문제 배경: Object Pool 통합 관리의 필요성** </br>
+현재 프로젝트에서는 Arrow, Enemy 등의 게임 오브젝트를 Object Pool을 통해 재사용하고 있으며, 이들 각각은 고유의 Key를 통해 Addressables에서 Prefab을 로드하여 생성됩니다. 이러한 리소스들은 게임 진행 중 지속적으로 생성되고 소멸되므로, 다음과 같은 문제가 발생했습니다.
+- 각 풀을 개별적으로 관리하게 되면 중복 코드 증가, 관리 주체 분산, 상태 추적 어려움 등의 문제가 생김
+- 사용이 끝난 오브젝트나 필요 없는 풀을 적시에 해제하지 않으면 불필요한 메모리 점유가 계속됨
+
+2. **해결 방안: GameObjectPoolManager 설계 목표** </br>
+이러한 문제를 해결하고자 GameObjectPoolManager를 도입하였으며, 주요 설계 목표는 다음과 같습니다.
+- **중앙 집중형 관리:** 모든 Object Pool에 대한 생성, 접근, 반환, 해제를 하나의 Manager에서 일괄적으로 처리하여 일관성과 유지보수성을 확보
+- **Key 기반 접근:** 각 풀은 고유 Key를 통해 식별되며, Addressable Key를 그대로 재활용함으로써 리소스 로딩 및 매칭 로직을 간소화
+- **메모리 최적화:** 더 이상 사용되지 않는 Object Pool은 명시적 또는 조건 기반으로 제거하여 런타임 메모리 사용량을 최소화
+
+
+---
