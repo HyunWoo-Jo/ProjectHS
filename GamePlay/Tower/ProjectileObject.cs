@@ -14,9 +14,20 @@ namespace GamePlay
         private event Action _OnArrived;
         
 
-        public void SetTarget(float3 targetPos, Action arrivedEvent) {
+        public void SetTarget(float3 startPos, float3 targetPos, Action arrivedEvent) {
+            this.transform.position = startPos;
             _targetPos = targetPos;
             _OnArrived = arrivedEvent;
+
+            float3 dir = math.normalize(targetPos - startPos);
+
+            if (!math.any(math.isnan(dir))) {
+                // Y축이 방향을 바라보도록 하는 회전 생성
+                // forward = 고정축, up = 바라볼 방향
+                quaternion rot = quaternion.LookRotationSafe(math.forward(), dir);
+
+                transform.rotation = rot;
+            }
         }
 
         private void Update() {
@@ -26,7 +37,7 @@ namespace GamePlay
             float3 nextPos = prevPos + direction * speed * Time.deltaTime;
 
             transform.position = (Vector3)nextPos;
-            transform.LookAt(_targetPos);
+            
 
             // 도착 판정
             float distToTarget = math.distance(prevPos, _targetPos);

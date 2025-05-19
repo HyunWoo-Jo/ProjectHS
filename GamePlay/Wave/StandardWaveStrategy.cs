@@ -19,8 +19,8 @@ namespace GamePlay
             };
             spawnData.enemyData = enemyData;
             spawnData.spawnInterval = 1;
-            spawnData.spawnCount = stageLevel;
-            spawnData.spawnEnemyKey = EnemyPrefabKey.EnemyL1.ToString() + ".prefab";
+            spawnData.spawnCount = stageLevel * 20;
+            spawnData.spawnEnemyPoolType = PoolType.EnemyL1;
             return spawnData;
         }
     }

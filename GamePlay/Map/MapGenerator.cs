@@ -126,7 +126,7 @@ namespace GamePlay22
 
             // Path를 최종 위치로 변경
             foreach(Vector2Int pos in pathWaypointList) {
-                pathList.Add(MapWorldToObjectPos(pos.x, pos.y));
+                pathList.Add(MapWorldToObjectPos(pos.x, pos.y) + new Vector3(0, 0.7f,0));
 
             }
             

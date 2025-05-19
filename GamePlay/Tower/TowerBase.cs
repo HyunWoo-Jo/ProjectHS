@@ -14,22 +14,55 @@ namespace GamePlay
         [Inject] protected IEnemyDataService enemyDataService;
         [ReadEditor] [SerializeField] protected int targetIndex = -1;
 
+
+        protected float curAttackTime = 0; // 현재 장전 시간
+        
+
+
         public void SetTowerData(TowerData data) {
             towerData = data;
         }
 
-        public abstract void SetPosition(Vector2 pos); // 위치 설정
+        public void SetPosition(Vector2 pos) { // 위치 설정
 
-        public abstract void Attack(EnemyData enemyData); // 공격
 
-        protected void SerchIsRangeEnemiesIndex() { // 범위안에 들어온 적 찾기
+        }
+
+        public virtual void Attack() {
+            if (IsAttackAble()) { // 공격이 가능한 상태이면
+                AttackLogic(); // 공격 상세 내용 호출 하위 클레스에서 구현
+            }
+        }
+        public abstract void AttackLogic();
+
+
+        private bool IsAttackAble() { // 공격 가능 여부
+            if (targetIndex != -1 && curAttackTime >= towerData.attackTime) return true;
+            return false;
+        }
+
+       
+        
+
+
+        public abstract void SetAttackSpeed(float speed); // 공격 속도 설정
+
+
+        protected virtual void Update() {
+            SerchIsRangeEnemiesIndex(); // 조건에 따라 매프레임 범위 안에 들어온 적 검색
+            UpdateAttackTimer(); // 시간 갱신
+
+            Attack(); // 공격 
+        }
+
+        private void SerchIsRangeEnemiesIndex() { // 범위안에 들어온 적 찾기
             if (targetIndex != -1) { // 타겟이 존재하면 
                 EnemyData enemyData = enemyDataService.GetEnemyData(targetIndex);
-                if (enemyData.isDead || math.distance(enemyData.position,transform.position) > towerData.range) { // 죽었거나 공격 범위를 초과했으면 초기화
+                if (enemyData.isDead || math.distance(enemyData.position, transform.position) > towerData.range) { // 죽었거나 공격 범위를 초과했으면 초기화
                     targetIndex = -1;
                 }
-            } 
-            if(targetIndex == -1) { // 타겟이 없으면 검색 시작
+            }
+            if (targetIndex == -1) { // 타겟이 없으면 검색 시작
                 int[] temp = new int[1] { -1 };
                 NativeArray<int> resultIndex = new NativeArray<int>(temp, Allocator.TempJob);
                 var handle = new EnemiesSerchJob {
@@ -56,7 +89,7 @@ namespace GamePlay
             [ReadOnly] public float range;
             [ReadOnly] public float3 position;
             public void Execute() {
-                for(int i =0;i< enemies.Length; i++) {
+                for (int i = 0; i < enemies.Length; i++) {
                     if (!enemies[i].isSpawn) return;
                     if (enemies[i].isDead) continue;
                     if (math.distance(enemies[i].position, position) <= range) {
@@ -67,15 +100,11 @@ namespace GamePlay
             }
         }
 
-        public abstract void SetAttackSpeed(float speed); // 공격 속도 설정
-
-        public void TargetSerch() {
-
-        }
-
-        protected virtual void Update() {
-            SerchIsRangeEnemiesIndex(); // 조건에 따라 매프레임 범위 안에 들어온 적 검색
-
+        private void UpdateAttackTimer() { // 공격 시간 갱신
+            curAttackTime += Time.deltaTime * towerData.attackSpeed;
+            if (curAttackTime > towerData.attackTime) {
+                curAttackTime = towerData.attackTime;
+            }
         }
 
     }

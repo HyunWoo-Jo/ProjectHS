@@ -5,7 +5,8 @@ using System.Linq;
 namespace CustomUtility { 
     public interface IObjectPool {
         internal void RepayItem(GameObject item, int index);
-
+        public T BorrowItem<T> () where T : MonoBehaviour;
+        public void Dispose();
     }
     public static class ObjectPoolExtensions { 
         // Builder 확장 매서드
@@ -62,7 +63,7 @@ namespace CustomUtility {
         internal ObjectPool() {
         }
 
-        public void Dipose() {
+        public void Dispose() {
            
             itemObj = null;
             while (item_que.Count > 0) {
@@ -113,5 +114,8 @@ namespace CustomUtility {
             return index_T_list;
         }
 
+        public U BorrowItem<U>() where U : MonoBehaviour {
+            return BorrowItem() as U;
+        }
     }
 }

@@ -11,6 +11,6 @@ namespace Data
         public float curRemainingTime = 0;
         public int curSpawnIndex = 0;
 
-        public string spawnEnemyKey;
+        public PoolType spawnEnemyPoolType;
     }
 }

@@ -51,7 +51,7 @@ namespace GamePlay
 
         private void Awake() {
             _tileSpriteMapper = new TileSpriteMapper(_dataManager);
-            _mapGenerator = new MapGenerator(new SLinePathStrategy());
+            _mapGenerator = UnityEngine.Random.Range(0,2) == 0 ? new MapGenerator(new SLinePathStrategy()) : new MapGenerator(new ULinePathStrategy());
             LoadFieldPrefab();
         }
 
