@@ -13,6 +13,7 @@
 - [2025.05.15 / Tower System 설계](#tower-system-설계)
 - [2025.05.15 / GameDataHub 도입 배경 및 설계](#gamedatahub-도입-배경-및-설계)
 - [2025.05.19 / GameObjectPoolManager 도입 배경 및 설계](#gameobjectpoolmanager-도입-배경-및-설계)
+- [2025.05.26 / Upgrade System 설계](#upgrade-system-설계)
 ---
 #### 2025.04.19
 ### 전체 시스템 구조 설계
@@ -478,16 +479,117 @@ public class GameDataHub : IEnemyDataProvider
 ---
 #### 2025.05.19
 ### GameObjectPoolManager 도입 배경 및 설계
-1. **문제 배경: Object Pool 통합 관리의 필요성** </br>
-현재 프로젝트에서는 Arrow, Enemy 등의 게임 오브젝트를 Object Pool을 통해 재사용하고 있으며, 이들 각각은 고유의 Key를 통해 Addressables에서 Prefab을 로드하여 생성됩니다. 이러한 리소스들은 게임 진행 중 지속적으로 생성되고 소멸되므로, 다음과 같은 문제가 발생했습니다.
+1. **문제 배경: `Object Pool` 통합 관리의 필요성** </br>
+현재 프로젝트에서는 Arrow, Enemy 등의 게임 오브젝트를 `Object Pool`을 통해 재사용하고 있으며, 이들 각각은 고유의 Key를 통해 Addressables에서 Prefab을 로드하여 생성됩니다. 이러한 리소스들은 게임 진행 중 지속적으로 생성되고 소멸되므로, 다음과 같은 문제가 발생했습니다.
 - 각 풀을 개별적으로 관리하게 되면 중복 코드 증가, 관리 주체 분산, 상태 추적 어려움 등의 문제가 생김
 - 사용이 끝난 오브젝트나 필요 없는 풀을 적시에 해제하지 않으면 불필요한 메모리 점유가 계속됨
 
-2. **해결 방안: GameObjectPoolManager 설계 목표** </br>
-이러한 문제를 해결하고자 GameObjectPoolManager를 도입하였으며, 주요 설계 목표는 다음과 같습니다.
-- **중앙 집중형 관리:** 모든 Object Pool에 대한 생성, 접근, 반환, 해제를 하나의 Manager에서 일괄적으로 처리하여 일관성과 유지보수성을 확보
+2. **해결 방안: `GameObjectPoolManager` 설계 목표** </br>
+이러한 문제를 해결하고자 `GameObjectPoolManager`를 도입하였으며, 주요 설계 목표는 다음과 같습니다.
+- **중앙 집중형 관리:** 모든` Object Pool`에 대한 생성, 접근, 반환, 해제를 하나의 Manager에서 일괄적으로 처리하여 일관성과 유지보수성을 확보
 - **Key 기반 접근:** 각 풀은 고유 Key를 통해 식별되며, Addressable Key를 그대로 재활용함으로써 리소스 로딩 및 매칭 로직을 간소화
-- **메모리 최적화:** 더 이상 사용되지 않는 Object Pool은 명시적 또는 조건 기반으로 제거하여 런타임 메모리 사용량을 최소화
+- **메모리 최적화:** 더 이상 사용되지 않는 `Object Pool`은 명시적 또는 조건 기반으로 제거하여 런타임 메모리 사용량을 최소화
 
 
 ---
+#### 2025.05.26
+### Upgrade System 설계
+1. **설계 내용**
+
+`Upgrade System`의 경우 계정 전체에 적용이 되는 `Global Upgrade`와 세션 단위로 초기화, 관리 되는 `SessionUpgrade`가 존재합니다.</br>
+`Global Upgrade`의 경우 `Repository 패턴`을 이용해 데이터를 관리합니다.</br>
+`SessionUpgrade`의 경우 세션 단위로 초기화, 관리 되어 PlayScene에서 생성하여 관리 합니다.</br>
+
+2. **설계 의도**
+
+`Global Upgrade`의 경우` Repository`를 사용한 이유는 다읍과 같습니다. </br>
+    - `Global Upgrade`의 경우 Firebase에 데이터를 저장해서 Repository 패턴을 통해 저장 책임을 분리하였습니다. </br>
+    - 추후 Firebase가 아닌(다른 DB, 로컬) 등 데이터 저장이 변경이 되어도 기존의 코드의 변경이 아닌 확장을 위하여 분리하였습니다.</br>
+    - 게임진행중(Session) 중에 변동이 될 내용이 없기 때문에 사용하였습니다. </br> 
+`Command` 도입이유 </br>
+    - 기능 캡슐화 및 확장성 확보, 로깅, 실행 취소, 테스트 등의 기능을 `Command` 객체 단위로 추후 확장 할 수 있습니다. </br>  
+`Factory` 도입 이유 </br> 
+    - OCP(개방 폐쇄) 준수 </br> 
+    - `Factory`를 도입하 새로운 핸들러를 등록만 하면 되고, 기존 로직은 수정 없이 확장 가능합니다. </br> 
+
+```mermaid
+classDiagram  
+graph LR  
+class TowerBase{  
+    - TowerData  
+    - UpgradeData  
+}  
+  
+class UpgradeSystem {  
+    - GameDataHub // Inject  
+    - GlobalUpgradeRepo // Inject  
+    - sessionUpgradeData : UpgradeSystem  
+    - Upgrade()  
+    + InterfaceFunctions()  
+}  
+  
+class IUpgradeService {  
+    <<Interface>>  
+    + UpgradeTowerSpeed(value)  
+    + UpgradeTowerPower(value)  
+    + ...()  
+}  
+  
+class GlobalUpgradeRepo {  
+    - globalUpgradeData : UpgradeSystem  
+    + GetUpgradeData(key) data  
+    + SetUpgradeData(key, data)  
+    + GetUpgradeData(key)  
+}  
+  
+class UpgradeDataStore {  
+    + dataDictionary  
+}  
+  
+class GameDataHub {  
+    + towerDataList  
+}  
+  
+class UI_Event_{  
+    <<이벤트가 발생하는 클레스>>  
+    - IUpgradeAble // inject  
+}  
+
+class UpgradeCommand {
+    - IUpgradeService // inject
+    - UpgradeCommandFactory
+    + invoke(type, value)
+}
+
+class IDataGetter {
+    + GetData() Data
+}
+
+class IUpgradeCommandHandler  {
+    +Execute(value)
+}
+class UpgradeCommandFactory {
+    -IUpgradeCommandHandler
+}
+
+UpgradeSystem --> GlobalUpgradeRepo  
+UpgradeSystem *--> UpgradeDataStore : Session Upgrade  
+GlobalUpgradeRepo --> UpgradeDataStore : Global Upgrade  
+  
+UpgradeSystem --> GameDataHub : 업그레이드시 데이터에 접근  
+GameDataHub --> TowerBase   
+  
+IUpgradeService <|-- UpgradeSystem  
+  
+IUpgradeService <-- UpgradeCommand
+UpgradeCommand <-- UI_Event_ : 데이터 Set call
+IDataGetter <|-- UpgradeDataStore
+IDataGetter <|-- GlobalUpgradeRepo
+
+UI_Event_ --> IDataGetter
+
+UpgradeCommandFactory --> IUpgradeCommandHandler
+UpgradeCommand --> UpgradeCommandFactory
+```
+
+
