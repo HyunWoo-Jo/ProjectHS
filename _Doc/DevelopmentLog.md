@@ -495,20 +495,18 @@ public class GameDataHub : IEnemyDataProvider
 #### 2025.05.26
 ### Upgrade System 설계
 1. **설계 내용**
-
 `Upgrade System`의 경우 계정 전체에 적용이 되는 `Global Upgrade`와 세션 단위로 초기화, 관리 되는 `SessionUpgrade`가 존재합니다.</br>
-`Global Upgrade`의 경우 `Repository 패턴`을 이용해 데이터를 관리합니다.</br>
-`SessionUpgrade`의 경우 세션 단위로 초기화, 관리 되어 PlayScene에서 생성하여 관리 합니다.</br>
+`Global Upgrade`의 경우 `Repository` 패턴을 이용해 데이터를 관리합니다.</br>
+`SessionUpgrade`의 경우 세션 단위로 초기화, 관리 되어 PlayScene에서 생성하여 관리합니다.</br>
 
 2. **설계 의도**
-
-`Global Upgrade`의 경우` Repository`를 사용한 이유는 다읍과 같습니다. </br>
+- **`Global Upgrade`의 경우` Repository`를 사용한 이유는 다음과 같습니다.** </br>
     - `Global Upgrade`의 경우 Firebase에 데이터를 저장해서 Repository 패턴을 통해 저장 책임을 분리하였습니다. </br>
-    - 추후 Firebase가 아닌(다른 DB, 로컬) 등 데이터 저장이 변경이 되어도 기존의 코드의 변경이 아닌 확장을 위하여 분리하였습니다.</br>
-    - 게임진행중(Session) 중에 변동이 될 내용이 없기 때문에 사용하였습니다. </br> 
-`Command` 도입이유 </br>
+    - 추후 Firebase가 아닌(다른 DB, 로컬) 등 데이터 저장이 변경되어도 기존 코드의 변경이 아닌 확장을 위하여 분리하였습니다.</br>
+    - 게임 진행중(Session) 중에 변동이 될 내용이 없기 때문에 사용하였습니다. </br> 
+- **`Command` 도입 이유** </br>
     - 기능 캡슐화 및 확장성 확보, 로깅, 실행 취소, 테스트 등의 기능을 `Command` 객체 단위로 추후 확장 할 수 있습니다. </br>  
-`Factory` 도입 이유 </br> 
+- **`Factory` 도입 이유** </br> 
     - OCP(개방 폐쇄) 준수 </br> 
     - `Factory`를 도입하 새로운 핸들러를 등록만 하면 되고, 기존 로직은 수정 없이 확장 가능합니다. </br> 
 
