@@ -550,7 +550,7 @@ class GlobalUpgradeRepo {
     + GetUpgradeData(key)  
 }  
   
-class UpgradeDataStore {  
+class UpgradeModel {  
     + dataDictionary  
 }  
   
@@ -581,8 +581,8 @@ class UpgradeCommandFactory {
 }
 
 UpgradeSystem --> GlobalUpgradeRepo  
-UpgradeSystem *--> UpgradeDataStore : Session Upgrade  
-GlobalUpgradeRepo --> UpgradeDataStore : Global Upgrade  
+UpgradeSystem *--> UpgradeModel : Session Upgrade  
+GlobalUpgradeRepo --> UpgradeModel : Global Upgrade  
   
 UpgradeSystem --> GameDataHub : 업그레이드시 데이터에 접근  
 GameDataHub --> TowerBase   
@@ -591,7 +591,7 @@ IUpgradeService <|-- UpgradeSystem
   
 IUpgradeService <-- UpgradeCommand
 UpgradeCommand <-- UI_Event_ : 데이터 Set call
-IDataGetter <|-- UpgradeDataStore
+IDataGetter <|-- UpgradeModel
 IDataGetter <|-- GlobalUpgradeRepo
 
 UI_Event_ --> IDataGetter
