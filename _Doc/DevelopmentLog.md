@@ -531,7 +531,7 @@ class TowerBase{
 class UpgradeSystem {  
     - GameDataHub // Inject  
     - GlobalUpgradeRepo // Inject  
-    - sessionUpgradeData : UpgradeSystem  
+    - sessionUpgradeData : UpgradeModel // Inject  
     - Upgrade()  
     + InterfaceFunctions()  
 }  
@@ -581,7 +581,7 @@ class UpgradeCommandFactory {
 }
 
 UpgradeSystem --> GlobalUpgradeRepo  
-UpgradeSystem *--> UpgradeModel : Session Upgrade  
+UpgradeSystem --> UpgradeModel : Session Upgrade  
 GlobalUpgradeRepo --> UpgradeModel : Global Upgrade  
   
 UpgradeSystem --> GameDataHub : 업그레이드시 데이터에 접근  
