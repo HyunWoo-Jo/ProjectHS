@@ -520,84 +520,140 @@ public class GameDataHub : IEnemyDataProvider
     - OCP(개방 폐쇄) 준수 </br> 
     - `Factory`를 도입하 새로운 핸들러를 등록만 하면 되고, 기존 로직은 수정 없이 확장 가능합니다. </br> 
 
+#### `Upgrade System`
 ```mermaid
-classDiagram  
-graph LR  
-class TowerBase{  
-    - TowerData  
-    - UpgradeData  
+classDiagram
+
+class GameDataHub {  
+    + upgradeDataList 
+}  
+class GlobalUpgradeRepo {  
+    - globalUpgradeData : UpgradeModel  
+    + GetUpgradeData(key) data  
+    + SetUpgradeData(key, data)  
+    + GetUpgradeData(key)  
+}  
+class UpgradeModel {  
+    + dataDictionary  
 }  
   
+
+class IUpgradeService {  
+    <<Interface>>  
+    
+}
+class IStatUpgradeService {
+    <<Interface>>
+    + UpgradeTowerSpeed(value)  
+    + UpgradeTowerPower(value)  
+    + ...()  
+}
+class IAbilityUpgradeService {
+    <<Interface>>
+    + EnableSlow()
+    + DisableSlow()
+    + ...()
+}
+class AbilityUpgrade {
+    + InterfaceLogics()
+}
+class StatUpgrade {
+    + InterfaceLogics()
+}
+class IDataGetter {
+    <<Interface>>
+    + GetData() Data
+}
 class UpgradeSystem {  
     - GameDataHub // Inject  
     - GlobalUpgradeRepo // Inject  
     - sessionUpgradeData : UpgradeModel // Inject  
     - Upgrade()  
     + InterfaceFunctions()  
-}  
-  
-class IUpgradeService {  
-    <<Interface>>  
-    + UpgradeTowerSpeed(value)  
-    + UpgradeTowerPower(value)  
-    + ...()  
-}  
-  
-class GlobalUpgradeRepo {  
-    - globalUpgradeData : UpgradeSystem  
-    + GetUpgradeData(key) data  
-    + SetUpgradeData(key, data)  
-    + GetUpgradeData(key)  
-}  
-  
-class UpgradeModel {  
-    + dataDictionary  
-}  
-  
-class GameDataHub {  
-    + towerDataList  
-}  
-  
-class UI_Event_{  
-    <<이벤트가 발생하는 클레스>>  
-    - IUpgradeAble // inject  
-}  
+}   
 
-class UpgradeCommand {
-    - IUpgradeService // inject
-    - UpgradeCommandFactory
-    + invoke(type, value)
-}
+%% Service 영역
+IUpgradeService <|-- IAbilityUpgradeService
+IUpgradeService <|-- IStatUpgradeService
+IAbilityUpgradeService <|-- AbilityUpgrade
+IStatUpgradeService <|-- StatUpgrade
 
-class IDataGetter {
-    + GetData() Data
-}
+%% System 영역
+UpgradeSystem --> GlobalUpgradeRepo : GlobalData
+UpgradeSystem --> UpgradeModel : SessionData
+UpgradeSystem --> GameDataHub
 
-class IUpgradeCommandHandler  {
-    +Execute(value)
-}
-class UpgradeCommandFactory {
-    -IUpgradeCommandHandler
-}
-
-UpgradeSystem --> GlobalUpgradeRepo  
-UpgradeSystem --> UpgradeModel : Session Upgrade  
-GlobalUpgradeRepo --> UpgradeModel : Global Upgrade  
-  
-UpgradeSystem --> GameDataHub : 업그레이드시 데이터에 접근  
-GameDataHub --> TowerBase   
-  
-IUpgradeService <|-- UpgradeSystem  
-  
-IUpgradeService <-- UpgradeCommand
-UpgradeCommand <-- UI_Event_ : 데이터 Set call
+%% Data 영역
+GlobalUpgradeRepo --> UpgradeModel
 IDataGetter <|-- UpgradeModel
 IDataGetter <|-- GlobalUpgradeRepo
 
-UI_Event_ --> IDataGetter
+otherClass --> IDataGetter : Get
 
-UpgradeCommandFactory --> IUpgradeCommandHandler
-UpgradeCommand --> UpgradeCommandFactory
+%% System -- Service
+IAbilityUpgradeService <-- UpgradeSystem
+IStatUpgradeService <-- UpgradeSystem
+
 ```
+#### `Upgrade Command`
+```mermaid
+classDiagram
+class UpgradePayload {
+    + Type    : UpgradeType
+    + Value?  : float
+    + Ability?: AbilityId
+    + Args?   : IReadOnlyDictionary<string,object>
+}
+class UpgradeCommand {
+    - IUpgradeCommandHandler
+    - payload : UpgradePayload
+    + Execute()
+}
+class IUpgradeCommandHandler  {
+    <<Interface>>
+    - IUpgradeService
+    +Execute(payload)
+}
+
+class AbilityUpgradeHandler {
+    - IAbilityUpgradeService
+}
+class StatUpgradeHandler {
+    - IStatUpgradeService
+}
+
+class UpgradeCommandFactory { 
+    - handlerDictionary // mapping
+    - IAbilityUpgradeService // Inject
+    - IStatUpgradeService // Inject
+    + Create(type, value)
+}
+class UI_Event_{  
+    <<이벤트가 발생하는 클레스(Invoker)>> 
+    - UpgradeCommandFactory // inject  
+}  
+
+%% Service 영역
+IUpgradeService <|-- IAbilityUpgradeService
+IUpgradeService <|-- IStatUpgradeService
+
+
+%% Command
+IUpgradeCommandHandler <|-- AbilityUpgradeHandler
+IUpgradeCommandHandler <|-- StatUpgradeHandler
+
+UpgradeCommandFactory --> IAbilityUpgradeService
+UpgradeCommandFactory --> IStatUpgradeService
+UpgradeCommandFactory --> UpgradeCommand
+UpgradeCommandFactory --> AbilityUpgradeHandler : create
+UpgradeCommandFactory --> StatUpgradeHandler : create
+UpgradeCommand --> IUpgradeCommandHandler : execute
+%% call
+UI_Event_ --> UpgradeCommandFactory : Create
+
+UpgradeCommand --> UpgradePayload
+```
+
+---
 
 
