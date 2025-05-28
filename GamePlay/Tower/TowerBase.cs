@@ -13,14 +13,18 @@ namespace GamePlay
         [SerializeField] protected TowerData towerData;
         [Inject] protected IEnemyDataService enemyDataService;
         [ReadEditor] [SerializeField] protected int targetIndex = -1;
-
+        // upgrade data
 
         protected float curAttackTime = 0; // 현재 장전 시간
-        
 
+        protected virtual void Awake() {
+            // Binding
+            SetAttackSpeed(towerData.attackSpeed.Value);
+            towerData.attackSpeed.OnValueChanged += SetAttackSpeed;
+        }
 
-        public void SetTowerData(TowerData data) {
-            towerData = data;
+        public TowerData GetTowerData() {
+            return towerData;
         }
 
         public void SetPosition(Vector2 pos) { // 위치 설정
@@ -101,7 +105,7 @@ namespace GamePlay
         }
 
         private void UpdateAttackTimer() { // 공격 시간 갱신
-            curAttackTime += Time.deltaTime * towerData.attackSpeed;
+            curAttackTime += Time.deltaTime * towerData.attackSpeed.Value;
             if (curAttackTime > towerData.attackTime) {
                 curAttackTime = towerData.attackTime;
             }

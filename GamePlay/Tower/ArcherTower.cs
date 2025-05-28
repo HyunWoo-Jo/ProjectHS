@@ -1,3 +1,4 @@
+using Codice.CM.Common;
 using CustomUtility;
 using Data;
 using Unity.Mathematics;
@@ -16,7 +17,8 @@ namespace GamePlay
         private static int _shootAnimHashKey = -1;
         private const float _RotationSpeed = 30f;
 
-        private void Awake() {
+        protected override void Awake() {
+            base.Awake();
 #if UNITY_EDITOR
             Assert.IsNotNull(_bowPivotTr);
 #endif
@@ -63,11 +65,6 @@ namespace GamePlay
 
         }
 
-        public override void SetAttackSpeed(float speed) {
-            _bowAnim.speed = speed;
-            towerData.attackSpeed = speed;
-        }
-
 
         protected override void Update() {
             base.Update();
@@ -75,6 +72,8 @@ namespace GamePlay
 
         }
 
-        
+        public override void SetAttackSpeed(float speed) {
+            _bowAnim.speed = speed;
+        }
     }
 }

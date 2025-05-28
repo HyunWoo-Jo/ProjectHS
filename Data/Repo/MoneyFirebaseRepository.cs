@@ -2,16 +2,10 @@ using UnityEngine;
 
 namespace Data
 {
-
-    public interface IMoneyRepository {
-        long GetValue();
-        void SetValue(long value);
-    }
-
-    public class MoneyRepository : IMoneyRepository {
+    public class MoneyFirebaseRepository : IMoneyRepository {
         private MoneyModel _money;
 
-        public MoneyRepository() {
+        public MoneyFirebaseRepository() {
             _money = new MoneyModel();
         }
 
