@@ -6,6 +6,8 @@ using Unity.Mathematics;
 namespace Data {
     public interface IEnemyDataService {
         EnemyData GetEnemyData(int index);
+        int EnemiesLength();
+        bool IsEnemyData();
         void SetEnemyData(int index, EnemyData enemyData);
         NativeArray<EnemyData> GetEnemiesData();
     }

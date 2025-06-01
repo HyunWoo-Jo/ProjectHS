@@ -13,7 +13,6 @@ namespace Data
     public class UserAuthRepositoryFirebase : IUserAuthRepository {
 
         private UserAuthModel _model;
-
         public UserAuthRepositoryFirebase() {
             _model = new UserAuthModel();
         }

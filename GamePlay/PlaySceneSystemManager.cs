@@ -14,6 +14,7 @@ namespace GamePlay
     [RequireComponent (typeof(StageSystem))]
     [RequireComponent (typeof(WaveSystem))]
     [RequireComponent (typeof(EnemySystem))]
+    [RequireComponent (typeof(TowerSystem))]
     public class PlaySceneSystemManager : MonoBehaviour
     {
         [Inject] private GameDataHub _gameDataHub;
@@ -24,6 +25,7 @@ namespace GamePlay
         private StageSystem _stageSystem;
         private WaveSystem _waveSystem;
         private EnemySystem _enemySystem;
+        private TowerSystem _towerSystem;   
 
         public Vector2Int _mapSize = new Vector2Int(10, 10); // 임시 맵 사이즈
         
@@ -36,7 +38,7 @@ namespace GamePlay
             _stageSystem = GetComponent<StageSystem>();
             _waveSystem = GetComponent<WaveSystem>();
             _enemySystem = GetComponent<EnemySystem>();
-
+            _towerSystem = GetComponent<TowerSystem>();
             //////////// Input System
 #if UNITY_EDITOR
             IInputStrategy inputStrategy = new PcInputStrategy();
@@ -89,16 +91,6 @@ namespace GamePlay
 
         }
 
-        private void Start() {
-            OnStartStage();
-        }
-
-        /// <summary>
-        /// Stage 시작
-        /// </summary>
-        private void OnStartStage() {
-            _stageSystem.StartStage();
-        }
 
     }
 }

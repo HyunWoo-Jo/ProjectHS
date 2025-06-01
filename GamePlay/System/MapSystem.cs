@@ -66,13 +66,13 @@ namespace GamePlay
             _tileSpriteMapper.LoadDataAsync(tema, () => { _isLoadedTema = true; }); 
         }
         public Vector3 GetCenter(int x, int y) {
-            return _mapGenerator.MapWorldToObjectPos(x, y) * 0.5f;
+            return _mapGenerator.GridToWorldPosition(x, y) * 0.5f;
         }
         /// <summary>
         /// 생성된 맵 크기의 최대 부분을 리턴
         /// </summary>
         public Vector3 GetMax(int x, int y) {
-            return _mapGenerator.MapWorldToObjectPos(x, y);
+            return _mapGenerator.GridToWorldPosition(x, y);
         }
 
         // 맵 생성

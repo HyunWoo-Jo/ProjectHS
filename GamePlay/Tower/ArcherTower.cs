@@ -32,6 +32,7 @@ namespace GamePlay
         }
         private void AimLookAtEnemy() {
             if(targetIndex != -1) { 
+                
                 EnemyData enemyData = enemyDataService.GetEnemyData(targetIndex);
                 float3 dir = math.normalize(enemyData.position - (float3)_bowPivotTr.position);
                 dir.z = 0; // z√‡ ¡¶∞≈

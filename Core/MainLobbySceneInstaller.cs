@@ -12,7 +12,6 @@ namespace Core
         public override void InstallBindings() {
             // UI ViewModel¿ª Bind
             Container.Bind<MainLobbyNavigateViewModel>().AsTransient().NonLazy();
-            Container.Bind<MoneyViewModel>().AsTransient().NonLazy();
         }
     }
 }

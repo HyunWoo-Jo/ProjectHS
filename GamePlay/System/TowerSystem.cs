@@ -1,14 +1,17 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Data;
+using Zenject;
 namespace GamePlay
 {
     [DefaultExecutionOrder(80)]
     public class TowerSystem : MonoBehaviour
     {
-        private List<TowerBase> _towerDataList = new();
-
+        [Inject] private GameDataHub _gameDataHub;
+        [Inject] private DataManager _dataManager;
+        // tower »ý¼º
         public void AddTower() {
+            
 
         }
 

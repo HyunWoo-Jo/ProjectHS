@@ -7,6 +7,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using System;
 using CustomUtility;
+using Unity.Android.Gradle.Manifest;
 namespace GamePlay
 {
     public abstract class TowerBase : MonoBehaviour {
@@ -53,20 +54,20 @@ namespace GamePlay
 
 
         protected virtual void Update() {
-            SerchIsRangeEnemiesIndex(); // 조건에 따라 매프레임 범위 안에 들어온 적 검색
+            if (enemyDataService.IsEnemyData()) {
+                SerchIsRangeEnemiesIndex(); // 조건에 따라 매프레임 범위 안에 들어온 적 검색
+                Attack(); // 공격 
+            }
             UpdateAttackTimer(); // 시간 갱신
-
-            Attack(); // 공격 
         }
 
         private void SerchIsRangeEnemiesIndex() { // 범위안에 들어온 적 찾기
-            if (targetIndex != -1) { // 타겟이 존재하면 
+            if (targetIndex != -1 && enemyDataService.EnemiesLength() > targetIndex) { // 타겟이 존재하면 
                 EnemyData enemyData = enemyDataService.GetEnemyData(targetIndex);
                 if (enemyData.isDead || math.distance(enemyData.position, transform.position) > towerData.range) { // 죽었거나 공격 범위를 초과했으면 초기화
                     targetIndex = -1;
                 }
-            }
-            if (targetIndex == -1) { // 타겟이 없으면 검색 시작
+            }else { // 타겟이 없으면 검색 시작
                 int[] temp = new int[1] { -1 };
                 NativeArray<int> resultIndex = new NativeArray<int>(temp, Allocator.TempJob);
                 var handle = new EnemiesSerchJob {

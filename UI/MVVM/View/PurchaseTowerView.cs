@@ -1,29 +1,23 @@
 
 using UnityEngine;
-using TMPro;
 using Zenject;
-
+using System;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI
 {
-    public class MoneyView : MonoBehaviour
+    public class PurchaseTowerView : MonoBehaviour
     {
-        [Inject] private MoneyViewModel _viewModel;
-
-        [SerializeField] private TextMeshPro _text;
+        [Inject] private PurchaseTowerViewModel _viewModel;
         private void Awake() {
 #if UNITY_EDITOR // Assertion
             RefAssert();
 #endif
             // 버튼 초기화
-         
             _viewModel.OnDataChanged += UpdateUI;
 
         }
-        private void Start() {
-            UnityEngine.Debug.Log(1);
-        }
+
         private void OnDestroy() {
             _viewModel.OnDataChanged -= UpdateUI;
             _viewModel = null; // 참조 해제
@@ -37,7 +31,7 @@ namespace UI
 #endif
         // UI 갱신
         private void UpdateUI() {
-            _text.text = _viewModel.GetMoney.ToString();
+            
         }
 ////////////////////////////////////////////////////////////////////////////////////
         // your logic here

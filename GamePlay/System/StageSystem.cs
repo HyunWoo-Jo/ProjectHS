@@ -1,6 +1,7 @@
 using Data;
 using System;
 using UnityEngine;
+using Zenject;
 
 namespace GamePlay
 {
@@ -10,12 +11,24 @@ namespace GamePlay
     [DefaultExecutionOrder(80)]
     public class StageSystem : MonoBehaviour
     {
+        [Inject] private WaveStatusModel _waveStatusModel;
+
         public event Action<StageType, int> OnStageStart; // 스테이지가 시작될때 발생되는 Event
         public event Action<int> OnStageEnd; // 스테이지가 끝날때 발생되는 Event
-        public int StageLevel { get; private set; } = 1;// 현재 스테이지
+        public int StageLevel {
+            get { return _waveStatusModel.waveLevelObservable.Value; }
+            set { _waveStatusModel.waveLevelObservable.Value = value; }
+        }
+        public float WaveTime {
+            get { return _waveStatusModel.waveTimeObservable.Value; }
+            set { _waveStatusModel.waveTimeObservable.Value = value; }
+        }
 
         private IStageTypeStrategy _stageTypeStrategy;
         private IStageEndStrategy _stageEndStrategy;
+
+        private const float stageStandardTime = 40f;
+
         public StageType CurStageType { get; private set;}
 
         /// <summary>
@@ -62,14 +75,26 @@ namespace GamePlay
         /// Stage가 종료되었을때 호출
         /// </summary>
         private void EndStage() {
-
-
             OnStageEnd?.Invoke(StageLevel); // Event 실행
-            ++StageLevel;
+            WaveTime = stageStandardTime; // 남은 시간 초기화
+            ++StageLevel; // 다음 스테이지
+        }
+
+
+        private void Start() {
+            WaveTime = 0; // 기본 시간으로 설정
         }
 
         private void Update() {
-            
+            float time = WaveTime;
+            // 시간 계산 (추후 게임 속도, 일시정지 등이 추가 될 수 있음)
+            time -= Time.deltaTime;
+
+            WaveTime = time;
+            if (time <= 0f) {
+                EndStage();
+                StartStage();
+            }
 
         }
 

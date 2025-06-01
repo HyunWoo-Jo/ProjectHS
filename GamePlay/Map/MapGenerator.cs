@@ -115,7 +115,7 @@ namespace GamePlay22
                 for (int x = 0; x < sizeX; x++) {
                     int calculatedOrder = (BASE_ORDER - (y * ORDER_PER_ROW) + x) - (BASE_ORDER + ORDER_PER_ROW); // order이 - 값이 되도록 계산
                     MapData data = new() {
-                        position = MapWorldToObjectPos(x,y),
+                        position = GridToWorldPosition(x,y),
                         type = finalGrid[x, y],
                         orderBy = calculatedOrder
                     };
@@ -126,7 +126,7 @@ namespace GamePlay22
 
             // Path를 최종 위치로 변경
             foreach(Vector2Int pos in pathWaypointList) {
-                pathList.Add(MapWorldToObjectPos(pos.x, pos.y) + new Vector3(0, 0.7f,0));
+                pathList.Add(GridToWorldPosition(pos.x, pos.y) + new Vector3(0, 0.7f,0));
 
             }
             
@@ -137,7 +137,7 @@ namespace GamePlay22
         /// <summary>
         /// 오브젝트 이미지에 맞춰 위치를 변경해주는 함수
         /// </summary>
-        public Vector3 MapWorldToObjectPos(int x, int y) {
+        public Vector3 GridToWorldPosition(int x, int y) {
             return new Vector3((x * 1.25f) + (y * 1.25f), (y * 0.75f) - (x * 0.75f), 0);
         }
 

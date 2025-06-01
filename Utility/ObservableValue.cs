@@ -11,10 +11,8 @@ namespace CustomUtility
         public T Value {
             get => _value;
             set {
-                if (!EqualityComparer<T>.Default.Equals(_value, value)) {
-                    _value = value;
-                    OnValueChanged?.Invoke(value);
-                }
+                _value = value;
+                OnValueChanged?.Invoke(value);
             }
         }
 
