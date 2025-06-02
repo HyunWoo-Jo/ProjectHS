@@ -1,6 +1,6 @@
 using UnityEngine;
-
-namespace Data
+using Data;
+namespace Network
 {
 
     /// <summary>

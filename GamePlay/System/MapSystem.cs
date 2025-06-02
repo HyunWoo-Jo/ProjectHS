@@ -19,7 +19,7 @@ namespace GamePlay
         [Inject] private DataManager _dataManager; // Addressable 데이터 관리
 
         private TileSpriteMapper _tileSpriteMapper; // 테마에 맞춰 Sprite를 로드
-        private MapGenerator _mapGenerator;
+        private MapGenerator _mapGenerator = new MapGenerator();
         private bool _isLoadedTema = false; // Tema 로딩이 완료 되었나 체크 하는 변수
         private MapTema _loadedTema; // 로드한 Tema 이름
         private GameObject _fieldPrefab; // 맵 Base Prefab;
@@ -51,8 +51,11 @@ namespace GamePlay
 
         private void Awake() {
             _tileSpriteMapper = new TileSpriteMapper(_dataManager);
-            _mapGenerator = UnityEngine.Random.Range(0,2) == 0 ? new MapGenerator(new SLinePathStrategy()) : new MapGenerator(new ULinePathStrategy());
             LoadFieldPrefab();
+        }
+
+        public void SetPathStrategy(IPathStrategy strategy) {
+            _mapGenerator.SetPathStrategy(strategy);
         }
 
         #region public (PlayScene.cs에서 호출하는 함수)

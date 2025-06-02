@@ -19,6 +19,7 @@ namespace GamePlay
     {
         [Inject] private DataManager _dataManager;
         [Inject] private GameDataHub _gameDataHub;
+        [Inject] private StageSettingsModel _stageSettingsModel;
         public StageType CurStageType {  get; private set; }
         private IWaveStrategy _waveStrategy; // 어떤 Wave를 발생 시킬지 정하는 전략 
         private float3 _spawnPosition; // 생성 위치
@@ -35,7 +36,7 @@ namespace GamePlay
             SetWaveStrategy(type); // 웨이브 전략을 type에 맞춰 정함
 
             // Spawn Data 생성
-            _spawnData = _waveStrategy.GetSpawnData(stageLevel, _spawnPosition);
+            _spawnData = _waveStrategy.GetSpawnData(stageLevel, _spawnPosition, _stageSettingsModel.stageDelayTime);
             
             // Spawn Data에 맞춰 Enemy Data 생성
             EnemyData[] enemyDatas = new EnemyData[_spawnData.spawnCount];
@@ -45,7 +46,7 @@ namespace GamePlay
 
             // NativeArray 생성
             var spawnEnemyDatas = new NativeArray<EnemyData>(enemyDatas, Allocator.Persistent);
-            _gameDataHub.SetEnemiesData(spawnEnemyDatas); // 허브에 등록
+            _spawnData.curSpawnIndex = _gameDataHub.MergeAliveEnemiesAndAppend(spawnEnemyDatas); // 허브에 등록 , 기존 데이터가 있으면 merge
 
             // Enemy Pool 등록
             _gameObjectPoolManager.RegisterPool<ObjectPoolItem>(_spawnData.spawnEnemyPoolType); // 등록 (이미 존재하면 자동 스킵)

@@ -7,7 +7,7 @@ namespace Core
     public class ProjectUIInstaller : MonoInstaller
     {
         public override void InstallBindings() {
-            Container.Bind<MoneyViewModel>().AsSingle().NonLazy(); // Money Bind
+            Container.BindInterfacesAndSelfTo<CrystalViewModel>().AsSingle().NonLazy(); // Crystal Bind
         }
 
     }

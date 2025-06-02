@@ -2,6 +2,7 @@ using UnityEngine;
 using Zenject;
 using System;
 using System.Threading.Tasks;
+using Firebase.Extensions;
 namespace Network
 {
     /// <summary>
@@ -35,14 +36,10 @@ namespace Network
         public async Task<bool> IsConnectedAsync() {
             return await _networkLogic.IsConnectedAsync();
         }
+        
 
-        public Task<long> GetUserMoneyAsync() {
-            throw new NotImplementedException();
-        }
 
-        public Task SaveUserMoneyAsync(long userMoney) {
-            throw new NotImplementedException();
-        }
+
 
         public int GetUpgradeAsync(string key) {
             throw new NotImplementedException();
@@ -51,5 +48,24 @@ namespace Network
         public void SetUpgradeAsync(string key, int value) {
             throw new NotImplementedException();
         }
+
+        ////////////// User Service   
+        public void GetUserCrystalAsync(Action<int> completeAction) {
+            _networkLogic.GetUserCrystal().ContinueWithOnMainThread(task => {
+                if (task.IsFaulted || task.IsCanceled) {
+                    return;
+                }
+                if (task.Result.Exists) {
+                    completeAction?.Invoke(Convert.ToInt32(task.Result.Value));
+                } else {
+                    SaveUseCrystalAsync(0); // 존재하지 않으면 데이터 생성
+                }
+            });
+        }
+
+        public void SaveUseCrystalAsync(int userCrystal) {
+            _networkLogic.SetUserCrystal(userCrystal);
+        }
+        //////////////
     }
 }

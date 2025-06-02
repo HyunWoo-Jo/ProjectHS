@@ -2,6 +2,8 @@ using UnityEngine;
 using Data;
 using System.Linq;
 using Zenject;
+using System;
+using GamePlay22;
 namespace GamePlay
 {
     /// <summary>
@@ -85,7 +87,11 @@ namespace GamePlay
 
             //////////// Map System
             //¸Ê »ý¼º
-            _mapSystem.LoadMapTema(MapTema.Spring);
+            MapTema[] temas = (MapTema[])Enum.GetValues(typeof(MapTema));
+            MapTema tema = temas[UnityEngine.Random.Range(0, temas.Length)];
+            _mapSystem.LoadMapTema(tema);
+
+            _mapSystem.SetPathStrategy(new SLinePathStrategy());
             _mapSystem.GenerateMap(_mapSize.x, _mapSize.y);
 
 

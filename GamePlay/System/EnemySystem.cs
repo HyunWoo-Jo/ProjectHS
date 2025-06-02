@@ -30,7 +30,7 @@ namespace GamePlay
                 paths = paths,
                 deltaTime = Time.deltaTime
             };
-
+            Debug.Log(enemiesData.Length);
             JobHandle moveJobHandle = moveJob.Schedule(enemiesData.Length, 32);
             moveJobHandle.Complete(); // 완료 대기
 

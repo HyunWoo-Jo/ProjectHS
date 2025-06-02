@@ -3,6 +3,7 @@ using Firebase.Auth;
 using Firebase.Database;
 using System.Threading.Tasks;
 using System;
+using Firebase.Extensions;
 namespace Network
 {
 
@@ -65,7 +66,7 @@ namespace Network
         /// <returns></returns>
 
         public async Task<bool> IsConnectedAsync() {
-            if(_auth.CurrentUser == null) { // 로그인 되어있지 않은 경우
+            if(_auth.CurrentUser == null || _user == null) { // 로그인 되어있지 않은 경우
                 return false;
             }
 
@@ -83,7 +84,16 @@ namespace Network
             _user.Dispose();
         }
 
+        public Task<DataSnapshot> GetUserCrystal() {
+            return GetCrystalRef().GetValueAsync();
+        }
 
+        public void SetUserCrystal(int value) {
+            GetCrystalRef().SetValueAsync(value);
+        }
 
+        private DatabaseReference GetCrystalRef() {
+            return _databaseReference.Child("UserData").Child(_user.UserId).Child("Crystal");
+        }
     }
 }

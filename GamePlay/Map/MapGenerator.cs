@@ -13,10 +13,8 @@ namespace GamePlay22
     /// </summary>
     public class MapGenerator {
         private IPathStrategy _pathStrategy; // Path 생성 규약
-        public MapGenerator(IPathStrategy pathStrategy) {
-            _pathStrategy = pathStrategy;
-        }
-        public void SetPathGenerate(IPathStrategy pathStrategy) {
+
+        public void SetPathStrategy(IPathStrategy pathStrategy) {
             _pathStrategy = pathStrategy;
         }
 

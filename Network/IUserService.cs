@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Threading.Tasks;
+using System;
 namespace Network
 {
     /// <summary>
@@ -7,7 +8,7 @@ namespace Network
     /// </summary>
     public interface IUserService
     {
-        Task<long> GetUserMoneyAsync();
-        Task SaveUserMoneyAsync(long userMoney); 
+        void GetUserCrystalAsync(Action<int> completeAction);
+        void SaveUseCrystalAsync(int userCrystal); 
     }
 }

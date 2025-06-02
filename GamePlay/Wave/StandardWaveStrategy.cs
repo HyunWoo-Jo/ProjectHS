@@ -4,10 +4,11 @@ using Unity.Mathematics;
 namespace GamePlay
 {
     public class StandardWaveStrategy : IWaveStrategy {
-        public SpawnData GetSpawnData(int stageLevel, float3 spawnPosition) {
+        public SpawnData GetSpawnData(int stageLevel, float3 spawnPosition, float spawnTimeout) {
             SpawnData spawnData = new SpawnData();
 
             float hp = stageLevel * 10;
+            int spawnCount = stageLevel * 20;
             EnemyData enemyData = new EnemyData {
                 position = spawnPosition,
                 curHp = hp,
@@ -18,8 +19,8 @@ namespace GamePlay
                 currentPathIndex = 0
             };
             spawnData.enemyData = enemyData;
-            spawnData.spawnInterval = 1;
-            spawnData.spawnCount = stageLevel * 20;
+            spawnData.spawnInterval = spawnTimeout / spawnCount;
+            spawnData.spawnCount = spawnCount;
             spawnData.spawnEnemyPoolType = PoolType.EnemyL1;
             return spawnData;
         }
