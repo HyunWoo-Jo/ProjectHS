@@ -55,9 +55,6 @@ namespace GamePlay
                 case StageType.Boss:
                 _stageEndStrategy = new BossStageEndStrategy();
                 break;
-                case StageType.Timer:
-                _stageEndStrategy = new TimerStageEndStrategy();
-                break;
             }
         }
 
@@ -87,6 +84,7 @@ namespace GamePlay
         }
 
         private void Update() {
+            if (GameSettings.IsPause) return;
             float time = WaveTime;
             // 시간 계산 (추후 게임 속도, 일시정지 등이 추가 될 수 있음)
             time -= Time.deltaTime;

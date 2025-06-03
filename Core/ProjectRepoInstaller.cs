@@ -9,6 +9,7 @@ namespace Core
     public class ProjectRepoInstaller : MonoInstaller
     {
         public override void InstallBindings() {
+
             // repo »ý¼º
             Container.Bind<ICrystalRepository>().To<CrystalFirebaseRepository>().AsSingle().NonLazy();
 

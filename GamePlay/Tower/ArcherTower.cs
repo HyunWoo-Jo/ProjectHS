@@ -22,13 +22,16 @@ namespace GamePlay
 #if UNITY_EDITOR
             Assert.IsNotNull(_bowPivotTr);
 #endif
-            // pool에 등록 (이미 등록 되어있다면 스킵)
-            _poolManager.RegisterPool<ProjectileObject>(PoolType.Arrow);
+           
 
             if (_shootAnimHashKey == -1) {
                 _shootAnimHashKey = Animator.StringToHash("Shoot");
             }
+        }
 
+        private void Start() {
+            // pool에 등록 (이미 등록 되어있다면 스킵)
+            _poolManager.RegisterPool<ProjectileObject>(PoolType.Arrow);
         }
         private void AimLookAtEnemy() {
             if(targetIndex != -1) { 
@@ -68,6 +71,7 @@ namespace GamePlay
 
 
         protected override void Update() {
+            if (IsPause()) return;
             base.Update();
             AimLookAtEnemy();
 

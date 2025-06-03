@@ -46,7 +46,7 @@ namespace GamePlay
 
             // NativeArray 생성
             var spawnEnemyDatas = new NativeArray<EnemyData>(enemyDatas, Allocator.Persistent);
-            _spawnData.curSpawnIndex = _gameDataHub.MergeAliveEnemiesAndAppend(spawnEnemyDatas); // 허브에 등록 , 기존 데이터가 있으면 merge
+            _spawnData.startIndex = _gameDataHub.MergeAliveEnemiesAndAppend(spawnEnemyDatas); // 허브에 등록 , 기존 데이터가 있으면 merge
 
             // Enemy Pool 등록
             _gameObjectPoolManager.RegisterPool<ObjectPoolItem>(_spawnData.spawnEnemyPoolType); // 등록 (이미 존재하면 자동 스킵)
@@ -59,13 +59,11 @@ namespace GamePlay
                 case StageType.Boss:
                 _waveStrategy = new BossWaveStrategy();
                 break;
-                case StageType.Timer:
-                _waveStrategy = new TimerWaveStrategy();
-                break;
             }
         }
 
         private void Update() {
+            if (GameSettings.IsPause) return;
             NativeArray<EnemyData> enemiesData = _gameDataHub.GetEnemiesData();
             List<ObjectPoolItem> enemyPoolItemList = _gameDataHub.enemyPoolItemList;
             if (_spawnData == null || enemiesData.Length == 0 ) return;
@@ -73,9 +71,10 @@ namespace GamePlay
             // 시간 지남에 따른 spawn
             if (_spawnData.curRemainingTime <= 0 && _spawnData.curSpawnIndex < _spawnData.spawnCount) {
                 _spawnData.curRemainingTime += _spawnData.spawnInterval;
-                var enemyData = enemiesData[_spawnData.curSpawnIndex];
+                int index = _spawnData.curSpawnIndex + _spawnData.startIndex;
+                var enemyData = enemiesData[index];
                 enemyData.isSpawn = true;
-                enemiesData[_spawnData.curSpawnIndex] = enemyData;
+                enemiesData[index] = enemyData;
                 _spawnData.curSpawnIndex++;
 
                 // 생성

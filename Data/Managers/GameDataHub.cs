@@ -32,10 +32,13 @@ namespace Data
             // 살아 있는 기존 적만 임시 List로 필터링
             var aliveList = new List<EnemyData>(_enemiesData.Length);
             var alivePools = new List<ObjectPoolItem>(_enemiesData.Length);
-            for (int i = 0; i < _enemiesData.Length; ++i) {
+            for (int i = 0; i < _enemiesData.Length; i++) {
                 if (!_enemiesData[i].isDead) {
                     aliveList.Add(_enemiesData[i]);
-                    alivePools.Add(enemyPoolItemList[i]);     // pool도 같은 인덱스로 보존
+                    if (!_enemiesData[i].isObj) {
+                        alivePools.Add(enemyPoolItemList[i]);     // pool도 같은 인덱스로 보존
+                    }
+                   
                 }
             }
             int startIndex = aliveList.Count;

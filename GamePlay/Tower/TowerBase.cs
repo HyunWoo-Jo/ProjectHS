@@ -24,6 +24,11 @@ namespace GamePlay
             towerData.attackSpeed.OnValueChanged += SetAttackSpeed;
         }
 
+
+        protected bool IsPause() {
+            return GameSettings.IsPause;
+        }
+
         public TowerData GetTowerData() {
             return towerData;
         }
@@ -54,6 +59,7 @@ namespace GamePlay
 
 
         protected virtual void Update() {
+            if (IsPause()) return;
             if (enemyDataService.IsEnemyData()) {
                 SerchIsRangeEnemiesIndex(); // 조건에 따라 매프레임 범위 안에 들어온 적 검색
                 Attack(); // 공격 

@@ -1,9 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using CustomUtility;
-using Data;
 using Zenject;
-namespace GamePlay
+namespace Data
 {
 
 

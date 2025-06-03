@@ -17,10 +17,20 @@ namespace Core
 
 
             // Play Scene에서만 사용되는  View Model
-            Container.Bind<PurchaseTowerViewModel>().AsTransient().NonLazy();
+            Container.BindInterfacesAndSelfTo<PurchaseTowerViewModel>().AsCached().NonLazy();
+           
+
             Container.BindInterfacesAndSelfTo<WaveStatusViewModel>().AsCached().NonLazy();
+
+            Container.BindInterfacesAndSelfTo<GoldViewModel>().AsCached().NonLazy();
+
             // Play Scene에서만 사용되는  Model
+            Container.Bind<PurchaseTowerModel>().AsCached().NonLazy();
             Container.Bind<WaveStatusModel>().AsCached().NonLazy(); // Wave 정보
+            Container.Bind<GoldModel>().AsCached().NonLazy();
+
+
+           
         }
     }
 }

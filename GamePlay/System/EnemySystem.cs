@@ -21,6 +21,7 @@ namespace GamePlay
         [Inject] private GameDataHub _gameDataHub;
 
         private void Update() {
+            if (GameSettings.IsPause) return;
             var enemiesData = _gameDataHub.GetEnemiesData();
             var paths = _gameDataHub.GetPath();
             if (enemiesData.Length <= 0 || paths.Length <= 0) return;
@@ -30,7 +31,6 @@ namespace GamePlay
                 paths = paths,
                 deltaTime = Time.deltaTime
             };
-            Debug.Log(enemiesData.Length);
             JobHandle moveJobHandle = moveJob.Schedule(enemiesData.Length, 32);
             moveJobHandle.Complete(); // 완료 대기
 

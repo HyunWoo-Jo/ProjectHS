@@ -17,6 +17,10 @@ namespace UI
             OnDataChanged?.Invoke(value);
         }
 
+        public void Update() {
+            NotifyViewDataChanged(Crystal);
+        }
+
         // zenject에서 관리
 
         public void Initialize() {

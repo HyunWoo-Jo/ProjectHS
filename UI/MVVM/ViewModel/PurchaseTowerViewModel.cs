@@ -1,18 +1,39 @@
 
 using Zenject;
 using System;
+using Data;
 namespace UI
 {
-    public class PurchaseTowerViewModel 
-    {   
-        public event Action OnDataChanged; // 데이터가 변경될떄 호출될 액션 (상황에 맞게 변수명을 변경해서 사용)
+    public class PurchaseTowerViewModel : IInitializable, IDisposable
+    {
+        [Inject] private PurchaseTowerModel _model;
+        public event Action OnButtonClick;
+        public event Action<int> OnDataChanged;
 
         /// <summary>
-        /// 데이터 변경 알림
+        /// 버튼 클릭
         /// </summary>
-        private void NotifyViewDataChanged() {
-            OnDataChanged?.Invoke();
+        public void ButtonClick() {
+            OnButtonClick?.Invoke();
         }
+
+        public void Update() {
+            NotifyDataChanged(_model.towerPriceObservable.Value);
+        }
+
+        private void NotifyDataChanged(int value) {
+            OnDataChanged?.Invoke(value);
+        }
+
+
+        // Jenject에서 관리
+        public void Initialize() {
+            _model.towerPriceObservable.OnValueChanged += NotifyDataChanged;
+        }
+        public void Dispose() {
+            _model.towerPriceObservable.OnValueChanged -= NotifyDataChanged;
+        }
+
 
     }
 } 

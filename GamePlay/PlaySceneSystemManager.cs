@@ -4,6 +4,7 @@ using System.Linq;
 using Zenject;
 using System;
 using GamePlay22;
+using UI;
 namespace GamePlay
 {
     /// <summary>
@@ -30,7 +31,10 @@ namespace GamePlay
         private TowerSystem _towerSystem;   
 
         public Vector2Int _mapSize = new Vector2Int(10, 10); // 임시 맵 사이즈
-        
+
+        /////// viewModel
+        [Inject] private PurchaseTowerViewModel _purchaseTowerViewModel;
+
 
         private void Awake() {
             // 초기화
@@ -95,6 +99,11 @@ namespace GamePlay
             _mapSystem.GenerateMap(_mapSize.x, _mapSize.y);
 
 
+            UIInit();
+        }
+
+        private void UIInit() {
+            _purchaseTowerViewModel.OnButtonClick += _towerSystem.AddTower;
         }
 
 

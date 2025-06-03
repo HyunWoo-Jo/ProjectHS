@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using Zenject;
 using ModestTree;
+using static UnityEditor.Profiling.HierarchyFrameDataView;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
@@ -21,6 +22,11 @@ namespace UI
          
             _viewModel.OnDataChanged += UpdateUI;
         }
+
+        private void Start() {
+            _viewModel.Update();
+        }
+
         private void OnDestroy() {
             _viewModel.OnDataChanged -= UpdateUI;
             _viewModel = null; // 참조 해제

@@ -19,6 +19,7 @@ namespace GamePlay
         }
 
         private void Update() {
+            if (GameSettings.IsPause) return;
             if (_inputStrategy == null) {
                 Debug.LogError("SetInputStrategy 를 반드시 호출해야함"); // 예외
                 return;

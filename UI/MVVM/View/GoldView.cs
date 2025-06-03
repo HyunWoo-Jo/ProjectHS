@@ -2,20 +2,16 @@
 using UnityEngine;
 using Zenject;
 using System;
-using UnityEngine.EventSystems;
-using ModestTree;
 using TMPro;
-using CustomUtility;
-using System.Runtime.CompilerServices;
+using ModestTree;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI
 {
-    public class PurchaseTowerView : MonoBehaviour
+    public class GoldView : MonoBehaviour
     {
-        [Inject] private PurchaseTowerViewModel _viewModel;
-        [SerializeField] private EventTrigger _button;
-        [SerializeField] private TextMeshProUGUI _priceText;
+        [Inject] private GoldViewModel _viewModel;
+        [SerializeField] private TextMeshProUGUI _goldText;
         private void Awake() {
 #if UNITY_EDITOR // Assertion
             RefAssert();
@@ -23,7 +19,6 @@ namespace UI
             // 버튼 초기화
             _viewModel.OnDataChanged += UpdateUI;
 
-            ButtonInit();
         }
         private void Start() {
             _viewModel.Update();
@@ -36,20 +31,15 @@ namespace UI
 #if UNITY_EDITOR
         // 검증
         private void RefAssert() {
-            Assert.IsNotNull(_button);
-            Assert.IsNotNull(_priceText);
+            Assert.IsNotNull(_goldText);
         }
 #endif
         // UI 갱신
-        private void UpdateUI(int price) {
-            _priceText.text = price.ToString() + "G";
+        private void UpdateUI(int value) {
+            _goldText.text = value.ToString();
         }
 ////////////////////////////////////////////////////////////////////////////////////
         // your logic here
-
-        private void ButtonInit() {
-            _button.AddTrigger(EventTriggerType.PointerClick, _viewModel.ButtonClick, typeof(PurchaseTowerView).Name, nameof(ButtonInit));
-        }
 
     }
 }

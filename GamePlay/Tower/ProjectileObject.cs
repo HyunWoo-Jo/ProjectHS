@@ -1,7 +1,9 @@
+using Data;
 using System;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
+using Zenject;
 
 namespace GamePlay
 {
@@ -12,7 +14,7 @@ namespace GamePlay
         public float arrivedRange = 1f;
         public float3 _targetPos;
         private event Action _OnArrived;
-        
+       
 
         public void SetTarget(float3 startPos, float3 targetPos, Action arrivedEvent) {
             this.transform.position = startPos;
@@ -31,6 +33,8 @@ namespace GamePlay
         }
 
         private void Update() {
+            if (GameSettings.IsPause) return;
+
             // 화살 이동
             float3 prevPos = (float3)transform.position;
             float3 direction = math.normalize(_targetPos - prevPos);
