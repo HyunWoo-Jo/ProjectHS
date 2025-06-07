@@ -7,16 +7,24 @@ using System.Linq;
 namespace Data
 {
     public class GameDataHub : IEnemyDataService, IPositionService {
-        public List<ObjectPoolItem> enemyPoolItemList = new();
+        private List<ObjectPoolItem> _enemyPoolItemList = new();
 
         private NativeArray<EnemyData> _enemiesData;
-        private List<TowerData> _towerData = new();
         private NativeArray<float3> _paths;
         private NativeArray<float3> _worldPosition;
+
+        private List<SlotData> _slotDataList = new();
+        private List<TowerData> _towerDataList = new();
+        
+        public List<ObjectPoolItem> GetEnemyPoolList() {
+            return _enemyPoolItemList;
+        }
+        
         public void SetEnemiesData(NativeArray<EnemyData> data) {
             if (_enemiesData.IsCreated) _enemiesData.Dispose();
             _enemiesData = data;
         }
+        
 
         /// <summary>
         /// enemiesData를 병합, ObjectPool을 유지
@@ -35,10 +43,8 @@ namespace Data
             for (int i = 0; i < _enemiesData.Length; i++) {
                 if (!_enemiesData[i].isDead) {
                     aliveList.Add(_enemiesData[i]);
-                    if (!_enemiesData[i].isObj) {
-                        alivePools.Add(enemyPoolItemList[i]);     // pool도 같은 인덱스로 보존
-                    }
-                   
+                    alivePools.Add(_enemyPoolItemList[i]);     // pool도 같은 인덱스로 보존
+
                 }
             }
             int startIndex = aliveList.Count;
@@ -52,17 +58,17 @@ namespace Data
             // 5) 기존 배열 Dispose & 필드 갱신
             if (_enemiesData.IsCreated) _enemiesData.Dispose();
             _enemiesData = mergedArray;
-            enemyPoolItemList = alivePools;
+            _enemyPoolItemList = alivePools;
             return startIndex;
         }
         public NativeArray<EnemyData> GetEnemiesData() => _enemiesData;
 
         public void SetTowerData(List<TowerData> data) {
-            _towerData = data;
+            _towerDataList = data;
         }
 
         public List<TowerData> GetTowerData() {
-            return _towerData;
+            return _towerDataList;
         }
 
         public void SetPath(IEnumerable<Vector3> path) {
@@ -79,6 +85,11 @@ namespace Data
         }
 
         public EnemyData GetEnemyData(int index) {
+            if(_enemiesData.Length <= index || -1 >= index) {
+                return new EnemyData { // 죽은 데이터 반환
+                    isDead = true
+                };   
+            }
             return _enemiesData[index];
         }
 
@@ -89,15 +100,31 @@ namespace Data
         public float3 GetGridToWorldPosition(int index) {
             return _worldPosition[index];
         }
+        public void SetWorldPositionData(NativeArray<float3> arrays) {
+            if (_worldPosition.IsCreated) _worldPosition.Dispose();
+            _worldPosition = arrays;
+        }
 
         public bool IsEnemyData() {
             return _enemiesData.IsCreated;
         }
 
+
+        public void ClearSlotDataList() {
+            _slotDataList.Clear();
+        }
+        public void AddSlot(SlotData slotData) {
+            _slotDataList.Add(slotData);
+        }
+        public List<SlotData> GetSlotList() {
+            return _slotDataList;
+        }
+
         ~GameDataHub() { // 소멸
             if (_enemiesData.IsCreated) _enemiesData.Dispose();
-            _towerData = null;
+            _towerDataList = null;
             if (_paths.IsCreated) _paths.Dispose();
+            if(_worldPosition.IsCreated) _worldPosition.Dispose();
         }
     }   
 }

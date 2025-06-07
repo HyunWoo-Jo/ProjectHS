@@ -25,7 +25,6 @@ namespace UI
 
         public void Initialize() {
             _repo.AddChangeHandler(NotifyViewDataChanged);
- 
         }
 
         // zenject에서 관리

@@ -7,6 +7,8 @@ using System.Collections;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using System;
+using Unity.Collections;
+using System.Reflection;
 
 namespace GamePlay
 {
@@ -17,6 +19,7 @@ namespace GamePlay
     public class MapSystem : MonoBehaviour
     {
         [Inject] private DataManager _dataManager; // Addressable 데이터 관리
+        [Inject] private GameDataHub _gameDataHub; // map 데이터 저장
 
         private TileSpriteMapper _tileSpriteMapper; // 테마에 맞춰 Sprite를 로드
         private MapGenerator _mapGenerator = new MapGenerator();
@@ -85,11 +88,31 @@ namespace GamePlay
 
             OnMapChanged?.Invoke();
 
-            // Instance 맵
+            // Map Data 기반으로 slot, position 생성
+            _gameDataHub.ClearSlotDataList();
+            
+            NativeArray<float3> positions = new NativeArray<float3>(_mapDataList.Count, Allocator.Persistent);
+            int index = 0;
+            foreach (var mapData in _mapDataList) {
+                // position 생성
+                positions[index++] = mapData.position;
+
+                 // Slot data 생성
+                 SlotData slotData = new SlotData {
+                    slotState = mapData.type == TileType.Ground ? SlotState.PlaceAble : SlotState.Blocked, // Gound면 사용 가능 영역, 아니면 사용 불가 영역
+            
+                };
+                _gameDataHub.AddSlot(slotData); // 데이터 추가
+            }
+            _gameDataHub.SetWorldPositionData(positions); // Set data
+
+            // Instance 맵 데이터 로드까지 대기후 생성 
             StartCoroutine(InstanceMapCoroutine());
-        }
+        }  
 
         #endregion
+
+
 
         /// <summary>
         /// Prefab을 로드

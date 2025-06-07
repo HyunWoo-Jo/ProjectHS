@@ -9,14 +9,13 @@ namespace Data
     [Serializable]
     public struct EnemyData
     {
-        // 현재 크기 39 바이트
+        // 현재 크기 31 바이트
         // 크기를 더 늘릴 생각이 존재하면 분리해서 저장
         public float3 position; // 위치 
         public float speed; // 속도 
-        public float maxHp; // 최대 체력 
-        public float curHp; // 현재 체력 
-        public float maxShield; // 최대 쉴드 
-        public float curShield; // 현재 쉴드 
+        public int maxHp; // 최대 체력 
+        public int curHp; // 현재 체력 (실제 UI, 죽음 판별에 사용)
+        public int nextTempHp; // 데미지 처리 후 임시 체력 (투척의 경우 대미지가 즉시 적용 되게 활용) 
 
         public bool isDead; // 죽음 여부
         public bool isSpawn; // 생성 여부

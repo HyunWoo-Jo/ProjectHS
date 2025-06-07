@@ -7,12 +7,13 @@ namespace GamePlay
         public SpawnData GetSpawnData(int stageLevel, float3 spawnPosition, float spawnTimeout) {
             SpawnData spawnData = new SpawnData();
 
-            float hp = stageLevel * 10;
-            int spawnCount = stageLevel * 20;
+            int hp = stageLevel;
+            int spawnCount = stageLevel * 3;
             EnemyData enemyData = new EnemyData {
                 position = spawnPosition,
                 curHp = hp,
                 maxHp = hp,
+                nextTempHp = hp,
                 speed = 1,
                 isSpawn = false,
                 isDead = false,

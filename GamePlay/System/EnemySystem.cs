@@ -10,6 +10,7 @@ using UnityEngine.Jobs;
 using System.IO;
 using System.Linq;
 using Zenject;
+using System;
 namespace GamePlay
 {
     /// <summary>
@@ -19,6 +20,12 @@ namespace GamePlay
     public class EnemySystem : MonoBehaviour {
         // DOD(data oriented design) 구조
         [Inject] private GameDataHub _gameDataHub;
+
+        public List<EnemyData> debug;
+
+        public event Action OnEnemyDied;
+        public event Action OnEnemyFinishedPath;
+
 
         private void Update() {
             if (GameSettings.IsPause) return;
@@ -35,14 +42,30 @@ namespace GamePlay
             moveJobHandle.Complete(); // 완료 대기
 
 
-            // Position Setting
-            List<ObjectPoolItem> enemyObjectPoolItemList = _gameDataHub.enemyPoolItemList;
+            // Position Setting // 죽은 적 처리
+            List<ObjectPoolItem> enemyObjectPoolItemList = _gameDataHub.GetEnemyPoolList();
             for (int i = 0; i < enemyObjectPoolItemList.Count; i++) {
-                if (!enemiesData[i].isSpawn) return;
-                if (enemiesData[i].isDead || enemiesData[i].isObj) continue;
-                enemyObjectPoolItemList[i].transform.position = enemiesData[i].position;
-                
+                var enemyData = enemiesData[i];
+                if (!enemyData.isSpawn) break;
+                if (enemyData.isDead || !enemyData.isObj) continue;
+                if (enemyData.curHp <= 0) {
+                    enemyData.isDead = true;
+                    enemiesData[i] = enemyData;
+                    OnEnemyDied?.Invoke(); // event 발생
+                    continue;
+                }
+                if (enemyData.currentPathIndex >= paths.Length) { // 최종 경로에 도착
+                    enemyData.isDead = true;
+                    enemiesData[i] = enemyData;
+                    OnEnemyFinishedPath?.Invoke(); // event 발생
+                    continue;
+                }
+
+
+                enemyObjectPoolItemList[i].transform.position = enemyData.position;
             }
+
+            debug = _gameDataHub.GetEnemiesData().ToList();
         }
 
 
@@ -74,7 +97,10 @@ namespace GamePlay
                     curEnemyData.currentPathIndex++;
 
                     // 모든 경로를 지나옴
-                    if (curEnemyData.currentPathIndex >= paths.Length) return;
+                    if (curEnemyData.currentPathIndex >= paths.Length) {
+                        enemiesData[index] = curEnemyData;
+                        return;
+                    }
                     // 방향 다시 계산
                     targetPosition = paths[curEnemyData.currentPathIndex];
                     directionToTarget = targetPosition - curEnemyData.position;

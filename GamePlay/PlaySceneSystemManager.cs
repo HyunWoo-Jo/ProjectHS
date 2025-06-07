@@ -36,6 +36,10 @@ namespace GamePlay
         [Inject] private PurchaseTowerViewModel _purchaseTowerViewModel;
 
 
+        /// Model
+        [Inject] private PurchaseTowerModel _purchaseTowerModel; // 타워 구매 비용 모델
+        [Inject] private GoldModel _goldModel; // 골드 모델
+
         private void Awake() {
             // 초기화
             _mapSystem = GetComponent<MapSystem>();
@@ -71,7 +75,7 @@ namespace GamePlay
 
             // 카메라 핸들러를 Input과 바인드
             _inputSystem.OnInputDragEvent += _cameraSystem.HandleCameraMovement;
-
+            _inputSystem.OnCloseUpDownEvent += _cameraSystem.HandleCameraCloseUpDown;
 
             //////////// Stage System
             _stageSystem.OnStageStart += _waveSystem.SpawnEnemiesWave; // Stage가 시작되면 WaveData를 발생하도록 설정
@@ -87,7 +91,14 @@ namespace GamePlay
             _mapSystem.OnMapChanged += () => {
                 _gameDataHub.SetPath(_mapSystem.GetPath());
             };
+            _enemySystem.OnEnemyDied += () => { // 골드 획득
 
+            };
+            _enemySystem.OnEnemyFinishedPath += () => { // 라이프 소모
+
+            };
+            
+            
 
             //////////// Map System
             //맵 생성
@@ -100,10 +111,25 @@ namespace GamePlay
 
 
             UIInit();
-        }
 
+           
+        }
+        private void Start() {
+            // 초기 골드 설정 (추후 업그레이드와 연결)
+            _goldModel.goldObservable.Value += 10;
+        }
+        // ui 초기화
         private void UIInit() {
-            _purchaseTowerViewModel.OnButtonClick += _towerSystem.AddTower;
+            // 구매 버튼 기능 
+            _purchaseTowerViewModel.OnButtonClick += () => {
+                if(_purchaseTowerModel.towerPriceObservable.Value <= _goldModel.goldObservable.Value) { // 소유한 골드가 더 많을때 
+                    _goldModel.goldObservable.Value -= _purchaseTowerModel.towerPriceObservable.Value; // 골드 소모
+                    _purchaseTowerModel.towerPriceObservable.Value += 1; // 타워를 구매할 때 마다 비용 증가
+                    _towerSystem.AddTower();
+                }
+                
+            };
+            
         }
 
 

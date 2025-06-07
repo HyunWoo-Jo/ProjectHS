@@ -6,7 +6,7 @@ namespace GamePlay
         protected Vector2 firstFramePosition;
         protected float clickStartTime;
         protected InputType inputType;
-
+        protected float closeUpDownSize;
         public virtual float ClickTime() {
             return Time.time - clickStartTime;
         }
@@ -17,6 +17,10 @@ namespace GamePlay
 
         public InputType GetInputType() {
             return inputType;
+        }
+
+        public float GetCloseUpDownSizeSize() {
+            return closeUpDownSize;
         }
 
         public abstract Vector2 GetPosition();

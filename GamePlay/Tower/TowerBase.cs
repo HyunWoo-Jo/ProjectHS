@@ -20,6 +20,7 @@ namespace GamePlay
 
         protected virtual void Awake() {
             // Binding
+            towerData.towerObj = this.gameObject;
             SetAttackSpeed(towerData.attackSpeed.Value);
             towerData.attackSpeed.OnValueChanged += SetAttackSpeed;
         }
@@ -102,7 +103,7 @@ namespace GamePlay
             public void Execute() {
                 for (int i = 0; i < enemies.Length; i++) {
                     if (!enemies[i].isSpawn) return;
-                    if (enemies[i].isDead) continue;
+                    if (enemies[i].isDead || enemies[i].nextTempHp <= 0) continue;
                     if (math.distance(enemies[i].position, position) <= range) {
                         resultIndex[0] = i;
                         return;

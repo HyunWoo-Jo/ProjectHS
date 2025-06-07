@@ -14,6 +14,7 @@ namespace GamePlay
     {
         private IInputStrategy _inputStrategy;
         public event Action<Vector2> OnInputDragEvent;
+        public event Action<float> OnCloseUpDownEvent;
         public void SetInputStrategy(IInputStrategy inputStrategy) {  
             _inputStrategy = inputStrategy; 
         }
@@ -24,7 +25,7 @@ namespace GamePlay
                 Debug.LogError("SetInputStrategy 를 반드시 호출해야함"); // 예외
                 return;
             }
-            _inputStrategy.UpdateInput();
+            _inputStrategy.UpdateInput(); // Update
 
             if (_inputStrategy.GetInputType() != InputType.None) {
                 Vector2 direction = _inputStrategy.GetPosition() - _inputStrategy.GetFirstFramePosition();
@@ -33,9 +34,11 @@ namespace GamePlay
                 if((float)Screen.height * 0.20f <= direction.magnitude) { // 스크린 높이 기준 20% 보다 크면
                     OnInputDragEvent?.Invoke(direction);
                 }
-
-
-            } 
+            }
+            float closeUpDownSize = _inputStrategy.GetCloseUpDownSizeSize();
+            if (closeUpDownSize != 0) {
+                OnCloseUpDownEvent?.Invoke(closeUpDownSize);
+            }
 
         }
     }

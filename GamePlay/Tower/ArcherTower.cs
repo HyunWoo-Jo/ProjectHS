@@ -35,7 +35,6 @@ namespace GamePlay
         }
         private void AimLookAtEnemy() {
             if(targetIndex != -1) { 
-                
                 EnemyData enemyData = enemyDataService.GetEnemyData(targetIndex);
                 float3 dir = math.normalize(enemyData.position - (float3)_bowPivotTr.position);
                 dir.z = 0; // z축 제거
@@ -58,13 +57,24 @@ namespace GamePlay
             _bowAnim.SetTrigger(_shootAnimHashKey);
 
             EnemyData enemyData = enemyDataService.GetEnemyData(targetIndex);
-            // arrow 생성
-            ProjectileObject arrow = _poolManager.BorrowItem<ProjectileObject>(PoolType.Arrow);
-            arrow.SetTarget(_bowPivotTr.transform.position, enemyData.position, () => { // arrow 목표 지점에 도착시 컨트롤 하는 로직
-                _poolManager.Repay(PoolType.Arrow, arrow.gameObject);
+            if (!enemyData.isDead) { // 더미 데이터가 아닐 경우
+                // arrow 생성
+                ProjectileObject arrow = _poolManager.BorrowItem<ProjectileObject>(PoolType.Arrow);
 
-            });
-            
+                // 임시 데미지 처리
+                enemyData.nextTempHp -= towerData.attackPower;
+                enemyDataService.SetEnemyData(targetIndex, enemyData);
+
+                arrow.SetTarget(_bowPivotTr.transform.position, enemyData.position, () => { // arrow 목표 지점에 도착시 컨트롤 하는 로직
+                    // 도착시 데미지 처리
+                    EnemyData temp = enemyDataService.GetEnemyData(targetIndex);
+                    if (!temp.isDead) {
+                        temp.curHp = temp.nextTempHp;
+                        enemyDataService.SetEnemyData(targetIndex, temp);
+                    }
+                    _poolManager.Repay(PoolType.Arrow, arrow.gameObject);
+                });
+            }
 
 
         }

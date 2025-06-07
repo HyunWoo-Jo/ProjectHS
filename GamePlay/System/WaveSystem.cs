@@ -36,7 +36,7 @@ namespace GamePlay
             SetWaveStrategy(type); // 웨이브 전략을 type에 맞춰 정함
 
             // Spawn Data 생성
-            _spawnData = _waveStrategy.GetSpawnData(stageLevel, _spawnPosition, _stageSettingsModel.stageDelayTime);
+            _spawnData = _waveStrategy.GetSpawnData(stageLevel, _spawnPosition, _stageSettingsModel.stageDelayTime - 10);
             
             // Spawn Data에 맞춰 Enemy Data 생성
             EnemyData[] enemyDatas = new EnemyData[_spawnData.spawnCount];
@@ -65,8 +65,8 @@ namespace GamePlay
         private void Update() {
             if (GameSettings.IsPause) return;
             NativeArray<EnemyData> enemiesData = _gameDataHub.GetEnemiesData();
-            List<ObjectPoolItem> enemyPoolItemList = _gameDataHub.enemyPoolItemList;
-            if (_spawnData == null || enemiesData.Length == 0 ) return;
+            List<ObjectPoolItem> enemyPoolItemList = _gameDataHub.GetEnemyPoolList();
+            if (_spawnData == null || enemiesData.Length == 0) return;
             _spawnData.curRemainingTime -= Time.deltaTime;
             // 시간 지남에 따른 spawn
             if (_spawnData.curRemainingTime <= 0 && _spawnData.curSpawnIndex < _spawnData.spawnCount) {
@@ -74,15 +74,18 @@ namespace GamePlay
                 int index = _spawnData.curSpawnIndex + _spawnData.startIndex;
                 var enemyData = enemiesData[index];
                 enemyData.isSpawn = true;
-                enemiesData[index] = enemyData;
+                
                 _spawnData.curSpawnIndex++;
 
                 // 생성
                 var item = _gameObjectPoolManager.BorrowItem<ObjectPoolItem>(_spawnData.spawnEnemyPoolType);
+                enemyData.isObj = true;
                 item.gameObject.SetActive(true);
 
                 // 할당
                 enemyPoolItemList.Add(item);
+
+                enemiesData[index] = enemyData;
             }
 
 
