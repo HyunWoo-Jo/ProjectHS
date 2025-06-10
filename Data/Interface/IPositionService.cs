@@ -5,6 +5,6 @@ namespace Data
 {
     public interface IPositionService
     {
-        float3 GetGridToWorldPosition(int index);
+        float3 GetIndexToWorldPosition(int index);
     }
 }

@@ -4,27 +4,43 @@ using System.Collections.Generic;
 using CustomUtility;
 using Unity.Mathematics;
 using System.Linq;
+using System;
 namespace Data
 {
     public class GameDataHub : IEnemyDataService, IPositionService {
         private List<ObjectPoolItem> _enemyPoolItemList = new();
 
+        // Data
         private NativeArray<EnemyData> _enemiesData;
-        private NativeArray<float3> _paths;
+        private NativeArray<float3> _paths; 
         private NativeArray<float3> _worldPosition;
+        private int2 _mapSize;
 
-        private List<SlotData> _slotDataList = new();
-        private List<TowerData> _towerDataList = new();
-        
-        public List<ObjectPoolItem> GetEnemyPoolList() {
-            return _enemyPoolItemList;
-        }
-        
+        private List<SlotData> _slotDataList = new(); // 타워 슬롯
+        private List<TowerData> _towerDataList = new(); // 전체 타워 목록
+
+        public List<ObjectPoolItem> GetEnemyPoolList() => _enemyPoolItemList;
+
+
         public void SetEnemiesData(NativeArray<EnemyData> data) {
             if (_enemiesData.IsCreated) _enemiesData.Dispose();
             _enemiesData = data;
         }
-        
+
+        // grid 를 가지고 index를 반환 // 실패시 -1
+        public int GetIndex(int x, int y) {
+            // 입력 범위 검사
+            if (x < 0 || x >= _mapSize.x)
+                return -1;
+            if (y < 0 || y >= _mapSize.y)
+                return -1;
+            // 인덱스 계산
+            return y * _mapSize.x + x;
+        }
+        public void SetMapSize(int x, int y) {
+            _mapSize = new int2 { x = x, y = y };
+        }
+        public int2 GetMapSize() => _mapSize;
 
         /// <summary>
         /// enemiesData를 병합, ObjectPool을 유지
@@ -67,22 +83,16 @@ namespace Data
             _towerDataList = data;
         }
 
-        public List<TowerData> GetTowerData() {
-            return _towerDataList;
-        }
+        public List<TowerData> GetTowerData() => _towerDataList;
 
         public void SetPath(IEnumerable<Vector3> path) {
             if(_paths.IsCreated) _paths.Dispose();
             _paths = new NativeArray<float3>(path.Select(s => new float3(s.x, s.y, s.z)).ToArray(), Allocator.Persistent);
         }
 
-        public NativeArray<float3> GetPath() {
-            return _paths;
-        }
+        public NativeArray<float3> GetPath() => _paths;
 
-        public int EnemiesLength() {
-            return _enemiesData.Length;
-        }
+        public int EnemiesLength() => _enemiesData.Length;
 
         public EnemyData GetEnemyData(int index) {
             if(_enemiesData.Length <= index || -1 >= index) {
@@ -97,18 +107,13 @@ namespace Data
             _enemiesData[index] = enemyData;
         }
 
-        public float3 GetGridToWorldPosition(int index) {
-            return _worldPosition[index];
-        }
+        public float3 GetIndexToWorldPosition(int index) => _worldPosition[index];
         public void SetWorldPositionData(NativeArray<float3> arrays) {
             if (_worldPosition.IsCreated) _worldPosition.Dispose();
             _worldPosition = arrays;
         }
 
-        public bool IsEnemyData() {
-            return _enemiesData.IsCreated;
-        }
-
+        public bool IsEnemyData() => _enemiesData.IsCreated;
 
         public void ClearSlotDataList() {
             _slotDataList.Clear();
@@ -116,9 +121,7 @@ namespace Data
         public void AddSlot(SlotData slotData) {
             _slotDataList.Add(slotData);
         }
-        public List<SlotData> GetSlotList() {
-            return _slotDataList;
-        }
+        public List<SlotData> GetSlotList() => _slotDataList;
 
         ~GameDataHub() { // 소멸
             if (_enemiesData.IsCreated) _enemiesData.Dispose();

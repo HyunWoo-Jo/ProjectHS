@@ -5,6 +5,8 @@ using Zenject;
 using System;
 using GamePlay22;
 using UI;
+using UnityEngine.Assertions;
+using CustomUtility;
 namespace GamePlay
 {
     /// <summary>
@@ -40,7 +42,16 @@ namespace GamePlay
         [Inject] private PurchaseTowerModel _purchaseTowerModel; // 타워 구매 비용 모델
         [Inject] private GoldModel _goldModel; // 골드 모델
 
+
+        /// UI
+        [SerializeField] private GoldDropper _goldDropper;
+
         private void Awake() {
+#if UNITY_EDITOR
+            Assert.IsNotNull(_goldDropper);
+#endif
+
+
             // 초기화
             _mapSystem = GetComponent<MapSystem>();
             _inputSystem = GetComponent<ScreenClickInputSystem>();
@@ -66,8 +77,8 @@ namespace GamePlay
             _cameraSystem.SetCameraOffset(cameraOffset);
 
 
-            Vector2 maxX = _mapSystem.GetMax(_mapSize.x, _mapSize.y); // 맵이 대각선 모양이여서마지막 위치를 받아옴
-            Vector2 maxY = _mapSystem.GetMax(0, _mapSize.y); // 맵이 대각선 모양이여서 한줄의 마지막 위치를 받아옴
+            Vector2 maxX = GridUtility.GridToWorldPosition(_mapSize.x, _mapSize.y); // 맵이 대각선 모양이여서마지막 위치를 받아옴
+            Vector2 maxY = GridUtility.GridToWorldPosition(0, _mapSize.y); // 맵이 대각선 모양이여서 한줄의 마지막 위치를 받아옴
             
             
             // 카메라 이동 영역 설정
@@ -88,17 +99,23 @@ namespace GamePlay
             };
 
             // EnemySystem
+            _goldDropper.OnArrived += () => {
+                _goldModel.goldObservable.Value += 1;
+            };
             _mapSystem.OnMapChanged += () => {
                 _gameDataHub.SetPath(_mapSystem.GetPath());
             };
-            _enemySystem.OnEnemyDied += () => { // 골드 획득
-
+            _enemySystem.OnEnemyDied += (pos) => { // 골드 (생성, 이동) 이펙트
+                _goldDropper.SpawnAndMoveToTarget(pos);
             };
             _enemySystem.OnEnemyFinishedPath += () => { // 라이프 소모
 
             };
-            
-            
+
+
+            // TowerSystem
+            _inputSystem.OnRayHitEvent += _towerSystem.SelectTower;
+            _inputSystem.OnUpPointEvent += _towerSystem.OnPointUp;
 
             //////////// Map System
             //맵 생성
@@ -111,6 +128,8 @@ namespace GamePlay
 
 
             UIInit();
+
+           
 
            
         }

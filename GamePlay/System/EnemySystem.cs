@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using Zenject;
 using System;
+using UnityEngine.Assertions;
 namespace GamePlay
 {
     /// <summary>
@@ -20,12 +21,8 @@ namespace GamePlay
     public class EnemySystem : MonoBehaviour {
         // DOD(data oriented design) 구조
         [Inject] private GameDataHub _gameDataHub;
-
-        public List<EnemyData> debug;
-
-        public event Action OnEnemyDied;
+        public event Action<float3> OnEnemyDied;
         public event Action OnEnemyFinishedPath;
-
 
         private void Update() {
             if (GameSettings.IsPause) return;
@@ -51,7 +48,7 @@ namespace GamePlay
                 if (enemyData.curHp <= 0) {
                     enemyData.isDead = true;
                     enemiesData[i] = enemyData;
-                    OnEnemyDied?.Invoke(); // event 발생
+                    OnEnemyDied?.Invoke(enemyData.position); // event 발생
                     continue;
                 }
                 if (enemyData.currentPathIndex >= paths.Length) { // 최종 경로에 도착
@@ -65,7 +62,6 @@ namespace GamePlay
                 enemyObjectPoolItemList[i].transform.position = enemyData.position;
             }
 
-            debug = _gameDataHub.GetEnemiesData().ToList();
         }
 
 

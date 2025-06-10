@@ -9,6 +9,7 @@ using Unity.Mathematics;
 using System;
 using Unity.Collections;
 using System.Reflection;
+using CustomUtility;
 
 namespace GamePlay
 {
@@ -72,13 +73,7 @@ namespace GamePlay
             _tileSpriteMapper.LoadDataAsync(tema, () => { _isLoadedTema = true; }); 
         }
         public Vector3 GetCenter(int x, int y) {
-            return _mapGenerator.GridToWorldPosition(x, y) * 0.5f;
-        }
-        /// <summary>
-        /// 생성된 맵 크기의 최대 부분을 리턴
-        /// </summary>
-        public Vector3 GetMax(int x, int y) {
-            return _mapGenerator.GridToWorldPosition(x, y);
+            return GridUtility.GridToWorldPosition(x, y) * 0.5f;
         }
 
         // 맵 생성
@@ -105,7 +100,7 @@ namespace GamePlay
                 _gameDataHub.AddSlot(slotData); // 데이터 추가
             }
             _gameDataHub.SetWorldPositionData(positions); // Set data
-
+            _gameDataHub.SetMapSize(sizeX, sizeY);
             // Instance 맵 데이터 로드까지 대기후 생성 
             StartCoroutine(InstanceMapCoroutine());
         }  

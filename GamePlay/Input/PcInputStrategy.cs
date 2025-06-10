@@ -7,10 +7,16 @@ namespace GamePlay
         public override void UpdateInput() {
 
             //// 클릭 처리
-            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) { // UI 위 클릭이 아닐경우
+            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) { // UI 위 클릭이 아닐경우                
                 inputType = InputType.First;
                 clickStartTime = Time.time;
                 firstFramePosition = GetPosition();
+                if (TryRaycastTowerAtScreenPos(Input.mousePosition, out RaycastHit hit)){ // Tower인가 체크
+                    inputTargetType = InputTargetType.Tower;
+                    hitObject = hit.collider.gameObject;
+                } else {
+                    inputTargetType = InputTargetType.Ground;
+                }
             } else if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject()) { // Push중
                 inputType = InputType.Push;
             }

@@ -19,8 +19,16 @@ namespace CustomUtility {
             builder.pool.isStatic = true;
             return builder;
         }
+        /// <summary>
+        /// 자동 온오프 여부 (true 빌리기, 반납시 오브젝트가 SetActive가 자동으로 됨)
+        /// <returns></returns>
         public static ObjectPoolBuilder<T> AutoActivate<T>(this ObjectPoolBuilder<T> builder, bool isActivation) where T: MonoBehaviour {
             builder.pool.isAutoActivateOnBorrow = isActivation;
+            return builder;
+        }
+        /// 부모 설정
+        public static ObjectPoolBuilder<T> Parent<T>(this ObjectPoolBuilder<T> builder, Transform parentTr) where T : MonoBehaviour {
+           builder.pool.ownerObj.transform.SetParent(parentTr);
             return builder;
         }
 

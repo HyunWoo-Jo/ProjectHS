@@ -8,36 +8,43 @@ using Unity.Jobs;
 using System;
 using CustomUtility;
 using Unity.Android.Gradle.Manifest;
+using UnityEngine.Assertions;
 namespace GamePlay
 {
     public abstract class TowerBase : MonoBehaviour {
         [SerializeField] protected TowerData towerData;
         [Inject] protected IEnemyDataService enemyDataService;
         [ReadEditor] [SerializeField] protected int targetIndex = -1;
-        // upgrade data
+        [SerializeField] private SpriteRenderer _towerBaseRenderer;
+        
 
+
+        // upgrade data
+        public int index;
         protected float curAttackTime = 0; // 현재 장전 시간
 
+        public bool isStop = false;
+
         protected virtual void Awake() {
+#if UNITY_EDITOR
+            Assert.IsNotNull(_towerBaseRenderer);
+#endif
+
             // Binding
             towerData.towerObj = this.gameObject;
             SetAttackSpeed(towerData.attackSpeed.Value);
             towerData.attackSpeed.OnValueChanged += SetAttackSpeed;
         }
 
-
+        public Sprite GetTowerBaseSprite() => _towerBaseRenderer.sprite;
         protected bool IsPause() {
-            return GameSettings.IsPause;
+            return GameSettings.IsPause || isStop;
         }
 
         public TowerData GetTowerData() {
             return towerData;
         }
 
-        public void SetPosition(Vector2 pos) { // 위치 설정
-
-
-        }
 
         public virtual void Attack() {
             if (IsAttackAble()) { // 공격이 가능한 상태이면
