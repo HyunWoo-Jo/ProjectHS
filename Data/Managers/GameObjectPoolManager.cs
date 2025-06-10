@@ -83,6 +83,7 @@ namespace Data
         // Key µî·Ï
         public void AddKey() { // Key
            _prefabKeyDictionary.Add(PoolType.Arrow, "Arrow.prefab");
+           _prefabKeyDictionary.Add(PoolType.MagicBullet, "MagicBullet.prefab");
            _prefabKeyDictionary.Add(PoolType.EnemyL1, "EnemyL1.prefab");
            _prefabKeyDictionary.Add(PoolType.EnemyL2, "EnemyL2.prefab");
            _prefabKeyDictionary.Add(PoolType.EnemyL3, "EnemyL3.prefab");

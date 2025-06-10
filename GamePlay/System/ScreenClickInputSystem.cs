@@ -93,5 +93,5 @@ namespace GamePlay
             // 이벤트로 전달
             OnInputDragEvent?.Invoke(dir.normalized);
         }
-        }
+    }
 }

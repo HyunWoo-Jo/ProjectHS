@@ -7,7 +7,6 @@ using Unity.Collections;
 using Unity.Jobs;
 using System;
 using CustomUtility;
-using Unity.Android.Gradle.Manifest;
 using UnityEngine.Assertions;
 namespace GamePlay
 {
@@ -16,8 +15,8 @@ namespace GamePlay
         [Inject] protected IEnemyDataService enemyDataService;
         [ReadEditor] [SerializeField] protected int targetIndex = -1;
         [SerializeField] private SpriteRenderer _towerBaseRenderer;
-        
-
+        [SerializeField] protected Animator anim;
+        protected static int ShootAnimHashKey = Animator.StringToHash("Shoot");
 
         // upgrade data
         public int index;
@@ -53,19 +52,15 @@ namespace GamePlay
         }
         public abstract void AttackLogic();
 
-
+        public void SetAttackSpeed(float speed) { // 공격 속도 설정
+            anim.speed = speed;
+        }
         private bool IsAttackAble() { // 공격 가능 여부
             if (targetIndex != -1 && curAttackTime >= towerData.attackTime) return true;
             return false;
         }
 
        
-        
-
-
-        public abstract void SetAttackSpeed(float speed); // 공격 속도 설정
-
-
         protected virtual void Update() {
             if (IsPause()) return;
             if (enemyDataService.IsEnemyData()) {

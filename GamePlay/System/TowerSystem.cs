@@ -22,6 +22,7 @@ namespace GamePlay
 
         private List<string> _towerKeyList = new List<string> {
             "ArcherTower",
+            "MageTower"
         };
 
         private TowerBase _seletedTower;
@@ -33,6 +34,7 @@ namespace GamePlay
 #if UNITY_EDITOR
             Assert.IsNotNull(_towerShadowObjRenderer);
 #endif
+            // Tower 로딩
             _dataManager.LoadAssetsByLabelAsync<GameObject>(_towerLabel).ContinueWith(towerList => {
                 foreach (var prefab in towerList) { // 타워 등록
                     _towerPrefabDictionary[prefab.name] = prefab; 
