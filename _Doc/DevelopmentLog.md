@@ -14,6 +14,8 @@
 - [2025.05.15 / GameDataHub 도입 배경 및 설계](#gamedatahub-도입-배경-및-설계)
 - [2025.05.19 / GameObjectPoolManager 도입 배경 및 설계](#gameobjectpoolmanager-도입-배경-및-설계)
 - [2025.05.26 / Upgrade System 설계](#upgrade-system-설계)
+##### 25.06
+- [6월~ 개발 일지](/_Doc/DevelopmentLog_25_6.md)
 ---
 #### 2025.04.19
 ### 전체 시스템 구조 설계
