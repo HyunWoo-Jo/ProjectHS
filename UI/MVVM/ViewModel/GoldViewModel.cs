@@ -7,9 +7,9 @@ namespace UI
     public class GoldViewModel : IInitializable, IDisposable
     {   
         public event Action<int> OnDataChanged; // 데이터가 변경될떄 호출될 액션 (상황에 맞게 변수명을 변경해서 사용)
-        [Inject] private GoldModel _goldModel;
+        [Inject] private GoldModel _model;
 
-        public int Gold => _goldModel.goldObservable.Value;
+        public int Gold => _model.goldObservable.Value;
        
         /// <summary>
         /// 데이터 변경 알림
@@ -27,13 +27,13 @@ namespace UI
         /// Jenject에서 관리
         /// </summary>
         public void Initialize() {
-            _goldModel.goldObservable.OnValueChanged += GoldChanged;
+            _model.goldObservable.OnValueChanged += GoldChanged;
         }
         /// <summary>
         /// Jenject에서 관리
         /// </summary>
         public void Dispose() {
-            _goldModel.goldObservable.OnValueChanged -= GoldChanged;
+            _model.goldObservable.OnValueChanged -= GoldChanged;
         }
     }
 } 

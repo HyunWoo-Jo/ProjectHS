@@ -41,8 +41,8 @@ namespace GamePlay
         /// Model
         [Inject] private PurchaseTowerModel _purchaseTowerModel; // 타워 구매 비용 모델
         [Inject] private GoldModel _goldModel; // 골드 모델
-
-
+        [Inject] private ExpModel _expModel; // 경험치 모델
+        [Inject] private HpModel _hpModel; // hp 모델
         /// UI
         [SerializeField] private GoldDropper _goldDropper;
 
@@ -101,6 +101,7 @@ namespace GamePlay
             // EnemySystem
             _goldDropper.OnArrived += () => {
                 _goldModel.goldObservable.Value += 1;
+                _expModel.AddExp(1);
             };
             _mapSystem.OnMapChanged += () => {
                 _gameDataHub.SetPath(_mapSystem.GetPath());
@@ -109,7 +110,7 @@ namespace GamePlay
                 _goldDropper.SpawnAndMoveToTarget(pos);
             };
             _enemySystem.OnEnemyFinishedPath += () => { // 라이프 소모
-
+                _hpModel.curHpObservable.Value -= 1;
             };
 
 
