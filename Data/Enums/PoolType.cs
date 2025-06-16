@@ -8,5 +8,6 @@ namespace Data
         EnemyL1,
         EnemyL2,
         EnemyL3,
+        DamageLogUI,
     }
 }

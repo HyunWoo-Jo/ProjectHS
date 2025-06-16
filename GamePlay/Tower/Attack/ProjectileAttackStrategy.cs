@@ -4,6 +4,7 @@ using UnityEditor.EditorTools;
 using UnityEngine;
 using Unity.Mathematics;
 using Zenject;
+using UI;
 
 namespace GamePlay
 {
@@ -17,14 +18,19 @@ namespace GamePlay
             if (!enemyData.isDead) { // 살아있을 경우
                 ProjectileObject projectile = _poolManager.BorrowItem<ProjectileObject>(poolType); // 투사체 생성
                 // 임시 데미지 처리
-                enemyData.nextTempHp -= towerData.attackPower;
+                int damage = towerData.attackPower;
+                enemyData.nextTempHp -= damage;
                 enemyDataService.SetEnemyData(targetIndex, enemyData);
                 projectile.SetTarget(startPos, enemyData.position, () => { // arrow 목표 지점에 도착시 컨트롤 하는 로직
                     // 도착시 데미지 처리
                     EnemyData temp = enemyDataService.GetEnemyData(targetIndex);
+                    DamageLogUI log = _poolManager.BorrowItem<DamageLogUI>(PoolType.DamageLogUI);
+                    log.transform.position = Camera.main.WorldToScreenPoint(temp.position);
+                    log.SetDamage(damage);
                     if (!temp.isDead) {
                         temp.curHp = temp.nextTempHp;
                         enemyDataService.SetEnemyData(targetIndex, temp);
+                        
                     }
                     _poolManager.Repay(poolType, projectile.gameObject);
                 });

@@ -9,6 +9,7 @@ using Zenject;
 using Cysharp.Threading.Tasks;
 using Unity.Burst;
 using Unity.Jobs;
+using UnityEngine.Assertions;
 namespace GamePlay
 {
     /// <summary>
@@ -26,7 +27,6 @@ namespace GamePlay
         private SpawnData _spawnData; // 생성데이터
 
         [Inject] private GameObjectPoolManager _gameObjectPoolManager;
-
 
         public void SetSpawnPosition(float3 spawnPosition) {  _spawnPosition = spawnPosition; }
         /// <summary>
@@ -77,15 +77,14 @@ namespace GamePlay
                 
                 _spawnData.curSpawnIndex++;
 
-                // 생성
+                // enemy object 생성
                 var item = _gameObjectPoolManager.BorrowItem<ObjectPoolItem>(_spawnData.spawnEnemyPoolType);
                 enemyData.isObj = true;
-                item.gameObject.SetActive(true);
 
                 // 할당
                 enemyPoolItemList.Add(item);
-
                 enemiesData[index] = enemyData;
+
             }
 
 
@@ -95,9 +94,8 @@ namespace GamePlay
                 EnemyData enemyData = enemiesData[i];
                 if (!enemyData.isSpawn) return; 
                 if (enemyData.isDead && enemyData.isObj) {
-                    // 회수
                     enemyData.isObj = false;
-                    enemyPoolItemList[i].gameObject.SetActive(false);
+                    // Object 회수
                     _gameObjectPoolManager.Repay(_spawnData.spawnEnemyPoolType, enemyPoolItemList[i]);
                     enemiesData[i] = enemyData;
                 }

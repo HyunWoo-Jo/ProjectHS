@@ -25,6 +25,12 @@ namespace GamePlay
                         inputType = InputType.First;
                         firstFramePosition = touch.position;
                         clickStartTime = Time.time;
+                        if (TryRaycastTowerAtScreenPos(Input.mousePosition, out RaycastHit hit)) { // Tower인가 체크
+                            inputTargetType = InputTargetType.Tower;
+                            hitObject = hit.collider.gameObject;
+                        } else {
+                            inputTargetType = InputTargetType.Ground;
+                        }
                     }
                     if (touch.phase == TouchPhase.Stationary || touch.phase == TouchPhase.Moved) {
                         inputType = InputType.Push;

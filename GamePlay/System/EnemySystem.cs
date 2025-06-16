@@ -12,6 +12,7 @@ using System.Linq;
 using Zenject;
 using System;
 using UnityEngine.Assertions;
+using UI;
 namespace GamePlay
 {
     /// <summary>
@@ -21,8 +22,19 @@ namespace GamePlay
     public class EnemySystem : MonoBehaviour {
         // DOD(data oriented design) 구조
         [Inject] private GameDataHub _gameDataHub;
+        [Inject] private GameObjectPoolManager _poolManager;
+
         public event Action<float3> OnEnemyDied;
         public event Action OnEnemyFinishedPath;
+
+        [SerializeField] private Transform _damageLogCanvas; 
+
+        private void Awake() {
+#if UNITY_EDITOR
+            Assert.IsNotNull(_damageLogCanvas);
+#endif
+            _poolManager.RegisterPool<DamageLogUI>(PoolType.DamageLogUI, _damageLogCanvas);
+        }
 
         private void Update() {
             if (GameSettings.IsPause) return;
@@ -39,9 +51,9 @@ namespace GamePlay
             moveJobHandle.Complete(); // 완료 대기
 
 
-            // Position Setting // 죽은 적 처리
             List<ObjectPoolItem> enemyObjectPoolItemList = _gameDataHub.GetEnemyPoolList();
             for (int i = 0; i < enemyObjectPoolItemList.Count; i++) {
+                // 1. 죽은 적 처리
                 var enemyData = enemiesData[i];
                 if (!enemyData.isSpawn) break;
                 if (enemyData.isDead || !enemyData.isObj) continue;
@@ -58,8 +70,9 @@ namespace GamePlay
                     continue;
                 }
 
-
+                // 2. 미리 계산된 Position 설정
                 enemyObjectPoolItemList[i].transform.position = enemyData.position;
+
             }
 
         }

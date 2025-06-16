@@ -6,7 +6,7 @@ namespace CustomUtility {
     public interface IObjectPool {
         internal void RepayItem(GameObject item, int index);
         public T BorrowItem<T> () where T : MonoBehaviour;
-        public void Dispose();
+        public void Clear(); // 생성된 오브젝트 전부 제거
     }
     public static class ObjectPoolExtensions { 
         // Builder 확장 매서드
@@ -71,15 +71,11 @@ namespace CustomUtility {
         internal ObjectPool() {
         }
 
-        public void Dispose() {
-           
-            itemObj = null;
+        public void Clear() {
             while (item_que.Count > 0) {
                 T item = item_que.Dequeue();
-                GameObject.DestroyImmediate(item.gameObject);
+                GameObject.Destroy(item.gameObject);
             }
-            GameObject.DestroyImmediate(ownerObj);
-            ownerObj = null;
         }
 
         internal void CreateItem() {

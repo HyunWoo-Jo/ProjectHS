@@ -8,7 +8,7 @@ namespace UI {
     /// <summary>
     /// UI를 생성 관리하는 클레스
     /// </summary>
-    public class UIManager : MonoBehaviour, IUIFactory  {
+    public class UIManager : MonoBehaviour, IUIFactory, ISetMainCanvas  {
 
         private readonly Dictionary<string, string> _keyDictionary = new(); // (class name, addressable Key)
         private readonly Dictionary<int, KeyValuePair<GameObject, string>> _objDictionary = new(); // 생성된 오브젝트를 관리 (instance Id , <Obj, Addressable key>)

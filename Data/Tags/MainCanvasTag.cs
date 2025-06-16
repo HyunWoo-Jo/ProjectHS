@@ -2,18 +2,17 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Zenject;
 
-namespace UI
+namespace Data
 {
     public interface IMainCanvasTag {
         Canvas GetMainCanvas();
         RectTransform GetRectTransform();
-
     }
     public class MainCanvasTag : MonoBehaviour ,IMainCanvasTag
     {
         private Canvas _canvas;
         private RectTransform _rectTr;
-        [Inject] private UIManager _uiManager;
+        [Inject] private ISetMainCanvas _uiManager;
 
         private void Awake() {
             _canvas = GetComponent<Canvas>();

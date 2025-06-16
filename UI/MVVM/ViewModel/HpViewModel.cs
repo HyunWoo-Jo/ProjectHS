@@ -8,7 +8,7 @@ namespace UI
         [Inject] private HpModel _hpModel;   
         
         public event Action<int,int> OnHpChanged; // 데이터가 변경될떄 호출될 액션 (상황에 맞게 변수명을 변경해서 사용)
-
+        public event Action<int> OnChangedMaxHp; // 최대 체력 변경
         public int CurHp => _hpModel.curHpObservable.Value;
         public int MaxHP => _hpModel.maxHpObservable.Value;
 
@@ -23,11 +23,13 @@ namespace UI
         public void Initialize() {
             _hpModel.curHpObservable.OnValueChanged += NotifyChangedHp;
             _hpModel.maxHpObservable.OnValueChanged += NotifyChangedHp;
+            _hpModel.maxHpObservable.OnValueChanged += ChangedMaxHp;
         }
         // Zenject에서 관리
         public void Dispose() {
             _hpModel.curHpObservable.OnValueChanged -= NotifyChangedHp;
             _hpModel.maxHpObservable.OnValueChanged -= NotifyChangedHp;
+            _hpModel.maxHpObservable.OnValueChanged -= ChangedMaxHp;
         }
 
         /// <summary>
@@ -36,6 +38,13 @@ namespace UI
         /// <param name="value"></param>
         private void NotifyChangedHp(/*Observable에 Bind하기 위해 사용 되는 파라미터(사용 안함)*/int value) {
             OnHpChanged?.Invoke(CurHp, MaxHP);
+        }
+
+        /// <summary>
+        /// 최대 체력 변경
+        /// </summary>
+        private void ChangedMaxHp(int value) {
+            OnChangedMaxHp?.Invoke(value);
         }
 
     }

@@ -12,10 +12,6 @@ namespace GamePlay
         protected GameObject hitObject;
         private readonly LayerMask _towerMask = LayerMask.GetMask("Tower");
 
-        protected InputBase() {
-            Debug.Log(_towerMask.value);
-        }
-
         public virtual float ClickTime() {
             return Time.time - clickStartTime;
         }

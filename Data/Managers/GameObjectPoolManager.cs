@@ -12,6 +12,7 @@ namespace Data
     public class GameObjectPoolManager : MonoBehaviour
     {
         [Inject] private DataManager _dataManager;
+        [Inject] private DiContainer _diContainer;
         private Dictionary<PoolType, IObjectPool> _poolDictionary = new Dictionary<PoolType, IObjectPool>(); // pool
         private Dictionary<PoolType, string> _prefabKeyDictionary = new Dictionary<PoolType, string>(); // addressable key
         private Dictionary<PoolType, float> _refTimerDictionary = new Dictionary<PoolType, float>(); // 참조 시간
@@ -22,40 +23,35 @@ namespace Data
         private void Awake() {
             AddKey();
         }
-
+        private void OnDestroy() {
+            // 로드된 오브젝트 모드 반환
+            foreach (var keyValue in _prefabKeyDictionary) {
+                _dataManager.ReleaseAsset(keyValue.Value);
+            }
+        }
         private void Update() {
 
             // 일정 시간 사용안하면 삭제
-            List<PoolType> keysToRemove = new List<PoolType>();
-
             foreach (var keyValue in _poolDictionary) {
                 var poolType = keyValue.Key;
                 var timer = _refTimerDictionary[poolType];
                 if (timer >= LimitTime) {
                     if (_refCountDictionary[poolType] > 0) continue;
-                    _poolDictionary[poolType].Dispose();
-                    keysToRemove.Add(poolType);
+                    _poolDictionary[poolType].Clear();
                 } else {
                    _refTimerDictionary[poolType] += Time.deltaTime;
                 }
-            }
-
-            foreach (var key in keysToRemove) {
-                _poolDictionary.Remove(key);
-                _refTimerDictionary.Remove(key);
-                _refCountDictionary.Remove(key);
-
-                // addressable 제거
-                string addkey = _prefabKeyDictionary[key];
-                _dataManager.ReleaseAsset(addkey);
             }
         }
 
 
         public T BorrowItem<T>(PoolType poolType) where T : MonoBehaviour {
+            if(!_poolDictionary.ContainsKey(poolType)) RegisterPool<T>(poolType); 
             _refTimerDictionary[poolType] = 0f;
             _refCountDictionary[poolType]++;
-            return _poolDictionary[poolType].BorrowItem<T>();
+            T item = _poolDictionary[poolType].BorrowItem<T>();
+            _diContainer.InjectGameObject(item.gameObject); // 의존 주입
+            return item;
         }
 
         public void Repay(PoolType poolType, GameObject obj) {
@@ -69,11 +65,13 @@ namespace Data
         }
 
         // 등록
-        public void RegisterPool<T>(PoolType poolType) where T : MonoBehaviour {
+        public void RegisterPool<T>(PoolType poolType, Transform parentTr = null) where T : MonoBehaviour {
             if (!_poolDictionary.ContainsKey(poolType)) { // 존재하지 않으면 등록
                 string key = _prefabKeyDictionary[poolType];
                 GameObject prefab = _dataManager.LoadAssetSync<GameObject>(key);
-                ObjectPool<T> pool = ObjectPoolBuilder<T>.Instance(prefab).AutoActivate(true).Build();
+                var builder = ObjectPoolBuilder<T>.Instance(prefab).AutoActivate(true);
+                if (parentTr != null) { builder.Parent(parentTr); }
+                ObjectPool<T> pool = builder.Build();
                 _poolDictionary.Add(poolType, pool);
                 _refTimerDictionary.Add(poolType, 0);
                 _refCountDictionary.Add(poolType, 0);
@@ -87,6 +85,7 @@ namespace Data
            _prefabKeyDictionary.Add(PoolType.EnemyL1, "EnemyL1.prefab");
            _prefabKeyDictionary.Add(PoolType.EnemyL2, "EnemyL2.prefab");
            _prefabKeyDictionary.Add(PoolType.EnemyL3, "EnemyL3.prefab");
+           _prefabKeyDictionary.Add(PoolType.DamageLogUI, "DamageLogUI_Text.prefab");
         } 
     }
 }
