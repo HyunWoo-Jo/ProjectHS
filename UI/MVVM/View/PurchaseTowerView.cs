@@ -48,7 +48,7 @@ namespace UI
         // your logic here
 
         private void ButtonInit() {
-            _button.AddTrigger(EventTriggerType.PointerClick, _viewModel.ButtonClick, typeof(PurchaseTowerView).Name, nameof(ButtonInit));
+            _button.AddTrigger(EventTriggerType.PointerClick, _viewModel.ButtonClick, GetType().Name, nameof(ButtonInit));
         }
 
     }

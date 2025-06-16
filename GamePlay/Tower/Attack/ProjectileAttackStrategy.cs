@@ -25,7 +25,7 @@ namespace GamePlay
                     // 도착시 데미지 처리
                     EnemyData temp = enemyDataService.GetEnemyData(targetIndex);
                     DamageLogUI log = _poolManager.BorrowItem<DamageLogUI>(PoolType.DamageLogUI);
-                    log.transform.position = Camera.main.WorldToScreenPoint(temp.position);
+                    log.SetWorldToScreenPosition(temp.position);
                     log.SetDamage(damage);
                     if (!temp.isDead) {
                         temp.curHp = temp.nextTempHp;

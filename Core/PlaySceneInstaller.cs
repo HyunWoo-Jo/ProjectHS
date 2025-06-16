@@ -22,6 +22,7 @@ namespace Core
             Container.BindInterfacesAndSelfTo<GoldViewModel>().AsCached().NonLazy();
             Container.BindInterfacesAndSelfTo<ExpViewModel>().AsCached().NonLazy();
             Container.BindInterfacesAndSelfTo<HpViewModel>().AsCached().NonLazy();
+            Container.BindInterfacesAndSelfTo<PausePanelViewModel>().AsCached().NonLazy();
 
             // Play Scene에서만 사용되는  Model
             Container.Bind<PurchaseTowerModel>().AsCached().NonLazy();

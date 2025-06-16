@@ -19,6 +19,8 @@ namespace UI
 
         [Inject] private IMainCanvasTag _mainCanvas;
 
+        [Inject] public IUIFactory _uiManager; // UI effect 생성용 Interface
+
         [SerializeField] private Transform _mainPanel;
         [Header("Navigate Button")]
         [SerializeField] private EventTrigger _worldButton;
@@ -93,7 +95,7 @@ namespace UI
                 new Action(() => _viewModel.OnClickPanelMoveButton(MainLobbyNavigateViewModel.PanelType.Upgrade)), // 버튼 기능 바인딩
                 className, methodName + "_upgrade");
 
-            _playButton.AddTrigger(EventTriggerType.PointerClick, _viewModel.OnClickPlayButton, // 버튼 기능 바인딩
+            _playButton.AddTrigger(EventTriggerType.PointerClick, OnClickPlayButton, // 버튼 기능 바인딩
                 className, methodName + "_playButton");
         }
 
@@ -116,6 +118,16 @@ namespace UI
                 return _upgradeButton;
             }
             return null;
+        }
+
+        /// <summary>
+        /// Play Button 클릭
+        /// </summary>
+        public void OnClickPlayButton() {
+            IWipeUI wipeUI = _uiManager.InstanceUI<WipeUI>(20); // UI 생성 요청
+            float loadDelay = 0.5f;
+            wipeUI.Wipe(WipeDirection.Left, loadDelay, false); // 이펙트 호출
+            _viewModel.ChangedScene(loadDelay);
         }
     }
 }

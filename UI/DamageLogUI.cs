@@ -3,14 +3,13 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
-
+using Unity.Mathematics;
 namespace UI
 {
     public class DamageLogUI : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _text;
         private ObjectPoolItem _poolItem;
-        private float timer;
         private void Awake() {
 #if UNITY_EDITOR
             Assert.IsNotNull(_text);
@@ -24,11 +23,23 @@ namespace UI
             _text.color = color;
         }
 
+        public void SetWorldToScreenPosition(float3 pos) {
+            StartCoroutine(SetLoopPosition(pos));
+        }
+        
+
         public void SetDamage(int damage) {
             _text.text = damage.ToString();
             StartCoroutine(DelayRepay(1.5f));
             StartCoroutine(AlphaAnimation(1f));
         }
+        private IEnumerator SetLoopPosition(float3 pos) {
+            while (true) {
+                this.transform.position = Camera.main.WorldToScreenPoint(pos);
+                yield return null;
+            }
+        }
+
         private IEnumerator DelayRepay(float duration) {
             if (_poolItem == null) {
                 if(TryGetComponent<ObjectPoolItem>(out var poolItem)) {
