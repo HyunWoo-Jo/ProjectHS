@@ -3,11 +3,11 @@
 #### 25.04 ~ 05
 - [4~5월 개발 일지](/_Doc/DevelopmentLog.md)
 #### 25.06
-- [2025.06.17 / Tower Upgrade UI 설계](#tower-upgrade-ui-설계)
+- [2025.06.17 / Upgrade System 구조 변경](#upgrade-system-구조-변경)
 
 ---
 #### 2025.06.17
-### Tower Upgrade UI 설계
+### Upgrade System 구조 변경
 1. **설계 내용**
   - **확장성** 조건 로직을 UnlockStrategySO로 모듈화로 새 조건 추가 시 코드 수정 없이 SO만 생성
   - **수정 자율성** UpgradeDataSO와 조건 리스트를 인스펙터에서 조합
