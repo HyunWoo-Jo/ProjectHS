@@ -36,6 +36,7 @@ class UpgradeDataSO {
   + towerStat
   + upgradeType
   - UnlockStrategy_List
+  - ExecutionBinding_List
   ...
   + IsUnlocked() bool
 }
@@ -61,6 +62,38 @@ ScriptableObject <|-- UpgradeDataSO
 UpgradeSystem --> UpgradeDataSO
 UpgradeSystem --> UpgradeCard_UI : UpgradeDataSO 전달
 
+class UpgradeExecutionSO {
+    <<Abstract>>
+    + Execute(tower : TowerBase, value : ValueVariant)
+}
+
+class ExecutionBinding {
+    <<struct>>
+    + execution : UpgradeExecutionSO
+    + value : ValueVariant
+}
+
+class ValueVariant {
+    <<struct>>
+    + type : VarType
+    + f : float
+    + i : int
+    + s : string
+    + Get\<T>() : T
+}
+
+class VarType {
+    <<enum>>
+    Float
+    Int
+    String
+}
+
+ScriptableObject <|-- UpgradeExecutionSO
+UpgradeDataSO --> ExecutionBinding
+ExecutionBinding --> UpgradeExecutionSO
+ExecutionBinding --> ValueVariant
+ValueVariant --> VarType
 ```
 ---
 
