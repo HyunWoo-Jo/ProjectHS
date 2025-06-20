@@ -505,7 +505,8 @@ public class GameDataHub : IEnemyDataProvider
 
 ---
 #### 2025.05.26
-### ~~Upgrade System 설계~~ (구조 변경)
+### ~~Upgrade System 설계~~
+6월 개발일지 확인 (구조 변경)
 1. **설계 내용**
 `Upgrade System`의 경우 계정 전체에 적용이 되는 `Global Upgrade`와 세션 단위로 초기화, 관리 되는 `SessionUpgrade`가 존재합니다.</br>
 `Global Upgrade`의 경우 `Repository` 패턴을 이용해 데이터를 관리합니다.</br>
