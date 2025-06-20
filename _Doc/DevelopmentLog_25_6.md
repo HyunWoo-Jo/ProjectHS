@@ -10,7 +10,7 @@
 ### Upgrade System 구조 변경
 1. **설계 내용**
   - **확장성** 조건 로직을 UnlockStrategySO로 모듈화로 새 조건 추가 시 코드 수정 없이 SO만 생성
-  - **수정 자율성** UpgradeDataSO와 조건 리스트를 인스펙터에서 조합
+  - **수정 자율성** UpgradeDataSO와 Unlocked(조건), Execution(실행) 리스트를 인스펙터에서 조합
   - **테스트** Unlock 로직을 단위 테스트 가능
 2. **데이터 흐름**
 - `UpgradeSystem.OnUpgradeUI` 호출
@@ -18,7 +18,11 @@
 - 각 `UpgradeDataSO.IsUnlocked()` 호출 → 잠금/해금 필터링
 - `SelectUpgrade(count, unlockedList)` 로 UI에 표시할 카드 서브셋 결정
 - 각 카드에 `UpgradeCard_UI.SetUpgradeData` 바인딩 → UI 렌더링
-- 플레이어 클릭 시 `UpgradeSystem`이 적용
+- 플레이어 클릭 시 `UpgradeExecutionSO`의 `Execute` 적용
+3. **Global 데이터 적용**
+- Global 데이터의 경우 게임을 시작하면 변화 없이 항상 적용
+- 게임 시작시 `UpgradeSystem`에서 `IGlobalUpgradeRepo`를 통해 데이터를 받아와 적용
+
 
 3. **Class Diagram**
 ```mermaid
@@ -94,6 +98,15 @@ UpgradeDataSO --> ExecutionBinding
 ExecutionBinding --> UpgradeExecutionSO
 ExecutionBinding --> ValueVariant
 ValueVariant --> VarType
+
+%% Golbal
+class IGlobalUpgradeRepo {  
+    <<Interface>>
+    + GetUpgradeData(key) data  
+    + SetUpgradeData(key, data)  
+    + GetUpgradeData(key)  
+}
+UpgradeSystem --> IGlobalUpgradeRepo
 ```
 ---
 
