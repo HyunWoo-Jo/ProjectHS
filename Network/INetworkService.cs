@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -10,6 +11,6 @@ namespace Network
     {
         void LoginAsync();
 
-        Task<bool> IsConnectedAsync();
+        UniTask<bool> IsConnectedAsync();
     }
 }

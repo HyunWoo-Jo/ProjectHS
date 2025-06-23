@@ -3,6 +3,11 @@ using Zenject;
 using System;
 using System.Threading.Tasks;
 using Firebase.Extensions;
+using System.Collections.Generic;
+using System.Collections;
+using Data;
+using Cysharp.Threading.Tasks;
+using Firebase.Database;
 namespace Network
 {
     /// <summary>
@@ -17,6 +22,7 @@ namespace Network
             LoginAsync(); // 로그인 시도
 
         }
+
         private void OnDestroy() {
             isClosed = true;
         }
@@ -33,7 +39,7 @@ namespace Network
                 return;
             }
         }
-        public async Task<bool> IsConnectedAsync() {
+        public async UniTask<bool> IsConnectedAsync() {
             return await _networkLogic.IsConnectedAsync();
         }
         
@@ -41,30 +47,54 @@ namespace Network
 
 
 
-        public int GetUpgradeAsync(string key) {
-            throw new NotImplementedException();
-        }
 
-        public void SetUpgradeAsync(string key, int value) {
-            throw new NotImplementedException();
-        }
 
         ////////////// User Service   
-        public void GetUserCrystalAsync(Action<int> completeAction) {
-            _networkLogic.GetUserCrystal().ContinueWithOnMainThread(task => {
-                if (task.IsFaulted || task.IsCanceled) {
-                    return;
+        public async UniTask GetUserCrystalAsync(Action<int> completeAction) {
+            await _networkLogic.GetUserCrystal().ContinueWith(task => {
+                if (task.Exists) {
+                    completeAction?.Invoke(Convert.ToInt32(task.Value));
                 }
-                if (task.Result.Exists) {
-                    completeAction?.Invoke(Convert.ToInt32(task.Result.Value));
-                } else {
-                    SaveUseCrystalAsync(0); // 존재하지 않으면 데이터 생성
+            });
+           
+        }
+
+        public async UniTask SaveUseCrystalAsync(int userCrystal) {
+            await _networkLogic.SetUserCrystal(userCrystal);
+        }
+
+        ///////// Upgrade Service
+        
+        /// <summary>
+        /// ScritableObject Upgrade Table을 갱신함
+        /// </summary>
+        public UniTask GetAllUpgradeTableAsync(GlobalUpgradeDataSO tableSO) {
+            // 버전 체크
+            return _networkLogic.GetVersion().ContinueWith(task => {
+                if (task.Exists) {        
+                    // 버전이 다를 경우만 table을 읽어옴 (추후 검증 로직도 추가)
+                    if ((string)task.Value != tableSO.Version) {
+                        _networkLogic.GetUpgradeTable().ContinueWith(task => {
+                            if (task.Exists) {
+                                JsonUtility.FromJsonOverwrite(task.GetRawJsonValue(), tableSO);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        public UniTask GetAllUpgradeLevelAsync(Action<Dictionary<string, int>> complate) {
+
+            return _networkLogic.GetAllUpgrade().ContinueWith(task => {
+                if (task.Exists) {
+                    var data = task.Value as Dictionary<string, int>;
+                    complate?.Invoke(data);
                 }
             });
         }
 
-        public void SaveUseCrystalAsync(int userCrystal) {
-            _networkLogic.SetUserCrystal(userCrystal);
+        public void SetUpgradeAsync<T>(string key, T value) {
+            _networkLogic.SetUpgrade(key, value);
         }
         //////////////
     }

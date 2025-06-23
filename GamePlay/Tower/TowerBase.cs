@@ -14,9 +14,10 @@ namespace GamePlay
         [SerializeField] protected TowerData towerData;
         [Inject] protected IEnemyDataService enemyDataService;
         [ReadEditor] [SerializeField] protected int targetIndex = -1;
-        [SerializeField] private SpriteRenderer _towerBaseRenderer;
+        [SerializeField] private int sellPrice; // 판매 가격
+        [SerializeField] private SpriteRenderer _towerBaseRenderer; // 본체 Renerder (그림자에 사용)
         [SerializeField] protected Animator anim;
-        protected static int ShootAnimHashKey = Animator.StringToHash("Shoot");
+        protected static int ShootAnimHashKey = Animator.StringToHash("Shoot"); 
 
         // upgrade data
         public int index;

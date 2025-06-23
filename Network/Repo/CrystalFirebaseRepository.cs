@@ -2,12 +2,13 @@ using System;
 using UnityEngine;
 using Zenject;
 using Data;
+using Cysharp.Threading.Tasks;
 namespace Network
 {
     public class CrystalFirebaseRepository : ICrystalRepository {
         private CrystalModel _model;
         [Inject] private IUserService _userService;
-
+       
         public CrystalFirebaseRepository() {
             _model = new CrystalModel();
         }
@@ -17,11 +18,11 @@ namespace Network
             return _model.valueObservable.Value;
         }
 
-        public void AddChangeHandler(Action<int> handler) {
+        public void AddChangedHandler(Action<int> handler) {
             _model.valueObservable.OnValueChanged += handler;
         }
 
-        public void RemoveChangeHandler(Action<int> handler) {
+        public void RemoveChangedHandler(Action<int> handler) {
             _model.valueObservable.OnValueChanged -= handler;
         }
 
@@ -30,8 +31,8 @@ namespace Network
             _userService.SaveUseCrystalAsync(value);
         }
 
-        public void LoadValue() {
-            _userService.GetUserCrystalAsync(SetValue);
+        public async UniTask LoadValue() {
+            await _userService.GetUserCrystalAsync(SetValue);
         }
 
     }

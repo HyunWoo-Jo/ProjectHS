@@ -4,6 +4,7 @@ using TMPro;
 using Zenject;
 using ModestTree;
 using static UnityEditor.Profiling.HierarchyFrameDataView;
+using Cysharp.Threading.Tasks;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
@@ -39,7 +40,8 @@ namespace UI
         }
 #endif
         // UI 갱신
-        private void UpdateUI(int value) {
+        private async void UpdateUI(int value) {
+            await UniTask.SwitchToMainThread(); // 메인쓰레드로 전환
             _text.text = value.ToString();
         }
 ////////////////////////////////////////////////////////////////////////////////////

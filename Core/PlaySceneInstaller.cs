@@ -13,23 +13,23 @@ namespace Core
 
 
             // Settings
-            Container.Bind<StageSettingsModel>().AsCached().NonLazy();
+            Container.Bind<StageSettingsModel>().AsCached();
 
 
             // Play Scene에서만 사용되는  View Model
-            Container.BindInterfacesAndSelfTo<PurchaseTowerViewModel>().AsCached().NonLazy();
-            Container.BindInterfacesAndSelfTo<WaveStatusViewModel>().AsCached().NonLazy();
-            Container.BindInterfacesAndSelfTo<GoldViewModel>().AsCached().NonLazy();
-            Container.BindInterfacesAndSelfTo<ExpViewModel>().AsCached().NonLazy();
-            Container.BindInterfacesAndSelfTo<HpViewModel>().AsCached().NonLazy();
-            Container.BindInterfacesAndSelfTo<PausePanelViewModel>().AsCached().NonLazy();
+            Container.BindInterfacesAndSelfTo<PurchaseTowerViewModel>().AsCached();
+            Container.BindInterfacesAndSelfTo<WaveStatusViewModel>().AsCached();
+            Container.BindInterfacesAndSelfTo<GoldViewModel>().AsCached();
+            Container.BindInterfacesAndSelfTo<ExpViewModel>().AsCached();
+            Container.BindInterfacesAndSelfTo<HpViewModel>().AsCached();
+            Container.BindInterfacesAndSelfTo<PausePanelViewModel>().AsCached();
 
             // Play Scene에서만 사용되는  Model
-            Container.Bind<PurchaseTowerModel>().AsCached().NonLazy();
-            Container.Bind<WaveStatusModel>().AsCached().NonLazy(); // Wave 정보
-            Container.Bind<GoldModel>().AsCached().NonLazy();
-            Container.Bind<ExpModel>().AsCached().NonLazy();
-            Container.Bind<HpModel>().AsCached().NonLazy();
+            Container.Bind<PurchaseTowerModel>().AsCached();
+            Container.Bind<WaveStatusModel>().AsCached(); // Wave 정보
+            Container.Bind<GoldModel>().AsCached();
+            Container.Bind<ExpModel>().AsCached();
+            Container.Bind<HpModel>().AsCached();
            
         }
     }

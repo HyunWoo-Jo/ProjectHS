@@ -11,7 +11,8 @@ namespace Core
     {
         public override void InstallBindings() {
             // UI ViewModel¿ª Bind
-            Container.Bind<MainLobbyNavigateViewModel>().AsTransient().NonLazy();
+            Container.Bind<MainLobbyNavigateViewModel>().AsTransient();
+            Container.BindInterfacesAndSelfTo<MainLobbyUpgradeViewModel>().AsCached();
         }
     }
 }

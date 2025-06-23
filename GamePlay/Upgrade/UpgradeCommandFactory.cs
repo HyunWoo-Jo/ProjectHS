@@ -11,7 +11,7 @@ namespace GamePlay
         public UpgradeCommandFactory() {
             // handler µî·Ï
             _upgradeDictionary = new Dictionary<UpgradeType, IUpgradeCommandHandler> {
-                { UpgradeType.Power, new PowerUpHandler() },
+               // { UpgradeType.Power, new PowerUpHandler() },
             };
         }
 

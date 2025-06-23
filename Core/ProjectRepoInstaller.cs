@@ -15,6 +15,10 @@ namespace Core
 
             Container.Bind<IUserAuthRepository>().To<UserAuthRepositoryFirebase>().AsSingle().NonLazy();
             Container.Bind<IGlobalUpgradeRepository>().To<GlobalUpgradeFirebaseRepository>().AsSingle().NonLazy();
+
+
+            // Data Bind
+            Container.Bind<GlobalUpgradeDataSO>().FromScriptableObjectResource("GlobalUpgradeDataSO").AsSingle().NonLazy();
         }
 
 

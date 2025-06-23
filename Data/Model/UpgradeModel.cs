@@ -1,22 +1,26 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements.Experimental;
-
+using CustomUtility;
 namespace Data
 {
-    public class UpgradeModel : IDataGetterKey<float, UpgradeType>
+    public class UpgradeModel 
     {
-        private Dictionary<UpgradeType, float> _dataDictionary = new();
+        private Dictionary<string, int> _dataDictionary; // 업그레이드 단계를 저장
 
-        public float GetValue(UpgradeType key) {
-            if(_dataDictionary.TryGetValue(key, out var value)) {
-                return value;
+        public void SetNewData(Dictionary<string, int> dataDic) {
+            _dataDictionary = dataDic;
+        }
+
+        public int GetValue(UpgradeType key) {
+            if (_dataDictionary == null) return 0;
+            if (_dataDictionary.TryGetValue(key.ToString(), out int value)) {
+                return value; 
             }
             return 0;
         }
-        public void SetValue(UpgradeType key, float value) {
-            _dataDictionary[key] = value;
+        public void SetValue(UpgradeType key, int value) {
+            _dataDictionary[key.ToString()] = value;
         }
-    
+
     }
 }

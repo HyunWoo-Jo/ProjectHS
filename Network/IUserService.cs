@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Threading.Tasks;
 using System;
+using Cysharp.Threading.Tasks;
 namespace Network
 {
     /// <summary>
@@ -8,7 +9,9 @@ namespace Network
     /// </summary>
     public interface IUserService
     {
-        void GetUserCrystalAsync(Action<int> completeAction);
-        void SaveUseCrystalAsync(int userCrystal); 
+        UniTask GetUserCrystalAsync(Action<int> completeAction);
+        UniTask SaveUseCrystalAsync(int userCrystal);
+
+  
     }
 }
