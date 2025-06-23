@@ -112,12 +112,13 @@ UpgradeSystem --> IGlobalUpgradeRepo
 #### 2025.06.23
 ### 초기화 씬 구성
 1. **이유**
-- (가장 먼저 실행 되는)초기화 씬은 Network 연결의 이유로 제작 하였으며 순서는 다음과 같습니다.
+- (가장 먼저 실행 되는)초기화 씬은 Network 연결의 이유로 제작 하였으며</br>
+`InitSceneManager`에서 관련 로직을 순서대로 진행합니다.
 3. **초기화 순서(실패시 기본적으로 같은 단계의 행동을 다시 시도합니다.)**
 ```mermaid
 flowchart TD
-씬시작 --> Firebase로그인
-Firebase로그인 --> Version체크
+씬시작 --> Network연결확인
+Network연결확인 --> Version체크
 Version체크 --같은버전--> UserData갱신
 Version체크 --다른버전--> UpgradeTable갱신
 UpgradeTable갱신 --> UserData갱신
