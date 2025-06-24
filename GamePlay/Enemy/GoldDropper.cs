@@ -12,7 +12,7 @@ namespace GamePlay
         private ObjectPool<ObjectPoolItem> _goldPool;
         [SerializeField] private GameObject _goldPrefab;
         [SerializeField] private Transform _targetTr;
-        public Action OnArrived; // 도착 했을때 발동
+        public Action<EnemyData> OnArrived; // 도착 했을때 발동
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         private void Awake() {
 #if UNITY_EDITOR
@@ -22,12 +22,12 @@ namespace GamePlay
             _goldPool = ObjectPoolBuilder<ObjectPoolItem>.Instance(_goldPrefab, 10).AutoActivate(true).Parent(this.gameObject.transform).Build(); // pool 생성
         }
 
-        public void SpawnAndMoveToTarget(float3 startPos) {
+        public void SpawnAndMoveToTarget(EnemyData enemyData) {
             var poolItem = _goldPool.BorrowItem();
-            poolItem.transform.position = Camera.main.WorldToScreenPoint(startPos);
+            poolItem.transform.position = Camera.main.WorldToScreenPoint(enemyData.position);
             poolItem.transform.DOMove(_targetTr.position, 1f).OnComplete(() => {
                 _goldPool.RepayItem(poolItem);
-                OnArrived?.Invoke();
+                OnArrived?.Invoke(enemyData);
             });
 
         }

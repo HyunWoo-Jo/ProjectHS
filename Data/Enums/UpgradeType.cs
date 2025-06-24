@@ -10,6 +10,6 @@ namespace Data
         Power, // 공격력
         InitGold, // 초기 골드
         Hp, // 생명력
-        ExpPercent // 경험치 획득량
+        Exp // 경험치 획득량
     }
 }

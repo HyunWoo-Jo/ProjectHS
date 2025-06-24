@@ -42,18 +42,16 @@ namespace UI
         private async void UpdateUI() {
             await UniTask.SwitchToMainThread(); // 메인쓰레드로 전환
 
-            GlobalUpgradeDataSO table = _viewModel.GetUpgradeDataSO();
             foreach (var slot in _slots) {
-                UpgradeType upgradeType = slot.GetUpgradeType();
-                int upgradeLevel = _viewModel.GetData(upgradeType);
-                slot.SetValueText(upgradeLevel.ToString()); // level을 가지고옴
-
                 // Data
+                UpgradeType upgradeType = slot.GetUpgradeType();
 
-                int priceIncresment = table.GetPrice(upgradeType);
-                // 각 type에 맞는 정보를 table을 통해 가지고옴
-               
-                slot.SetPriceText((upgradeLevel * priceIncresment).ToString());
+                int price = _viewModel.GetPrice(upgradeType);
+                int abliltyValue = _viewModel.GetAbilityValue(upgradeType);
+                
+                // UI 수정
+                slot.SetValueText((abliltyValue).ToString()); // Text 변경
+                slot.SetPriceText((price).ToString());
             }
         }
 

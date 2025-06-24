@@ -8,10 +8,12 @@ namespace Data
     public interface IGlobalUpgradeRepository
     {
         UniTask LoadValue();
-        void SetValue(UpgradeType type, int value);
+        void SetLevel(UpgradeType type, int value);
         
-        int GetValueLocal(UpgradeType type);
-        GlobalUpgradeDataSO GetUpgradeTable();
+        int GetLevelLocal(UpgradeType type);
+        int GetPrice(UpgradeType type);
+        int GetAbilityValue(UpgradeType type);
+       
 
         void AddChangedHandler(Action handler);
         void RemoveChangedHandler(Action handler);

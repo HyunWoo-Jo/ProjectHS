@@ -3,7 +3,6 @@ using Data;
 using System.Linq;
 using Zenject;
 using System;
-using GamePlay22;
 using UI;
 using UnityEngine.Assertions;
 using CustomUtility;
@@ -46,6 +45,10 @@ namespace GamePlay
         /// UI
         [SerializeField] private GoldDropper _goldDropper;
 
+        // Policy
+        [Inject] private GoldPolicy _goldPolicy;
+        [Inject] private HpPolicy _hpPolicy;
+        [Inject] private ExpPolicy _expPolicy;
         private void Awake() {
 #if UNITY_EDITOR
             Assert.IsNotNull(_goldDropper);
@@ -99,18 +102,18 @@ namespace GamePlay
             };
 
             // EnemySystem
-            _goldDropper.OnArrived += () => {
-                _goldModel.goldObservable.Value += 1;
-                _expModel.AddExp(1);
+            _goldDropper.OnArrived += (enemyData) => {
+                _goldModel.goldObservable.Value += _goldPolicy.CalculateKillReward(enemyData);
+                _expModel.AddExp(_expPolicy.CalculateKillExperience(enemyData));
             };
             _mapSystem.OnMapChanged += () => {
                 _gameDataHub.SetPath(_mapSystem.GetPath());
             };
-            _enemySystem.OnEnemyDied += (pos) => { // 골드 (생성, 이동) 이펙트
-                _goldDropper.SpawnAndMoveToTarget(pos);
+            _enemySystem.OnEnemyDied += (enemyData) => { // 골드 (생성, 이동) 이펙트
+                _goldDropper.SpawnAndMoveToTarget(enemyData);
             };
-            _enemySystem.OnEnemyFinishedPath += () => { // 라이프 소모
-                _hpModel.curHpObservable.Value -= 1;
+            _enemySystem.OnEnemyFinishedPath += (enemyData) => { // 라이프 소모
+                _hpModel.curHpObservable.Value -= _hpPolicy.CalculateHpPenaltyOnLeak(enemyData);
             };
 
 
@@ -127,16 +130,24 @@ namespace GamePlay
             _mapSystem.SetPathStrategy(new SLinePathStrategy());
             _mapSystem.GenerateMap(_mapSize.x, _mapSize.y);
 
-
-            UIInit();
-
-           
-
-           
+            UIInit();     
         }
+
+
+        private void EnemyDied(EnemyData enemyData) {
+            _goldDropper.SpawnAndMoveToTarget(enemyData);
+        }
+
+
+
         private void Start() {
-            // 초기 골드 설정 (추후 업그레이드와 연결)
-            _goldModel.goldObservable.Value += 10;
+            // 초기 골드 설정
+            _goldModel.goldObservable.Value += _goldPolicy.GetPlayerStartGold();
+            // 초기 HP 설정
+            int startHp = _hpPolicy.GetStartPlayerHp();
+            _hpModel.maxHpObservable.Value = startHp;
+            _hpModel.curHpObservable.Value = startHp;
+
         }
         // ui 초기화
         private void UIInit() {

@@ -30,7 +30,11 @@ namespace Core
             Container.Bind<GoldModel>().AsCached();
             Container.Bind<ExpModel>().AsCached();
             Container.Bind<HpModel>().AsCached();
-           
+
+            // Policy
+            Container.Bind<GoldPolicy>().AsCached();
+            Container.Bind<HpPolicy>().AsCached();
+            Container.Bind<ExpPolicy>().AsCached();
         }
     }
 }

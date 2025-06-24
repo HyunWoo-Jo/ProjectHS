@@ -17,14 +17,18 @@ namespace UI
             OnDataChanged?.Invoke();
         }
 
-        public int GetData(UpgradeType type) {
-            return _repo.GetValueLocal(type);
+        public int GetPrice(UpgradeType type) {
+            return _repo.GetPrice(type);
         }
 
-        public GlobalUpgradeDataSO GetUpgradeDataSO() {
-            return _repo.GetUpgradeTable();
+        public int GetLevel(UpgradeType type) {
+            return _repo.GetLevelLocal(type);
+        }
+        public int GetAbilityValue(UpgradeType type) {
+            return _repo.GetAbilityValue(type);
         }
 
+            
         // Zenject에서 관리
         public void Initialize() {
             _repo.AddChangedHandler(NotifyViewDataChanged);

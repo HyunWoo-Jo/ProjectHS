@@ -24,8 +24,8 @@ namespace GamePlay
         [Inject] private GameDataHub _gameDataHub;
         [Inject] private GameObjectPoolManager _poolManager;
 
-        public event Action<float3> OnEnemyDied;
-        public event Action OnEnemyFinishedPath;
+        public event Action<EnemyData> OnEnemyDied;
+        public event Action<EnemyData> OnEnemyFinishedPath;
 
         [SerializeField] private Transform _damageLogCanvas; 
 
@@ -60,13 +60,13 @@ namespace GamePlay
                 if (enemyData.curHp <= 0) {
                     enemyData.isDead = true;
                     enemiesData[i] = enemyData;
-                    OnEnemyDied?.Invoke(enemyData.position); // event 발생
+                    OnEnemyDied?.Invoke(enemyData); // event 발생
                     continue;
                 }
                 if (enemyData.currentPathIndex >= paths.Length) { // 최종 경로에 도착
                     enemyData.isDead = true;
                     enemiesData[i] = enemyData;
-                    OnEnemyFinishedPath?.Invoke(); // event 발생
+                    OnEnemyFinishedPath?.Invoke(enemyData); // event 발생
                     continue;
                 }
 

@@ -87,8 +87,20 @@ namespace Network
 
             return _networkLogic.GetAllUpgrade().ContinueWith(task => {
                 if (task.Exists) {
-                    var data = task.Value as Dictionary<string, int>;
-                    complate?.Invoke(data);
+                    var objDict = task.Value as IDictionary<string, object>;
+                    if (objDict == null) {
+                        Debug.LogError("변환 실패");
+                        return;
+                    }
+                    var intDict = new Dictionary<string, int>();
+                    foreach (var kvp in objDict) {
+                        try {
+                            intDict[kvp.Key] = Convert.ToInt32(kvp.Value); // long to int32로 변환 (Firebase는 기본 long형)
+                        } catch (Exception e) {
+                            Debug.LogWarning($"키 {kvp.Key} 변환 실패: {e.Message}");
+                        }
+                    }
+                    complate?.Invoke(intDict);
                 }
             });
         }

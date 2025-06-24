@@ -3,7 +3,7 @@ using Data;
 using Zenject;
 namespace GamePlay
 {
-    public class UpgradeSystem : MonoBehaviour 
+    public class UpgradeSystem : MonoBehaviour  
     {
         [Inject] private GameDataHub _gameDataHub;
         [Inject] private IGlobalUpgradeRepository _globalUpgradeRepository;

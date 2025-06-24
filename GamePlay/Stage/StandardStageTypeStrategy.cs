@@ -8,11 +8,12 @@ namespace GamePlay
     public class StandardStageTypeStrategy : IStageTypeStrategy {
 
         public StageType GetStageType(int stageLevel) {
-            if (stageLevel % 10 == 0) {
+            return StageType.Standard;
+            /*if (stageLevel % 10 == 0) {
                 return StageType.Boss;
             } else {
                 return StageType.Standard;
-            }
+            }*/
 
         }
     }
