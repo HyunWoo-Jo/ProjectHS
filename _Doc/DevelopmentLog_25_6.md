@@ -5,6 +5,7 @@
 #### 25.06
 - [2025.06.17 / Upgrade System 구조 변경](#upgrade-system-구조-변경)
 - [2025.06.23 / 초기화 씬 구성](#초기화-씬-구성)
+- [2025.06.25 / Policy](#policy)
 ---
 #### 2025.06.17
 ### Upgrade System 구조 변경
@@ -114,7 +115,7 @@ UpgradeSystem --> IGlobalUpgradeRepo
 1. **이유**
 - (가장 먼저 실행 되는)초기화 씬은 Network 연결의 이유로 제작 하였으며</br>
 `InitSceneManager`에서 관련 로직을 순서대로 진행합니다.
-3. **초기화 순서(실패시 기본적으로 같은 단계의 행동을 다시 시도합니다.)**
+2. **초기화 순서(실패시 기본적으로 같은 단계의 행동을 다시 시도합니다.)**
 ```mermaid
 flowchart TD
 씬시작 --> Network연결확인
@@ -125,4 +126,24 @@ UpgradeTable갱신 --> UserData갱신
 UserData갱신 --> 다음씬으로이동
 ```
 ---
+#### 2025.06.25
+### Policy
+1. **설계 의도**
+- `Policy` 도입해 순수한 규칙을 한 곳에서 관리해서 유지보수성을 높였습니다.
+- 추후 변경될수 있는 난이도에 `Policy` 변경을 통해 쉽게 변경되도록 설계
+- (Gold, HP, Exp) 등 관리
+2. **Bind 위치**
+- `PlaySceneInstaller`에서 Bind를 하여 관리합니다. (PlayScene에서만 사용)
+3. **Ex)**
+```C#
+public class GoldPolicy
+{
+  public virtual int CalculateKillReward(EnemyData enemyData) {
+    return 1;
+  }
 
+  public virtual int GetPlayerStartGold() {
+    return _DefaultStartGold + _globalUpgradeRepo.GetAbilityValue(UpgradeType.InitGold); 
+  }
+}
+```
