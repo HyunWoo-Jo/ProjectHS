@@ -6,6 +6,7 @@
 - [2025.06.17 / Upgrade System 구조 변경](#upgrade-system-구조-변경)
 - [2025.06.23 / 초기화 씬 구성](#초기화-씬-구성)
 - [2025.06.25 / Policy 관리](#policy-관리)
+- [2025.06.28 / Contracts 계층 도입](#contracts-계층-도입)
 ---
 #### 2025.06.17
 ### Upgrade System 구조 변경
@@ -146,4 +147,34 @@ public class GoldPolicy
     return _DefaultStartGold + _globalUpgradeRepo.GetAbilityValue(UpgradeType.InitGold); 
   }
 }
+```
+---
+#### 2025.06.28
+### Contracts 계층 도입
+1. **도입 배경**
+- 프로젝트는 기본적으로 `GamePlay`계층 에서 `UI` 계층을 참조하는 구조를 가지고 있습니다.
+- **(문제점)** `UI`에서 `GamePlay` 계층을 참조하려고 하면 **순환 참조 문제**가 발생합니다.
+- 이러한 문제를 해결하자고 `Contracts` 계층을 도입하였습니다.
+- 예를들면 `UI` 계층의 `UI.PurchaseTowerViewModel`에서 `GamePlay.Serivece`의 `TryPurchase`를 호출 하고자합니다.
+- `Interface`를 `Contracts` 계층에 구현하여 `Contracts.ITowerPurchaseService` GamePlay의 `GamePlay.TowerPurchaseService`를 Bind하여 사용합니다.
+
+2. **예상되는 결과**
+- 순환 참조 오류 제거
+- UI 계층은 인터페이스만 의존하여 직접 참조 없이 서비스 호출
+- (단점) 설계마다 Bind 해야 하는 불편함
+3. **Ex)**
+``` C#
+// Contracts
+public interface ITowerPurchaseService {
+    bool TryPurchase();
+}
+
+// GamePlay
+public class TowerPurchaseService : ITowerPurchaseService { … }
+
+// UI
+[Inject] ITowerPurchaseService _svc;
+
+// Installer
+Container.Bind<ITowerPurchaseService>().To<TowerPurchaseService>() 로 런타임 Bind
 ```
