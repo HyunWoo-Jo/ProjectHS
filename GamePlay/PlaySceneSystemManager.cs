@@ -6,6 +6,7 @@ using System;
 using UI;
 using UnityEngine.Assertions;
 using CustomUtility;
+using Contracts;
 namespace GamePlay
 {
     /// <summary>
@@ -33,12 +34,9 @@ namespace GamePlay
 
         public Vector2Int _mapSize = new Vector2Int(10, 10); // 임시 맵 사이즈
 
-        /////// viewModel
-        [Inject] private PurchaseTowerViewModel _purchaseTowerViewModel;
-
 
         /// Model
-        [Inject] private PurchaseTowerModel _purchaseTowerModel; // 타워 구매 비용 모델
+        [Inject] private TowerPurchaseModel _towerPurchaseModel; // 타워 구매 비용 모델
         [Inject] private GoldModel _goldModel; // 골드 모델
         [Inject] private ExpModel _expModel; // 경험치 모델
         [Inject] private HpModel _hpModel; // hp 모델
@@ -46,9 +44,14 @@ namespace GamePlay
         [SerializeField] private GoldDropper _goldDropper;
 
         // Policy
-        [Inject] private GoldPolicy _goldPolicy;
-        [Inject] private HpPolicy _hpPolicy;
-        [Inject] private ExpPolicy _expPolicy;
+        [Inject] private IGoldPolicy _goldPolicy;
+        [Inject] private IHpPolicy _hpPolicy;
+        [Inject] private IExpPolicy _expPolicy;
+        [Inject] private ITowerPricePolicy _towerPolicy;
+
+        // Service
+        [Inject] private ITowerPurchaseService _towerPurchaseService;
+
         private void Awake() {
 #if UNITY_EDITOR
             Assert.IsNotNull(_goldDropper);
@@ -130,7 +133,6 @@ namespace GamePlay
             _mapSystem.SetPathStrategy(new SLinePathStrategy());
             _mapSystem.GenerateMap(_mapSize.x, _mapSize.y);
 
-            UIInit();     
         }
 
 
@@ -143,25 +145,16 @@ namespace GamePlay
         private void Start() {
             // 초기 골드 설정
             _goldModel.goldObservable.Value += _goldPolicy.GetPlayerStartGold();
+            // 초기 타워 가격 설정
+            _towerPurchaseModel.towerPriceObservable.Value = _towerPolicy.GetStartPrice();
+
             // 초기 HP 설정
             int startHp = _hpPolicy.GetStartPlayerHp();
             _hpModel.maxHpObservable.Value = startHp;
             _hpModel.curHpObservable.Value = startHp;
 
         }
-        // ui 초기화
-        private void UIInit() {
-            // 구매 버튼 기능 
-            _purchaseTowerViewModel.OnButtonClick += () => {
-                if(_purchaseTowerModel.towerPriceObservable.Value <= _goldModel.goldObservable.Value) { // 소유한 골드가 더 많을때 
-                    _goldModel.goldObservable.Value -= _purchaseTowerModel.towerPriceObservable.Value; // 골드 소모
-                    _purchaseTowerModel.towerPriceObservable.Value += 1; // 타워를 구매할 때 마다 비용 증가
-                    _towerSystem.AddTower();
-                }
-                
-            };
-            
-        }
+ 
 
 
     }

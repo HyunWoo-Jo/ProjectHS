@@ -11,9 +11,9 @@ using System.Runtime.CompilerServices;
 // Auto Generated Code
 namespace UI
 {
-    public class PurchaseTowerView : MonoBehaviour
+    public class TowerPurchaseView : MonoBehaviour
     {
-        [Inject] private PurchaseTowerViewModel _viewModel;
+        [Inject] private TowerPurchaseViewModel _viewModel;
         [SerializeField] private EventTrigger _button;
         [SerializeField] private TextMeshProUGUI _priceText;
         private void Awake() {
@@ -48,7 +48,15 @@ namespace UI
         // your logic here
 
         private void ButtonInit() {
-            _button.AddTrigger(EventTriggerType.PointerClick, _viewModel.ButtonClick, GetType().Name, nameof(ButtonInit));
+            _button.AddTrigger<bool>(EventTriggerType.PointerClick, _viewModel.PurchaseButtonClick, OnPurchaseButton, GetType().Name, nameof(ButtonInit));
+        }
+
+        private void OnPurchaseButton(bool isSuccess) {
+            if (isSuccess) { // 구매 성공 UI 이벤트
+
+            } else { // 구매 실패 UI 이벤트
+
+            }
         }
 
     }

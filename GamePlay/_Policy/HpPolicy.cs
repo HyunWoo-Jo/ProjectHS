@@ -5,7 +5,7 @@ namespace GamePlay
     /// <summary>
     /// HP Policy를 한곳에서 관리
     /// </summary>
-    public class HpPolicy
+    public class HpPolicy : IHpPolicy
     {
         private IGlobalUpgradeRepository _globalUpgradeRepo;
 
@@ -16,11 +16,11 @@ namespace GamePlay
         }
 
         // 적이 최종 지점에 도달했을때 패널티
-        public virtual int CalculateHpPenaltyOnLeak(EnemyData enemyData) {
+        public int CalculateHpPenaltyOnLeak(EnemyData enemyData) {
             return 1;
         }
 
-        public virtual int GetStartPlayerHp() {
+        public int GetStartPlayerHp() {
             return _StartPlayerHp + _globalUpgradeRepo.GetAbilityValue(UpgradeType.Hp);
         }
     }

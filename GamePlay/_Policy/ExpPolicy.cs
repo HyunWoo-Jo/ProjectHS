@@ -2,11 +2,11 @@ using UnityEngine;
 using Data;
 namespace GamePlay
 {
-    public class ExpPolicy
+    public class ExpPolicy : IExpPolicy
     {
         private const float _StartPlayerExp = 0;
 
-        public virtual float CalculateKillExperience(EnemyData enemyData) {
+        public float CalculateKillExperience(EnemyData enemyData) {
             return 1;
         }
 
