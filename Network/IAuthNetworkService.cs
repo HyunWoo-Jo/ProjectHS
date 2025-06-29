@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Network
 {
-    public interface IAuthService
+    public interface IAuthNetworkService
     {
         string GetToken();
         string GetUID();

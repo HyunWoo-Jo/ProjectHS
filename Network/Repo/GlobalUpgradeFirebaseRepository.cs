@@ -13,7 +13,7 @@ namespace Network
     public class GlobalUpgradeFirebaseRepository : IGlobalUpgradeRepository
     {
         private UpgradeModel _model;
-        [Inject] private IUpgradeService _upgradeService;
+        [Inject] private IGlobalUpgradeNetworkService _upgradeService;
         [Inject] private GlobalUpgradeDataSO _tableSO;
         private event Action _OnValueChanged;
 

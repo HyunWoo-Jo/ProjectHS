@@ -7,7 +7,7 @@ namespace Network
 {
     public class CrystalFirebaseRepository : ICrystalRepository {
         private CrystalModel _model;
-        [Inject] private IUserService _userService;
+        [Inject] private IUserNetworkService _userService;
        
         public CrystalFirebaseRepository() {
             _model = new CrystalModel();

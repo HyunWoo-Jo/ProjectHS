@@ -13,7 +13,7 @@ namespace Network
     /// <summary>
     /// Network를 관리하는 클레스
     /// </summary>
-    public class NetworkManager : MonoBehaviour, IUserService, IUpgradeService, INetworkService
+    public class NetworkManager : MonoBehaviour, IUserNetworkService, IGlobalUpgradeNetworkService, INetworkService
     {
         [Inject] private INetworkLogic _networkLogic;
         private bool isClosed = false;
@@ -108,6 +108,7 @@ namespace Network
         public void SetUpgradeAsync<T>(string key, T value) {
             _networkLogic.SetUpgrade(key, value);
         }
+
         //////////////
     }
 }

@@ -7,9 +7,9 @@ using UnityEngine;
 namespace Network
 {
     /// <summary>
-    /// 업그레이드 정보를 가지고 오는 
+    /// 업그레이드 정보를 수정하는 서비스
     /// </summary>
-    public interface IUpgradeService
+    public interface IGlobalUpgradeNetworkService
     {
         UniTask GetAllUpgradeTableAsync(GlobalUpgradeDataSO tableSO);
         UniTask GetAllUpgradeLevelAsync(Action<Dictionary<string, int>> complate);

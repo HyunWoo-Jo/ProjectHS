@@ -1,4 +1,5 @@
 using Data;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -14,6 +15,9 @@ namespace UI
         [SerializeField] private TextMeshProUGUI _priceText;
         
         public UpgradeType GetUpgradeType() => _upgradeType;
+        
+        public EventTrigger GetEventTrigger() => _buyButton;
+        
         private void Awake() {
 #if UNITY_EDITOR
             Assert.IsNotNull(_valueText);
@@ -23,5 +27,7 @@ namespace UI
 
         public void SetValueText(string value) { _valueText.text = value; }
         public void SetPriceText(string priceText) { _priceText.text = priceText; }
+
+        
     }
 }

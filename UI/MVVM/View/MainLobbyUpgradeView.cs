@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Data;
+using CustomUtility;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
@@ -24,6 +25,7 @@ namespace UI
             // 버튼 초기화
             _viewModel.OnDataChanged += UpdateUI;
 
+            ButtonInit();
             UpdateUI();
         }
 
@@ -38,6 +40,20 @@ namespace UI
 
         }
 #endif
+        // 초기화
+        private void ButtonInit() {
+            string className = GetType().Name;
+            string methodName = nameof(ButtonInit);
+            foreach (var slot in _slots) {
+                // 버튼에 기능 추가
+                var entTrigger = slot.GetEventTrigger();
+                entTrigger.AddTrigger(UnityEngine.EventSystems.EventTriggerType.PointerClick, () => {
+                    // 클릭했을때 업그레이드 구매 시도
+                    _viewModel.TryPurchase(slot.GetUpgradeType());
+                }, className, methodName);
+            }
+        }
+
         // UI 갱신
         private async void UpdateUI() {
             await UniTask.SwitchToMainThread(); // 메인쓰레드로 전환

@@ -4,10 +4,13 @@ using System;
 using Data;
 using System.Diagnostics;
 using CustomUtility;
+using Contracts;
 namespace UI
 {
     public class MainLobbyUpgradeViewModel : IInitializable, IDisposable {
         [Inject] private IGlobalUpgradeRepository _repo;
+        [Inject] private IGlobalUpgradePurchaseService _purchaseService;
+
         public event Action OnDataChanged; // 데이터가 변경될떄 호출될 액션 (상황에 맞게 변수명을 변경해서 사용)
 
         /// <summary>
@@ -26,6 +29,10 @@ namespace UI
         }
         public int GetAbilityValue(UpgradeType type) {
             return _repo.GetAbilityValue(type);
+        }
+
+        public bool TryPurchase(UpgradeType type) {
+            return _purchaseService.TryPurchase(type);
         }
 
             

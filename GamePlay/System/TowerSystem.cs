@@ -121,6 +121,7 @@ namespace GamePlay
         }
 
         // 포인터가 Up 되었을때 호출
+        // 포인터 방향에서 Tower의 위치가 변경이 될 수 있도록 설정
         public void OnPointUp() {
             if (_seletedTower != null) {
                 // 배치 

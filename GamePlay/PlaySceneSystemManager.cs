@@ -100,6 +100,7 @@ namespace GamePlay
             _stageSystem.SetStageTypeStrategy(new StandardStageTypeStrategy()); // 일반 모드로 스테이지를 선택하도록 설정
             
             // WaveSystem
+            // 맵이 변경되면 Spawn 장소도 변경되도록 변경
             _mapSystem.OnMapChanged += () => {
                 _waveSystem.SetSpawnPosition(_mapSystem.GetPath().First());
             };
@@ -121,7 +122,10 @@ namespace GamePlay
 
 
             // TowerSystem
+            // Ray에 Tower가 충돌했을때
             _inputSystem.OnRayHitEvent += _towerSystem.SelectTower;
+            // Up Event가 발생했을때
+            
             _inputSystem.OnUpPointEvent += _towerSystem.OnPointUp;
 
             //////////// Map System
@@ -136,13 +140,9 @@ namespace GamePlay
         }
 
 
-        private void EnemyDied(EnemyData enemyData) {
-            _goldDropper.SpawnAndMoveToTarget(enemyData);
-        }
-
-
-
         private void Start() {
+            // 초기화
+            
             // 초기 골드 설정
             _goldModel.goldObservable.Value += _goldPolicy.GetPlayerStartGold();
             // 초기 타워 가격 설정

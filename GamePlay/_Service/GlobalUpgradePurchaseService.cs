@@ -1,0 +1,27 @@
+using UnityEngine;
+using Contracts;
+using Network;
+using Zenject;
+using Data;
+namespace GamePlay
+{
+    public class GlobalUpgradePurchaseService : IGlobalUpgradePurchaseService 
+    {
+        [Inject] private IGlobalUpgradeNetworkService _upgradeService;
+        [Inject] private IGlobalUpgradeRepository _globalUpgradeRepo;
+        [Inject] private ICrystalRepository _crystalRepo;
+        public bool TryPurchase(UpgradeType type) {
+            int price = _globalUpgradeRepo.GetPrice(type);
+            int curCristal = _crystalRepo.GetValue();
+            if (price <= curCristal) {
+                curCristal -= price;
+
+                _crystalRepo.SetValue(curCristal);
+                int level = _globalUpgradeRepo.GetLevelLocal(type);
+                _globalUpgradeRepo.SetLevel(type, level + 1);
+                return true;
+            }
+            return false;     
+        }
+    }
+}
