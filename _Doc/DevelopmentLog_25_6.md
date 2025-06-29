@@ -137,16 +137,16 @@ UserData갱신 --> 다음씬으로이동
 - `PlaySceneInstaller`에서 Bind를 하여 관리합니다. (PlayScene에서만 사용)
 3. **Ex)**
 ```C#
-public class GoldPolicy
+public interface IGoldPolicy
 {
-  public virtual int CalculateKillReward(EnemyData enemyData) {
-    return 1;
-  }
-
-  public virtual int GetPlayerStartGold() {
-    return _DefaultStartGold + _globalUpgradeRepo.GetAbilityValue(UpgradeType.InitGold); 
-  }
+    // enemy Kill했을때 골드 보상
+    public int CalculateKillReward(EnemyData enemyData);
+    // 시작 골드
+    public int GetPlayerStartGold();
 }
+// 구현부
+public class GoldPolicy : IGoldPolicy
+...
 ```
 ---
 #### 2025.06.28
