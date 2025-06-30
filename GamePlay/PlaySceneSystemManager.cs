@@ -126,7 +126,7 @@ namespace GamePlay
             _inputSystem.OnRayHitEvent += _towerSystem.SelectTower;
             // Up Event가 발생했을때
             
-            _inputSystem.OnUpPointEvent += _towerSystem.OnPointUp;
+            _inputSystem.OnUpPointEvent += _towerSystem.OnEndDrag;
 
             //////////// Map System
             //맵 생성

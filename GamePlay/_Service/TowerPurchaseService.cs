@@ -13,10 +13,13 @@ namespace GamePlay
         public bool TryPurchase() { // 타워 구매 시도
             int cost = _pricePolicy.GetCurrentPrice();
             if (_gold.goldObservable.Value < cost) return false;
-            _gold.goldObservable.Value -= cost;
-            _towerSystem.AddTower();
-            _pricePolicy.AdvancePrice();
-            return true;
+            if (_towerSystem.TryAddTower()) { // 구매 성공시 
+                _gold.goldObservable.Value -= cost;
+                _pricePolicy.AdvancePrice();
+                return true;
+            }
+            
+            return false;
         }
     }
 }

@@ -7,6 +7,7 @@ using UnityEditor.Graphs;
 using Unity.Mathematics;
 using CustomUtility;
 using ModestTree;
+using System;
 namespace GamePlay
 {
     [DefaultExecutionOrder(80)]
@@ -16,11 +17,11 @@ namespace GamePlay
         [Inject] private DataManager _dataManager;
         [Inject] private DiContainer _container;
         private Dictionary<string, GameObject> _towerPrefabDictionary = new();
-        private readonly string _towerLabel = "Tower";
+        private readonly string _towerLabel = "Tower"; // Addressable Label
 
         [SerializeField] private float3 _towerOffset = new Vector3(0f, 0.75f, 0f);
 
-        private List<string> _towerKeyList = new List<string> {
+        private List<string> _towerKeyList = new List<string> { // Addressable Key
             "ArcherTower",
             "MageTower"
         };
@@ -47,10 +48,11 @@ namespace GamePlay
         }
         // tower 생성
         // 성공 true 실패 false
-        public bool AddTower() {
+        public bool TryAddTower() {
             // 비어있는 슬로 확인
             var slotList = _gameDataHub.GetSlotList();
             int index = -1;
+            // 비어있는 슬롯 검색
             foreach (var slotData in slotList) {
                 ++index;
                 if (slotData.slotState == SlotState.PlaceAble && !slotData.IsUsed()) { // 사용 가능, 비어있는 슬롯이면
@@ -67,12 +69,9 @@ namespace GamePlay
             var towerObj = GameObject.Instantiate(towerPrefab); // 생성
             _container.InjectGameObject(towerObj);
 
-            TowerBase towerBase = towerObj.GetComponent<TowerBase>();
-
-            // 배치
-            slotList[index].SetTowerData(towerBase.GetTowerData());
-            towerBase.transform.position = _gameDataHub.GetIndexToWorldPosition(index) + _towerOffset;
-            towerBase.index = index;
+            // 등록
+            RegisterTowerToSlot(towerObj, index);
+ 
             return true;
         }
 
@@ -81,15 +80,13 @@ namespace GamePlay
         /// </summary>
         public void SwapTower(int index1, int index2) {
             var slotList = _gameDataHub.GetSlotList();
+            // Get
             slotList[index1].GetTowerData(out var towerData1);
             slotList[index2].GetTowerData(out var towerData2);
-            // Swap
-            slotList[index1].SetTowerData(towerData2);
-            slotList[index2].SetTowerData(towerData1);
 
-            // position
-            towerData1.towerObj.transform.position = towerData2.towerObj.transform.position;
-            towerData2.towerObj.transform.position = _gameDataHub.GetIndexToWorldPosition(index1);
+            // Swap
+            RegisterTowerToSlot(towerData1.towerObj, index2);
+            RegisterTowerToSlot(towerData2.towerObj, index1);
         }
 
         public void RemoveTower(int index) {
@@ -98,58 +95,127 @@ namespace GamePlay
 
         // 타워를 선택 했을때 호출됨
         public void SelectTower(GameObject hitObject) {
-            _seletedTower = hitObject.GetComponent<TowerBase>();
+            // 선택한 타워 위치 변경
+            UpdateDragTowerPosition();
+            // shadow 표시
+            UpdateTowerShadow();
+        }
+
+        // 포인터가 Up 되었을때 호출
+        // 포인터 방향에서 Tower의 위치가 변경이 될 수 있도록 설정
+        public void OnEndDrag() {
+            if (_seletedTower != null) {
+                // 배치 
+                int index = PositionToIndex(_seletedTower.transform.position);
+                bool isSwap = false; // swap을 했나 확인용
+                if (index != -1) {
+                    // 새로운 슬롯 상태 확인
+                    SlotData slotData = _gameDataHub.GetSlotData(index);
+                    // 이용 가능한 슬롯에, 사용중이 아닐 경우
+                    if (slotData.slotState == SlotState.PlaceAble && !slotData.IsUsed()) {
+                        RelocateTower(index);
+                    } else if (slotData.slotState == SlotState.PlaceAble && slotData.IsUsed()) {
+                        SwapTower(index, _seletedTower.index); // 타워 위치 변경
+                        isSwap = true;
+                    } 
+                }
+                if (!isSwap) _seletedTower.transform.position = IndexToTowerPosition(_seletedTower.index);
+           
+                // 선택 타워 정보 제거
+                _seletedTower.isStop = false;
+                _seletedTower = null;
+                
+                // 그림자 제거
+                _towerShadowObjRenderer.gameObject.SetActive(false);
+                _isOnShadow = false;
+            }
+        }
+        #region private
+        /// <summary>
+        /// Drag 포지션 변경
+        /// </summary>
+        private void UpdateDragTowerPosition() {
             _seletedTower.isStop = true;
             Vector3 newPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             newPos.z = 0;
-            hitObject.transform.position = newPos;
-            // shadow 표시
+            _seletedTower.transform.position = newPos;
+        }
+        /// <summary>
+        /// Tower 그림자 표시
+        /// </summary>
+        private void UpdateTowerShadow() {
+            // shadow 표시 
             if (!_isOnShadow) {
+                // Sprite 갱신
                 _towerShadowObjRenderer.sprite = _seletedTower.GetTowerBaseSprite();
                 _isOnShadow = true;
             }
-            Vector2Int grid = GridUtility.WorldToGridPosition(newPos);
-            int index = _gameDataHub.GetIndex(grid.x, grid.y);
+            // 위치 정보를 index 정보로 변환
+            int index = PositionToIndex(_seletedTower.transform.position);
             var slotList = _gameDataHub.GetSlotList();
+
+            // 사용 가능한 슬롯에만 생성
             if (index != -1 && slotList[index].slotState == SlotState.PlaceAble) {
                 _towerShadowObjRenderer.gameObject.SetActive(true);
                 float3 shadowPos = _gameDataHub.GetIndexToWorldPosition(index) + _towerOffset;
+                // 그림자 생성
                 _towerShadowObjRenderer.transform.position = shadowPos;
             } else {
                 _towerShadowObjRenderer.gameObject.SetActive(false);
             }
         }
 
-        // 포인터가 Up 되었을때 호출
-        // 포인터 방향에서 Tower의 위치가 변경이 될 수 있도록 설정
-        public void OnPointUp() {
-            if (_seletedTower != null) {
-                // 배치 
-                Vector2Int grid = GridUtility.WorldToGridPosition(_seletedTower.transform.position);
-                int index = _gameDataHub.GetIndex(grid.x, grid.y);
-                float3 newPos = _gameDataHub.GetIndexToWorldPosition(_seletedTower.index) + _towerOffset;
-                if (index != -1) {
-                    // 새로운 슬롯 상태 확인
-                    var slotList = _gameDataHub.GetSlotList();
-                    SlotData slotData = slotList[index];
-                    if (slotData.slotState == SlotState.PlaceAble && !slotData.IsUsed()) { // 이용 가능한 슬롯에, 사용중이 아닐 경우
-                        newPos = _gameDataHub.GetIndexToWorldPosition(index) + _towerOffset;
-                        // 인덱스 변경
-                        slotList[_seletedTower.index].SetTowerData(null);
-                        _seletedTower.index = index;
-                        slotData.SetTowerData(_seletedTower.GetTowerData());
-                    } else if (slotData.slotState == SlotState.PlaceAble && slotData.IsUsed()) {// 이용 가능한 슬롯에, 사용중
-                        SwapTower(index, _seletedTower.index); // 타워 위치 변경
-                    }
-                }
-                _seletedTower.transform.position = newPos;
-                // 설정
-                _seletedTower.isStop = false;
-                _seletedTower = null;
-
-                _towerShadowObjRenderer.gameObject.SetActive(false);
-                _isOnShadow = false;
-            }
+        /// <summary>
+        /// 선택한 타워의 위치 변경
+        /// </summary>
+        private void RelocateTower(int index) {
+            var slotList = _gameDataHub.GetSlotList();
+            // 기존 슬롯 제거
+            slotList[_seletedTower.index].SetTowerData(null);
+            // 타워 데이터 셋
+            RegisterTowerToSlot(_seletedTower, index);
         }
+
+        /// <summary>
+        /// 타워 데이터를 Slot에 등록
+        /// </summary>
+        private void RegisterTowerToSlot(GameObject towerObj, int index) {
+            TowerBase towerBase = towerObj.GetComponent<TowerBase>();
+            RegisterTowerToSlot(towerBase, index);
+        }
+        /// <summary>
+        /// 타워 데이터를 Slot에 등록
+        /// </summary>
+        private void RegisterTowerToSlot(TowerBase towerBase, int index) {
+            SlotData slotData = _gameDataHub.GetSlotData(index);
+            // 배치
+            slotData.SetTowerData(towerBase.GetTowerData());
+            towerBase.transform.position = IndexToTowerPosition(index);
+            towerBase.index = index;
+        }
+
+
+        /// <summary>
+        /// Position을 index로 변환
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns> 실패시 -1을 반환 </returns>
+        private int PositionToIndex(Vector3 pos) {
+            Vector2Int grid = GridUtility.WorldToGridPosition(pos);
+            return _gameDataHub.GetIndex(grid.x, grid.y);
+        }
+
+        /// <summary>
+        /// Index 정보를 Tower Position으로 변경
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        private float3 IndexToTowerPosition(int index) {
+            return _gameDataHub.GetIndexToWorldPosition(index) + _towerOffset;
+        }
+
+
+
+        #endregion
     }
 }

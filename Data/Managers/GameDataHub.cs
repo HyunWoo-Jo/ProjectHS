@@ -123,6 +123,8 @@ namespace Data
         }
         public List<SlotData> GetSlotList() => _slotDataList;
 
+        public SlotData GetSlotData(int index) => _slotDataList[index];
+
         ~GameDataHub() { // ¼Ò¸ê
             if (_enemiesData.IsCreated) _enemiesData.Dispose();
             _towerDataList = null;
