@@ -7,6 +7,8 @@
 - [2025.06.23 / 초기화 씬 구성](#초기화-씬-구성)
 - [2025.06.25 / Policy 관리](#policy-관리)
 - [2025.06.28 / Contracts 계층 도입](#contracts-계층-도입)
+#### 25.07
+- [2025.07.2 / Upgrade 구조](#upgrade-구조)
 ---
 #### 2025.06.17
 ### Upgrade System 구조 변경
@@ -178,3 +180,105 @@ public class TowerPurchaseService : ITowerPurchaseService { … }
 // Installer
 Container.Bind<ITowerPurchaseService>().To<TowerPurchaseService>() 로 런타임 Bind
 ```
+---
+#### 2025.07.02
+### Upgrade 구조
+1. **설계 배경** </br>
+Upgrade 기능은 성장의 핵심 축으로, 다양한 업그레이드를 카드 형태로 선택하고, 조건에 따라 해금 되도록 설계를 했습니다. </br>
+핵심 구조는 `UpgradeDataSO`, `UI`로 나눠집니다. </br>
+2. **`UpgradeDataSO` 의 구조** </br>
+업그레이드의 실체는 `UpgradeDataSO`이며, 해금 조건(`UnlockModifier`)과 효과 적용(`UpgradeModifier`)을 각각 전략 객체로 위임하여 유연성과 확장성을 확보했습니다. </br>  
+전략은 `ScriptableObject` 기반으로 제작되어 인스펙터에서 쉽게 조합 가능하며, 조건 추가/변경 시 코드 수정 없이 SO만 교체하면 되도록 설계했습니다. </br>
+```mermaid
+classDiagram
+class Rarity {
+    <<Enum>>
+    Common,
+    Rare,
+    ...
+}
+
+class UpgradeDataSO {
+  + rarity : Rarity
+  + upgradeSprite : Sprite
+  + name : string
+  + descrition : string
+  - List&lt;UnlockModifier&gt;
+  - List&lt;UpgradeModifier&gt;
+  + CheckUnlock() bool 
+  + ApplyUpgrade() 
+}
+
+class UnlockModifier{
+  + value
+  - UnlockStrategyBaseSO
+  + IsSatisfied() bool
+}
+
+class UpgradeModifier {
+  + value
+  - UpgradeStrategyBaseSO
+  + Apply()
+}
+
+class UnlockStrategyBaseSO {
+  <<Abstruct>>
+  + IsSatisfied(value) bool
+}
+class UpgradeStrategyBaseSO{
+  <<Abstruct>>
+  + Apply(value)
+}
+class ScriptableObject {
+  <<UnityEngine>>
+}
+
+UpgradeDataSO --> UnlockModifier : 조건 체크
+UpgradeDataSO --> UpgradeModifier : 업그레이드 적용
+UnlockModifier --> UnlockStrategyBaseSO
+ScriptableObject <|-- UnlockStrategyBaseSO
+ScriptableObject <|-- UpgradeStrategyBaseSO
+
+UpgradeModifier --> UpgradeStrategyBaseSO
+
+Rarity <-- UpgradeDataSO
+```
+
+3. **Upgrade UI 상호 작용** </br>
+UI는 `View` ↔ `ViewModel` ↔ `Model`,`Serivce` 구조를 따릅니다. </br>
+업그레이드 선택/리롤은 버튼 입력을 통해 `ViewModel`에 행동이 위임되며</br> 
+`ViewModel`은 `SelectedUpgradeModel`과 `IUpgradeService`에 요청을 분리하여 전달합니다. </br>
+```mermaid
+classDiagram
+class IUpgradeService {
+  <<interface>>
+  + Reroll(index)
+  + ApplyUpgrade(index)
+}
+class UpgradeSystem {
+  - SelectedUpgradeModel // Inject
+  + ShowRandomUpgradeSelection()
+  + Reroll(index)
+  + ApplyUpgrade(index)
+}
+class SelectedUpgradeModel{
+  + ObservableValue&lt;UpgradeDataSO&gt;
+}
+class UpgradeViewModel{
+  - SelectedUpgradeModel // Inject
+  + OnDataChanged : Action&lt;int&gt;
+  + GetUpgradeData(index) UpgradeDataSO
+  + Reroll(index)
+}
+class UpgradeView {
+  - UpgradeViewModel // Inject
+  - UpdateUI(index)
+  + ButtonLogics(index)
+}
+IUpgradeService <|-- UpgradeSystem
+UpgradeSystem --> SelectedUpgradeModel : 데이터 갱신
+UpgradeViewModel --> SelectedUpgradeModel : 데이터 변경 구독
+UpgradeViewModel --> IUpgradeService : Reroll 요청
+UpgradeView --> UpgradeViewModel : 구독, 버튼 event 요청
+```
+
