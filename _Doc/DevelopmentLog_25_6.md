@@ -3,115 +3,12 @@
 #### 25.04 ~ 05
 - [4~5월 개발 일지](/_Doc/DevelopmentLog.md)
 #### 25.06
-- [2025.06.17 / Upgrade System 구조 변경](#upgrade-system-구조-변경)
 - [2025.06.23 / 초기화 씬 구성](#초기화-씬-구성)
 - [2025.06.25 / Policy 관리](#policy-관리)
 - [2025.06.28 / Contracts 계층 도입](#contracts-계층-도입)
+- [2025.06.29 / Global Upgrade 구조](#global-upgrade-구조)
 #### 25.07
 - [2025.07.2 / Upgrade 구조](#upgrade-구조)
----
-#### 2025.06.17
-### Upgrade System 구조 변경
-1. **설계 내용**
-  - **확장성** 조건 로직을 UnlockStrategySO로 모듈화로 새 조건 추가 시 코드 수정 없이 SO만 생성
-  - **수정 자율성** UpgradeDataSO와 Unlocked(조건), Execution(실행) 리스트를 인스펙터에서 조합
-  - **테스트** Unlock 로직을 단위 테스트 가능
-2. **데이터 흐름**
-- `UpgradeSystem.OnUpgradeUI` 호출
-- `_upgradeDictionary`에서 후보 `UpgradeDataSO` 로드
-- 각 `UpgradeDataSO.IsUnlocked()` 호출 → 잠금/해금 필터링
-- `SelectUpgrade(count, unlockedList)` 로 UI에 표시할 카드 서브셋 결정
-- 각 카드에 `UpgradeCard_UI.SetUpgradeData` 바인딩 → UI 렌더링
-- 플레이어 클릭 시 `UpgradeExecutionSO`의 `Execute` 적용
-3. **Global 데이터 적용**
-- Global 데이터의 경우 게임을 시작하면 변화 없이 항상 적용
-- 게임 시작시 `UpgradeSystem`에서 `IGlobalUpgradeRepo`를 통해 데이터를 받아와 적용
-
-
-3. **Class Diagram**
-```mermaid
-classDiagram
-class ScriptableObject {
-  <<UnityEngine>>
-}
-%% 조건을 정의
-class UnlockStrategySO {
-    <<Abstruct>> 
-    + IsUnlocked()
-}
-
-class UpgradeDataSO {
-  + towerStat
-  + upgradeType
-  - UnlockStrategy_List
-  - ExecutionBinding_List
-  ...
-  + IsUnlocked() bool
-}
-
-class UpgradeCard_UI{
-  - EventTrigger
-  - Image
-  - nameText
-  - descriptionText
-  + SetUpgradeData(UpgradeDataSO)
-}
-
-class UpgradeSystem {
-  - UpgradeData_Dictionary
-  + FindUnlockedUpgrade() // 해제된 업그레이드 목록 검색
-  + SeleteUpgrade(int count, UpgradeList) // 사용 가능한 업그레이드 목록에서 count 만큼 선택
-  + OnUpgradeUI() // UI 출력  
-}
-UpgradeDataSO -- > UnlockStrategySO
-ScriptableObject <|-- UnlockStrategySO
-ScriptableObject <|-- UpgradeDataSO
-
-UpgradeSystem --> UpgradeDataSO
-UpgradeSystem --> UpgradeCard_UI : UpgradeDataSO 전달
-
-class UpgradeExecutionSO {
-    <<Abstract>>
-    + Execute(tower : TowerBase, value : ValueVariant)
-}
-
-class ExecutionBinding {
-    <<struct>>
-    + execution : UpgradeExecutionSO
-    + value : ValueVariant
-}
-
-class ValueVariant {
-    <<struct>>
-    + type : VarType
-    + f : float
-    + i : int
-    + s : string
-    + Get\<T>() : T
-}
-
-class VarType {
-    <<enum>>
-    Float
-    Int
-    String
-}
-
-ScriptableObject <|-- UpgradeExecutionSO
-UpgradeDataSO --> ExecutionBinding
-ExecutionBinding --> UpgradeExecutionSO
-ExecutionBinding --> ValueVariant
-ValueVariant --> VarType
-
-%% Golbal
-class IGlobalUpgradeRepo {  
-    <<Interface>>
-    + GetUpgradeData(key) data  
-    + SetUpgradeData(key, data)  
-    + GetUpgradeData(key)  
-}
-UpgradeSystem --> IGlobalUpgradeRepo
-```
 ---
 #### 2025.06.23
 ### 초기화 씬 구성
@@ -181,11 +78,121 @@ public class TowerPurchaseService : ITowerPurchaseService { … }
 Container.Bind<ITowerPurchaseService>().To<TowerPurchaseService>() 로 런타임 Bind
 ```
 ---
+#### 2025.06.29
+### Global Upgrade 구조
+1. **설계 내용** </br>
+Global Upgrade는 게임 전체에 적용되는 업그레이드 시스템입니다. </br>  
+기본적으로 다음과 같은 특성을 고려하여 설계되었습니다: 
+- 글로벌 업그레이드는 **게임 플레이 도중 변경되지 않으며**, 게임 시작 시점에만 적용됨 
+- 데이터는 `IGlobalUpgradeRepository`를 통해 외부(Firebase 등)에서 로드
+- 실제 적용은 게임 시작 시, **초기 상태를 설정하는 Policy 계층**에서 수행
+- 적용 대상은 플레이어 HP, 시작 골드, 추가 경험치 등의 게임 초기 파라미터
+
+2. **Global Upgrade 적용 구조** </br>
+PlaySceneSystemManager는 게임 시작 시점에 Policy 객체를 통해 초기값을 조회 </br>
+Policy 객체는 IGlobalUpgradeRepository를 통해 업그레이드 수치를 간접적으로 참조 </br>
+로직은 테스트, 난이도 변경 등 바꿀수 있는 가능성을 고려하여 interface 중심 구조로 Bind를 통하여 쉽게 교체 가능하도록 설계</br>
+```mermaid
+classDiagram
+
+class IGlobalUpgradeRepository {
+  <<interface>>
+  + GetDataLogics(GlobalUpgradeType) Data
+}
+class IHpPolicy {
+  <<interface>>
+  + GetStartPlayerHp()
+}
+class HpPolicy{
+  - IGlobalUpgradeRepository // inject
+  + GetStartPlayerHP() int
+}
+
+class IGoldPolicy {
+    <<interface>>
+  + GetPlayerStartGold() int
+}
+
+class GoldPolicy{
+  - IGlobalUpgradeRepository // inject 
+  + GetPlayerStartGold() int
+}
+
+IHpPolicy <|-- HpPolicy
+HpPolicy --> IGlobalUpgradeRepository : Upgrade 정보 요청
+
+IGoldPolicy <|-- GoldPolicy
+GoldPolicy --> IGlobalUpgradeRepository : Upgrade 정보 요청
+
+class PlaySceneSystemManager{
+  - IGoldPolicy // inject
+  - IHpPolicy // inject
+  - Initialize() 
+}
+PlaySceneSystemManager --> IGoldPolicy : 초기화 정보 요청
+PlaySceneSystemManager --> IHpPolicy : 초기화 정보 요청
+
+```
+3. **UI** </br>
+업그레이드 UI는 메인 로비에 위치하며, 유저가 직접 업그레이드를 구매하거나 상태를 확인할 수 있도록 구성되어 있습니다.</br>
+
+- **UI 흐름 요약:**
+- View → ViewModel: 버튼 클릭 이벤트, UI 갱신 요청
+- ViewModel → Service/Repo: 구매 요청 또는 데이터 요청
+- Service → Repo: 크리스탈 확인 후 업그레이드 수치 갱신
+- OnDataChanged 이벤트 → View: UI 반영
+```mermaid
+classDiagram
+class MainLobbyUpgradeView {
+    - MainLobbyUpgradeViewModel // inject
+    - UpdataUI()
+}
+class MainLobbyUpgradeViewModel {
+    - IGlobalUpgradeRepository // inject
+    - IGlobalUpgradePurchaseService // inject
+    - OnDataChagned : Action
+}
+class IGlobalUpgradeRepository{
+    <<interface>>
+    + GetDataLogics() Data
+    + SetLogics()
+}
+class IGlobalUpgradePurchaseService {
+    <<interface>>
+    TryPurchase(GlobalUpgradeType) bool
+}
+class GlobalUpgradeFirebaseRepository {
+    + LoadData()
+    + GetDataLogics() Data
+    + SetLogics()
+}
+class GlobalUpgradePurchaseService {
+    - IGlobalUpgradeRepository // Inject
+    - ICrystalRepository // Inject
+    + TryPurchase(GlobalUpgradeType) bool
+}
+class ICrystalRepository {
+    <<interface>>
+    + GetValue() int
+    + SetValue(value)
+}
+MainLobbyUpgradeViewModel --> IGlobalUpgradeRepository : 데이터 요청, 변경 구독
+MainLobbyUpgradeViewModel --> IGlobalUpgradePurchaseService : 구매 요청
+MainLobbyUpgradeView --> MainLobbyUpgradeViewModel : 데이터 구독, 버튼 이벤트 요청
+IGlobalUpgradeRepository <|-- GlobalUpgradeFirebaseRepository
+IGlobalUpgradePurchaseService <|-- GlobalUpgradePurchaseService
+GlobalUpgradePurchaseService --> IGlobalUpgradeRepository : 데이터 저장 요청
+GlobalUpgradePurchaseService --> ICrystalRepository : 데이터 확인, 저장 요청
+```
+
+---
 #### 2025.07.02
 ### Upgrade 구조
 1. **설계 배경** </br>
 Upgrade 기능은 성장의 핵심 축으로, 다양한 업그레이드를 카드 형태로 선택하고, 조건에 따라 해금 되도록 설계를 했습니다. </br>
-핵심 구조는 `UpgradeDataSO`, `UI`로 나눠집니다. </br>
+핵심 구조는 `UpgradeDataSO` `UnlockStrategyBaseSO`(조건), `UpgradeStrategyBaseSO`(적용), `UI`로 나눠집니다. </br>
+- **확장성** - 조건 로직을 `UnlockStrategyBaseSO`, 적용 로직을 `UpgradeStrategyBaseSO`으로 모듈화 하여 확장성을 확보.
+- **수정 자율성** - `UpgradeDataSO`와 Unlocked(조건), Apply(적용) 리스트를 인스펙터에서 조합.
 2. **`UpgradeDataSO` 의 구조** </br>
 업그레이드의 실체는 `UpgradeDataSO`이며, 해금 조건(`UnlockModifier`)과 효과 적용(`UpgradeModifier`)을 각각 전략 객체로 위임하여 유연성과 확장성을 확보했습니다. </br>  
 전략은 `ScriptableObject` 기반으로 제작되어 인스펙터에서 쉽게 조합 가능하며, 조건 추가/변경 시 코드 수정 없이 SO만 교체하면 되도록 설계했습니다. </br>
