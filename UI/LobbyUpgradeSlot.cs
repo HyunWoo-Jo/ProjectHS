@@ -9,12 +9,12 @@ namespace UI
 {
     public class LobbyUpgradeSlot : MonoBehaviour
     {
-        [SerializeField] private UpgradeType _upgradeType;
+        [SerializeField] private GlobalUpgradeType _upgradeType;
         [SerializeField] private EventTrigger _buyButton;
         [SerializeField] private TextMeshProUGUI _valueText;
         [SerializeField] private TextMeshProUGUI _priceText;
         
-        public UpgradeType GetUpgradeType() => _upgradeType;
+        public GlobalUpgradeType GetUpgradeType() => _upgradeType;
         
         public EventTrigger GetEventTrigger() => _buyButton;
         

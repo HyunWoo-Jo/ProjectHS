@@ -23,45 +23,45 @@ namespace Data
         public GlobalUpgradeData Exp;
         private int _hash;
 
-        public int GetPriceIncrement(UpgradeType type) {
+        public int GetPriceIncrement(GlobalUpgradeType type) {
             switch (type) {
-                case UpgradeType.Power:
+                case GlobalUpgradeType.Power:
                 return Power.PriceIncrement;
 
-                case UpgradeType.InitGold:
+                case GlobalUpgradeType.InitGold:
                 return InitGold.PriceIncrement;
-                case UpgradeType.Hp:
+                case GlobalUpgradeType.Hp:
                 return HP.PriceIncrement;
-                case UpgradeType.Exp:
+                case GlobalUpgradeType.Exp:
                 return Exp.PriceIncrement;
             }
             return 0;
         }
-        public int GetStartPrice(UpgradeType type) {
+        public int GetStartPrice(GlobalUpgradeType type) {
             switch (type) {
-                case UpgradeType.Power:
+                case GlobalUpgradeType.Power:
                 return Power.StartPrice;
 
-                case UpgradeType.InitGold:
+                case GlobalUpgradeType.InitGold:
                 return InitGold.StartPrice;
-                case UpgradeType.Hp:
+                case GlobalUpgradeType.Hp:
                 return HP.StartPrice;
-                case UpgradeType.Exp:
+                case GlobalUpgradeType.Exp:
                 return Exp.StartPrice;
             }
             return 0;
         }
 
-        public int GetValueIncrement(UpgradeType type) {
+        public int GetValueIncrement(GlobalUpgradeType type) {
             switch (type) {
-                case UpgradeType.Power:
+                case GlobalUpgradeType.Power:
                 return Power.ValueIncrement;
 
-                case UpgradeType.InitGold:
+                case GlobalUpgradeType.InitGold:
                 return InitGold.ValueIncrement;
-                case UpgradeType.Hp:
+                case GlobalUpgradeType.Hp:
                 return HP.ValueIncrement;
-                case UpgradeType.Exp:
+                case GlobalUpgradeType.Exp:
                 return Exp.ValueIncrement;
             }
             return 0;

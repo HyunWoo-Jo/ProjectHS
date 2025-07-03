@@ -9,7 +9,7 @@ namespace Data
         public ObservableValue<int> levelObservable = new(1);
 
         private ObservableValue<float> _expObservable = new(0);
-        public ObservableValue<float> nextExpObservable = new(100);
+        public ObservableValue<float> nextExpObservable = new(10);
 
         /// <summary>
         /// 경험치를 증가 / 누적된 경험치가 다음 레벨 경험치를 초과하면 레벨업

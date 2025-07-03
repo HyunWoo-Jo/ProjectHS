@@ -21,7 +21,7 @@ namespace GamePlay
         }
 
         public int GetStartPlayerHp() {
-            return _StartPlayerHp + _globalUpgradeRepo.GetAbilityValue(UpgradeType.Hp);
+            return _StartPlayerHp + _globalUpgradeRepo.GetAbilityValue(GlobalUpgradeType.Hp);
         }
     }
 }

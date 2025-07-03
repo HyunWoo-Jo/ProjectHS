@@ -19,7 +19,7 @@ namespace GamePlay
         }
 
         public int GetPlayerStartGold() {
-            return _DefaultStartGold + _globalUpgradeRepo.GetAbilityValue(UpgradeType.InitGold); 
+            return _DefaultStartGold + _globalUpgradeRepo.GetAbilityValue(GlobalUpgradeType.InitGold); 
         }
     }
 }

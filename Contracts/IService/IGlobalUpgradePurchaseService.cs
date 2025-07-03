@@ -4,6 +4,6 @@ namespace Contracts
 {
     public interface IGlobalUpgradePurchaseService
     {
-        bool TryPurchase(UpgradeType type); // 업그레이드 구매 시도
+        bool TryPurchase(GlobalUpgradeType type); // 업그레이드 구매 시도
     }
 }

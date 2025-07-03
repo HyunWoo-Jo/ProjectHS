@@ -10,14 +10,16 @@ namespace Data
         public void SetTowerData(TowerData towerData) {
             this._towerData = towerData;
         }
-        public bool GetTowerData(out TowerData towerData) {
+        public bool TryGetTowerData(out TowerData towerData) {
             if (IsUsed()) {
                 towerData = _towerData;
                 return true;
             }
             towerData = null;
             return false;
-
+        }
+        public TowerData GetTowerData() {
+            return _towerData;
         }
 
         public bool IsUsed() {

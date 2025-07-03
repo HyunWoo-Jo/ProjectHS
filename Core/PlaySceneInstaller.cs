@@ -4,6 +4,7 @@ using Data;
 using GamePlay;
 using UI;
 using Contracts;
+using System.Linq;
 namespace Core
 {
     public class PlaySceneInstaller : MonoInstaller
@@ -25,16 +26,18 @@ namespace Core
             Container.Bind<GoldModel>().AsCached();
             Container.Bind<ExpModel>().AsCached();
             Container.Bind<HpModel>().AsCached();
+            Container.Bind<SelectedUpgradeModel>().AsCached();
 
             // System
-            Container.Bind<ScreenClickInputSystem>().FromComponentOn(_systemBase).AsCached();
-            Container.Bind<CameraSystem>().FromComponentOn(_systemBase).AsCached();
-            Container.Bind<MapSystem>().FromComponentOn(_systemBase).AsCached();
+            Container.BindInterfacesAndSelfTo<ScreenClickInputSystem>().FromComponentOn(_systemBase).AsCached();
+            Container.BindInterfacesAndSelfTo<CameraSystem>().FromComponentOn(_systemBase).AsCached();
+            Container.BindInterfacesAndSelfTo<MapSystem>().FromComponentOn(_systemBase).AsCached();
 
-            Container.Bind<StageSystem>().FromComponentOn(_systemBase).AsCached();
-            Container.Bind<TowerSystem>().FromComponentOn(_systemBase).AsCached();
-            Container.Bind<EnemySystem>().FromComponentOn(_systemBase).AsCached();
-            Container.Bind<WaveSystem>().FromComponentOn(_systemBase).AsCached();
+            Container.BindInterfacesAndSelfTo<StageSystem>().FromComponentOn(_systemBase).AsCached();
+            Container.BindInterfacesAndSelfTo<TowerSystem>().FromComponentOn(_systemBase).AsCached();
+            Container.BindInterfacesAndSelfTo<EnemySystem>().FromComponentOn(_systemBase).AsCached();
+            Container.BindInterfacesAndSelfTo<WaveSystem>().FromComponentOn(_systemBase).AsCached();
+            Container.BindInterfacesAndSelfTo<UpgradeSystem>().FromComponentOn(_systemBase).AsCached();
 
             // Policy
             Container.Bind<IGoldPolicy>().To<GoldPolicy>().AsCached();
@@ -52,10 +55,13 @@ namespace Core
             Container.BindInterfacesAndSelfTo<ExpViewModel>().AsCached();
             Container.BindInterfacesAndSelfTo<HpViewModel>().AsCached();
             Container.BindInterfacesAndSelfTo<PausePanelViewModel>().AsCached();
+            Container.BindInterfacesAndSelfTo<UpgradeViewModel>().AsSingle();
 
-            
 
-           
+            // So 의존 주입
+            Resources.LoadAll<UpgradeStrategyBaseSO>("UpgradeData").ToList().ForEach(Container.QueueForInject);
+            Resources.LoadAll<UnlockStrategyBaseSO>("UpgradeData").ToList().ForEach(Container.QueueForInject);
+
         }
     }
 }

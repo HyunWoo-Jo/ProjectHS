@@ -20,29 +20,29 @@ namespace UI
             OnDataChanged?.Invoke();
         }
 
-        public int GetPrice(UpgradeType type) {
+        public int GetPrice(GlobalUpgradeType type) {
             return _repo.GetPrice(type);
         }
 
-        public int GetLevel(UpgradeType type) {
+        public int GetLevel(GlobalUpgradeType type) {
             return _repo.GetLevelLocal(type);
         }
-        public int GetAbilityValue(UpgradeType type) {
+        public int GetAbilityValue(GlobalUpgradeType type) {
             return _repo.GetAbilityValue(type);
         }
 
-        public bool TryPurchase(UpgradeType type) {
+        public bool TryPurchase(GlobalUpgradeType type) {
             return _purchaseService.TryPurchase(type);
         }
 
             
         // Zenject에서 관리
         public void Initialize() {
-            _repo.AddChangedHandler(NotifyViewDataChanged);
+            _repo.AddChangedListener(NotifyViewDataChanged);
         }
         // Zenject에서 관리
         public void Dispose() {
-            _repo.AddChangedHandler(NotifyViewDataChanged);
+            _repo.AddChangedListener(NotifyViewDataChanged);
         }
     }
 } 

@@ -81,8 +81,8 @@ namespace GamePlay
         public void SwapTower(int index1, int index2) {
             var slotList = _gameDataHub.GetSlotList();
             // Get
-            slotList[index1].GetTowerData(out var towerData1);
-            slotList[index2].GetTowerData(out var towerData2);
+            var towerData1 = slotList[index1].GetTowerData();
+            var towerData2 = slotList[index2].GetTowerData();
 
             // Swap
             RegisterTowerToSlot(towerData1.towerObj, index2);
@@ -95,6 +95,10 @@ namespace GamePlay
 
         // 타워를 선택 했을때 호출됨
         public void SelectTower(GameObject hitObject) {
+            if (_seletedTower == null || hitObject.GetInstanceID() != _seletedTower.GetInstanceID()) {
+                _seletedTower = hitObject.GetComponent<TowerBase>();
+            }
+            if (_seletedTower == null) return;
             // 선택한 타워 위치 변경
             UpdateDragTowerPosition();
             // shadow 표시

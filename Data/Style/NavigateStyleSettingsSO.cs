@@ -3,9 +3,9 @@ using UnityEngine;
 using System;
 namespace Data
 {
-    [CreateAssetMenu(fileName = "NavigateStyleSettings", menuName = "Scriptable Objects/NavigateStyleSettings")]
+    [CreateAssetMenu(fileName = "NavigateStyleSettings", menuName = "Scriptable Objects/Style/NavigateStyleSettingsSO")]
     [Serializable]
-    public class NavigateStyleSettings : ScriptableObject
+    public class NavigateStyleSettingsSO : ScriptableObject
     {
         public float panelMoveDuration = 0.5f;
         public Ease panelMoveEase = Ease.InOutCirc;

@@ -18,11 +18,11 @@ namespace Network
             return _model.valueObservable.Value;
         }
 
-        public void AddChangedHandler(Action<int> handler) {
+        public void AddChangedListener(Action<int> handler) {
             _model.valueObservable.OnValueChanged += handler;
         }
 
-        public void RemoveChangedHandler(Action<int> handler) {
+        public void RemoveChangedListener(Action<int> handler) {
             _model.valueObservable.OnValueChanged -= handler;
         }
 

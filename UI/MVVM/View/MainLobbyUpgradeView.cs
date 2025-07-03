@@ -60,7 +60,7 @@ namespace UI
 
             foreach (var slot in _slots) {
                 // Data
-                UpgradeType upgradeType = slot.GetUpgradeType();
+                GlobalUpgradeType upgradeType = slot.GetUpgradeType();
 
                 int price = _viewModel.GetPrice(upgradeType);
                 int abliltyValue = _viewModel.GetAbilityValue(upgradeType);

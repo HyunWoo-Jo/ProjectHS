@@ -7,10 +7,9 @@ namespace GamePlay
 {
     public class GlobalUpgradePurchaseService : IGlobalUpgradePurchaseService 
     {
-        [Inject] private IGlobalUpgradeNetworkService _upgradeService;
         [Inject] private IGlobalUpgradeRepository _globalUpgradeRepo;
         [Inject] private ICrystalRepository _crystalRepo;
-        public bool TryPurchase(UpgradeType type) {
+        public bool TryPurchase(GlobalUpgradeType type) {
             int price = _globalUpgradeRepo.GetPrice(type);
             int curCristal = _crystalRepo.GetValue();
             if (price <= curCristal) {

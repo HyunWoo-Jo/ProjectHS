@@ -17,8 +17,6 @@ namespace Data
         private int2 _mapSize;
 
         private List<SlotData> _slotDataList = new(); // 타워 슬롯
-        private List<TowerData> _towerDataList = new(); // 전체 타워 목록
-
         public List<ObjectPoolItem> GetEnemyPoolList() => _enemyPoolItemList;
 
 
@@ -79,11 +77,11 @@ namespace Data
         }
         public NativeArray<EnemyData> GetEnemiesData() => _enemiesData;
 
-        public void SetTowerData(List<TowerData> data) {
-            _towerDataList = data;
-        }
 
-        public List<TowerData> GetTowerData() => _towerDataList;
+
+        public IEnumerable<TowerData> GetUsedTowerData() {
+            return _slotDataList.Where(data => data.IsUsed()).Select(data => data.GetTowerData());
+        }
 
         public void SetPath(IEnumerable<Vector3> path) {
             if(_paths.IsCreated) _paths.Dispose();
@@ -127,7 +125,6 @@ namespace Data
 
         ~GameDataHub() { // 소멸
             if (_enemiesData.IsCreated) _enemiesData.Dispose();
-            _towerDataList = null;
             if (_paths.IsCreated) _paths.Dispose();
             if(_worldPosition.IsCreated) _worldPosition.Dispose();
         }

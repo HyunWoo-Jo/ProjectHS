@@ -13,7 +13,7 @@ namespace UI
 {
     public class MainLobbyNavigateView : MonoBehaviour
     {
-        [SerializeField] private NavigateStyleSettings _style;
+        [SerializeField] private NavigateStyleSettingsSO _style;
 
         [Inject] private MainLobbyNavigateViewModel _viewModel;
 

@@ -24,12 +24,12 @@ namespace UI
         // zenject俊辑 包府
 
         public void Initialize() {
-            _repo.AddChangedHandler(NotifyViewDataChanged);
+            _repo.AddChangedListener(NotifyViewDataChanged);
         }
 
         // zenject俊辑 包府
         public void Dispose() {
-            _repo.RemoveChangedHandler(NotifyViewDataChanged);
+            _repo.RemoveChangedListener(NotifyViewDataChanged);
         }
     }
 } 

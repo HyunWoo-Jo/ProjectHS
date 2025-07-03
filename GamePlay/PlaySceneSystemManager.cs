@@ -30,7 +30,8 @@ namespace GamePlay
         private StageSystem _stageSystem;
         private WaveSystem _waveSystem;
         private EnemySystem _enemySystem;
-        private TowerSystem _towerSystem;   
+        private TowerSystem _towerSystem;
+        private UpgradeSystem _upgradeSystem;
 
         public Vector2Int _mapSize = new Vector2Int(10, 10); // 임시 맵 사이즈
 
@@ -40,6 +41,8 @@ namespace GamePlay
         [Inject] private GoldModel _goldModel; // 골드 모델
         [Inject] private ExpModel _expModel; // 경험치 모델
         [Inject] private HpModel _hpModel; // hp 모델
+        [Inject] private SelectedUpgradeModel _selectedUpgradeModel; // upgrade 모델
+
         /// UI
         [SerializeField] private GoldDropper _goldDropper;
 
@@ -66,6 +69,7 @@ namespace GamePlay
             _waveSystem = GetComponent<WaveSystem>();
             _enemySystem = GetComponent<EnemySystem>();
             _towerSystem = GetComponent<TowerSystem>();
+            _upgradeSystem = GetComponent<UpgradeSystem>();
             //////////// Input System
 #if UNITY_EDITOR
             IInputStrategy inputStrategy = new PcInputStrategy();
@@ -108,18 +112,20 @@ namespace GamePlay
             // EnemySystem
             _goldDropper.OnArrived += (enemyData) => {
                 _goldModel.goldObservable.Value += _goldPolicy.CalculateKillReward(enemyData);
-                _expModel.AddExp(_expPolicy.CalculateKillExperience(enemyData));
             };
             _mapSystem.OnMapChanged += () => {
                 _gameDataHub.SetPath(_mapSystem.GetPath());
             };
             _enemySystem.OnEnemyDied += (enemyData) => { // 골드 (생성, 이동) 이펙트
                 _goldDropper.SpawnAndMoveToTarget(enemyData);
+                _expModel.AddExp(_expPolicy.CalculateKillExperience(enemyData)); // 경험치 추가
             };
             _enemySystem.OnEnemyFinishedPath += (enemyData) => { // 라이프 소모
                 _hpModel.curHpObservable.Value -= _hpPolicy.CalculateHpPenaltyOnLeak(enemyData);
             };
 
+            // UpgradeSystem
+            _expModel.levelObservable.OnValueChanged += _upgradeSystem.QueueUpgradeRequest;
 
             // TowerSystem
             // Ray에 Tower가 충돌했을때
@@ -152,6 +158,9 @@ namespace GamePlay
             int startHp = _hpPolicy.GetStartPlayerHp();
             _hpModel.maxHpObservable.Value = startHp;
             _hpModel.curHpObservable.Value = startHp;
+
+            // 초기 reroll 횟수 추가
+            _selectedUpgradeModel.observableRerollCount.Value = 1;
 
         }
  

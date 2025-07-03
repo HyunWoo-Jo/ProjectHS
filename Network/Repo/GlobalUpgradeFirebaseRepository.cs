@@ -12,13 +12,13 @@ namespace Network
     /// </summary>
     public class GlobalUpgradeFirebaseRepository : IGlobalUpgradeRepository
     {
-        private UpgradeModel _model;
+        private GlobalUpgradeModel _model;
         [Inject] private IGlobalUpgradeNetworkService _upgradeService;
         [Inject] private GlobalUpgradeDataSO _tableSO;
         private event Action _OnValueChanged;
 
         public GlobalUpgradeFirebaseRepository() {
-            _model = new UpgradeModel();
+            _model = new GlobalUpgradeModel();
         }
 
         /// <summary>
@@ -36,32 +36,32 @@ namespace Network
 
         }
         /// Value
-        public int GetPrice(UpgradeType type) {
+        public int GetPrice(GlobalUpgradeType type) {
             return GetLevelLocal(type) * _tableSO.GetPriceIncrement(type) + _tableSO.GetStartPrice(type); 
         }
-        public int GetAbilityValue(UpgradeType type) {
+        public int GetAbilityValue(GlobalUpgradeType type) {
             return GetLevelLocal(type) * _tableSO.GetValueIncrement(type);
         }
 
 
         //// Level
-        public void SetLevel(UpgradeType type, int value) {
+        public void SetLevel(GlobalUpgradeType type, int value) {
             _upgradeService.SetUpgradeAsync(type.ToString(), value); // 네트워크 업데이트 요청
             _model.SetValue(type, value); // 모델 업데이트
             _OnValueChanged?.Invoke();
         }
 
         // 업그레이드 단계를 가지고옴
-        public int GetLevelLocal(UpgradeType type) {
+        public int GetLevelLocal(GlobalUpgradeType type) {
             return _model.GetValue(type); // 로컬에서 가지고옴   
         }
 
-        //// Handler
-        public void AddChangedHandler(Action handler) {
+        //// Listeners
+        public void AddChangedListener(Action handler) {
             _OnValueChanged += handler;
         }
 
-        public void RemoveChangedHandler(Action handler) {
+        public void RemoveChangedListener(Action handler) {
             _OnValueChanged -= handler;
         }
     }
