@@ -39,13 +39,10 @@ namespace Core
             Container.BindInterfacesAndSelfTo<WaveSystem>().FromComponentOn(_systemBase).AsCached();
             Container.BindInterfacesAndSelfTo<UpgradeSystem>().FromComponentOn(_systemBase).AsCached();
 
-            // Policy
-            Container.Bind<IGoldPolicy>().To<GoldPolicy>().AsCached();
-            Container.Bind<IHpPolicy>().To<HpPolicy>().AsCached();
-            Container.Bind<IExpPolicy>().To<ExpPolicy>().AsCached();
-            Container.Bind<ITowerPricePolicy>().To<TowerPricePolicy>().AsCached();
+            
             // Service
             Container.Bind<ITowerPurchaseService>().To<TowerPurchaseService>().AsCached();
+            Container.Bind<IRewardService>().To<RewardService>().AsCached();
 
 
             // Play Scene에서만 사용되는  View Model
@@ -55,7 +52,8 @@ namespace Core
             Container.BindInterfacesAndSelfTo<ExpViewModel>().AsCached();
             Container.BindInterfacesAndSelfTo<HpViewModel>().AsCached();
             Container.BindInterfacesAndSelfTo<PausePanelViewModel>().AsCached();
-            Container.BindInterfacesAndSelfTo<UpgradeViewModel>().AsSingle();
+            Container.BindInterfacesAndSelfTo<UpgradeViewModel>().AsCached();
+            Container.BindInterfacesAndSelfTo<RewardViewModel>().AsCached();
 
 
             // So 의존 주입

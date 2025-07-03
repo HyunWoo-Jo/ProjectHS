@@ -17,7 +17,6 @@ namespace UI
         [SerializeField] private EventTrigger _giveUpButton;
         [SerializeField] private EventTrigger _returnButton;
         [SerializeField] private TextMeshProUGUI _waveText;
-        [Inject] public IUIFactory _uiManager; // UI effect 생성용 Interface
         private bool _isAction = false; // button 기능 작동중인가 체크
         private void Awake() {
 #if UNITY_EDITOR // Assertion
@@ -67,15 +66,12 @@ namespace UI
         private void OnGiveUpButton() {
             if (_isAction) return;
             _isAction = true;
-            IWipeUI wipeUI = _uiManager.InstanceUI<WipeUI>(20); // UI 생성 요청
-            float loadDelay = 0.5f;
-            wipeUI.Wipe(WipeDirection.Left, loadDelay, false); // 이펙트 호출
-            _viewModel.ChangedScene(loadDelay);
+            _viewModel.ChangeScene();
         }
 
         private void OnReturnButton() {
             if (_isAction) return;
-            this.gameObject.SetActive(false);
+            Destroy(this.gameObject);
         }
 
         // UI 갱신

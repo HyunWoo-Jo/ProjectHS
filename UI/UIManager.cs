@@ -42,6 +42,8 @@ namespace UI {
         private void SetAddressableKey() {
             _keyDictionary.Add(nameof(WipeUI), "Wipe_UI.prefab");
             _keyDictionary.Add(nameof(UpgradeView), "Upgrade_SubCanvas.prefab");
+            _keyDictionary.Add(nameof(PausePanelView), "PausePanel_UI_Canvas.prefab");
+            _keyDictionary.Add(nameof(RewardView), "RewardPanel_UI_Canvas.prefab");
 
         }
 
@@ -69,7 +71,16 @@ namespace UI {
                 GameObject instanceObj = _container.InstantiatePrefab(prefab); // inject 동시에 생성
                 // Parent 설정
                 instanceObj.transform.SetParent(_canvasTag.GetRectTransform());
-                instanceObj.GetComponent<Canvas>().sortingOrder = orederBy;
+                Canvas canvas = instanceObj.GetComponent<Canvas>();
+                if(canvas != null) {
+                    canvas.sortingOrder = orederBy;
+                    // canvas 이면 위치 중앙으로 고정
+                    var rt = canvas.GetComponent<RectTransform>();
+                    rt.offsetMin = Vector2.zero; // Left, Bottom = 0
+                    rt.offsetMax = Vector2.zero; // Right, Top = 0
+                    rt.anchorMin = Vector2.zero;
+                    rt.anchorMax = Vector2.one;
+                }
 
                 // 등록
                 _objDictionary.Add(instanceObj.GetInstanceID(), new KeyValuePair<GameObject, string>(instanceObj, name));

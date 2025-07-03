@@ -9,7 +9,7 @@ using Contracts;
 namespace GamePlay
 {
     public class UpgradeSystem : MonoBehaviour, IUpgradeService {
-        [Inject] private IUIFactory _uiManager;
+        [Inject] private IUIFactory _uiFactory;
         [Inject] private GameDataHub _gameDataHub;
         [Inject] private IGlobalUpgradeRepository _globalUpgradeRepository;
         [Inject] private SelectedUpgradeModel _selectedUpgradeModel;
@@ -40,7 +40,7 @@ namespace GamePlay
                 // 모델에 업그레이드 갱신
                 _selectedUpgradeModel.observableUpgradeDatas[i].Value = randUpgleList.Count > i ? randUpgleList[i] : null;
             }
-            _uiManager.InstanceUI<UpgradeView>(40); // UI 생성
+            _uiFactory.InstanceUI<UpgradeView>(40); // UI 생성
         }
 
         

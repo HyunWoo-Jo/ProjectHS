@@ -36,6 +36,7 @@ namespace GamePlay
         public Vector2Int _mapSize = new Vector2Int(10, 10); // 임시 맵 사이즈
 
 
+
         /// Model
         [Inject] private TowerPurchaseModel _towerPurchaseModel; // 타워 구매 비용 모델
         [Inject] private GoldModel _goldModel; // 골드 모델
@@ -45,15 +46,17 @@ namespace GamePlay
 
         /// UI
         [SerializeField] private GoldDropper _goldDropper;
+        [Inject] private RewardViewModel _rewardViewModel;
 
         // Policy
         [Inject] private IGoldPolicy _goldPolicy;
         [Inject] private IHpPolicy _hpPolicy;
         [Inject] private IExpPolicy _expPolicy;
         [Inject] private ITowerPricePolicy _towerPolicy;
-
+        
         // Service
         [Inject] private ITowerPurchaseService _towerPurchaseService;
+        [Inject] private IUIFactory _uIFactory;
 
         private void Awake() {
 #if UNITY_EDITOR
@@ -124,6 +127,14 @@ namespace GamePlay
                 _hpModel.curHpObservable.Value -= _hpPolicy.CalculateHpPenaltyOnLeak(enemyData);
             };
 
+            // 게임 End 처리
+            _hpModel.curHpObservable.OnValueChanged += (value) => {
+                if (value <= 0) {
+                    _uIFactory.InstanceUI<RewardView>(92);
+                    _rewardViewModel.ProcessFinalReward();
+                }
+            };
+
             // UpgradeSystem
             _expModel.levelObservable.OnValueChanged += _upgradeSystem.QueueUpgradeRequest;
 
@@ -161,7 +172,6 @@ namespace GamePlay
 
             // 초기 reroll 횟수 추가
             _selectedUpgradeModel.observableRerollCount.Value = 1;
-
         }
  
 

@@ -19,8 +19,6 @@ namespace UI
 
         [Inject] private IMainCanvasTag _mainCanvas;
 
-        [Inject] public IUIFactory _uiManager; // UI effect 생성용 Interface
-
         [SerializeField] private Transform _mainPanel;
         [Header("Navigate Button")]
         [SerializeField] private EventTrigger _worldButton;
@@ -124,10 +122,7 @@ namespace UI
         /// Play Button 클릭
         /// </summary>
         public void OnClickPlayButton() {
-            IWipeUI wipeUI = _uiManager.InstanceUI<WipeUI>(20); // UI 생성 요청
-            float loadDelay = 0.5f;
-            wipeUI.Wipe(WipeDirection.Left, loadDelay, false); // 이펙트 호출
-            _viewModel.ChangedScene(loadDelay);
+            _viewModel.ChangeScene();
         }
     }
 }

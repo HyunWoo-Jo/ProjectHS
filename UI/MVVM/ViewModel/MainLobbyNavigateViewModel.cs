@@ -3,6 +3,7 @@ using Data;
 using System.Diagnostics;
 using System;
 using Zenject;
+using Contracts;
 
 namespace UI
 {
@@ -10,7 +11,7 @@ namespace UI
     public class MainLobbyNavigateViewModel
     {
         public event Action OnDataChanged; // 데이터가 변경될떄 호출될 액션
-        [Inject] public ILoadManager _loadManager; // Scene Load 관리 interface
+        [Inject] private ISceneTransitionService _sts; 
 
         /// <summary>
         /// 데이터 변경 알림
@@ -39,8 +40,8 @@ namespace UI
             PreActivePanel = panelType; // 
         }
 
-        public void ChangedScene(float delay) {
-            _loadManager.LoadScene(SceneName.PlayScene, delay); // 다음 씬을 호출
+        public void ChangeScene() {
+            _sts.LoadScene(SceneName.PlayScene);
         }
 
        

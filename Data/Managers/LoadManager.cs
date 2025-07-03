@@ -34,6 +34,7 @@ namespace Data
         /// <param name="nextScene"></param>
         /// <param name="delay"></param>
         public void LoadScene(SceneName nextScene, float delay) {
+            PreScene = NextScene; // 이전 씬 저장
             NextScene = nextScene; // 다음 씬 이름 저장
             _operation = SceneManager.LoadSceneAsync(SceneName.LoadScene.ToString()); // LoadScene으로 이동        
             _operation.completed += (op) => { // 로딩이 완료되면 NextScene을 로딩하는 코루틴 실행
