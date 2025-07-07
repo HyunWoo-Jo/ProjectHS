@@ -8,7 +8,8 @@
 - [2025.06.28 / Contracts 계층 도입](#contracts-계층-도입)
 - [2025.06.29 / Global Upgrade 구조](#global-upgrade-구조)
 #### 25.07
-- [2025.07.2 / Upgrade 구조](#upgrade-구조)
+- [2025.07.02 / Upgrade 구조](#upgrade-구조)
+- [2025.07.07 / Test 구조](#Test-구조)
 ---
 #### 2025.06.23
 ### 초기화 씬 구성
@@ -288,4 +289,20 @@ UpgradeViewModel --> SelectedUpgradeModel : 데이터 변경 구독
 UpgradeViewModel --> IUpgradeService : Reroll 요청
 UpgradeView --> UpgradeViewModel : 구독, 버튼 event 요청
 ```
-
+---
+#### 2025.07.07
+### Test 구조
+1. **테스트 목록 설계**
+- **UI**
+    * `UI`에서는 `ViewModel`의 중요 로직을 테스트 합니다.
+    * `UI`에 연결된 `Service`, `Repository` 등 로직이 제대로 호출이 되는지를 테스트합니다.
+- **Network**
+    - 실제 네트워크(Firebase)와 연결을 하여 데이터를 송수신이 정상인지 테스트합니다.
+- **Service**
+    * `Service`에 연결된 중요 로직이 제대로 호출되는지 테스트합니다.
+- **Unit**
+    * `GamePlay`의 핵심 로직을 테스트 합니다.
+    * Ex) `MapGenerator`의 맵 생성이 제대로 되는지 확인합니다.
+2. **도구**
+-  **Unity Test Runner**
+-  **Mocking** : [NSubstitute](https://github.com/Thundernerd/Unity3D-NSubstitute)
