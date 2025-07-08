@@ -3,6 +3,7 @@ using UnityEngine;
 using Zenject;
 using Data;
 using Cysharp.Threading.Tasks;
+using System.Diagnostics;
 namespace Network
 {
     public class CrystalFirebaseRepository : ICrystalRepository {
@@ -35,5 +36,14 @@ namespace Network
             await _userService.GetUserCrystalAsync(SetValue);
         }
 
+        public bool TrySpend(int price) {
+            _model.valueObservable.Value -= price;
+            return true;
+        }
+
+        public bool TryEarn(int value) {
+            _model.valueObservable.Value += value;
+            return true;
+        }
     }
 }

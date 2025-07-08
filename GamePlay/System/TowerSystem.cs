@@ -11,7 +11,7 @@ using System;
 namespace GamePlay
 {
     [DefaultExecutionOrder(80)]
-    public class TowerSystem : MonoBehaviour
+    public class TowerSystem : MonoBehaviour , ITowerSystem
     {
         [Inject] private GameDataHub _gameDataHub;
         [Inject] private DataManager _dataManager;

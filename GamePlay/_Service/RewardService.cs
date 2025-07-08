@@ -4,6 +4,9 @@ using Zenject;
 using Data;
 namespace GamePlay
 {
+    /// <summary>
+    /// Scene에서 Catched로 관리하여 Play Scene에서 한번만 작동되도록 관리
+    /// </summary>
     public class RewardService : IRewardService {
         [Inject] private IRewardPolicy _rewardPolicy;
         [Inject] private ICrystalRepository _crystalRepo;
@@ -17,7 +20,7 @@ namespace GamePlay
             if (_isProcess) return; // 한번만 처리하도록 설정
             int reward = _rewardPolicy.CalculateCrystalReward();
             if (reward <= 0) return;
-            _crystalRepo.SetValue(_crystalRepo.GetValue() + reward);
+            _crystalRepo.TryEarn(reward);
             _isProcess = true;
         }
     }

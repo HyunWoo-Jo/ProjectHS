@@ -41,6 +41,7 @@ namespace UI {
         /// </summary>
         private void SetAddressableKey() {
             _keyDictionary.Add(nameof(WipeUI), "Wipe_UI.prefab");
+            _keyDictionary.Add(nameof(IWipeUI), "Wipe_UI.prefab");
             _keyDictionary.Add(nameof(UpgradeView), "Upgrade_SubCanvas.prefab");
             _keyDictionary.Add(nameof(PausePanelView), "PausePanel_UI_Canvas.prefab");
             _keyDictionary.Add(nameof(RewardView), "RewardPanel_UI_Canvas.prefab");
@@ -63,7 +64,7 @@ namespace UI {
         /// <param name="parent"></param>
         /// <param name="orederBy"></param>
         /// <returns></returns>
-        public T InstanceUI<T>(int orederBy = 0) where T : Object {
+        public T InstanceUI<T>(int orederBy = 0){
             string name = typeof(T).Name;
             if (_keyDictionary.TryGetValue(name, out var key)) {
                 GameObject prefab = _dataManager.LoadAssetSync<GameObject>(key);
@@ -86,7 +87,8 @@ namespace UI {
                 _objDictionary.Add(instanceObj.GetInstanceID(), new KeyValuePair<GameObject, string>(instanceObj, name));
                 return instanceObj.GetComponent<T>();
             }
-            return null;
+            // 예외 전달
+            throw new KeyNotFoundException($"UI prefab not found: {name}");
         }
        
     }

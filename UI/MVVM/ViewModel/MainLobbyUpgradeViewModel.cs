@@ -42,7 +42,7 @@ namespace UI
         }
         // Zenject에서 관리
         public void Dispose() {
-            _repo.AddChangedListener(NotifyViewDataChanged);
+            _repo.RemoveChangedListener(NotifyViewDataChanged);
         }
     }
 } 

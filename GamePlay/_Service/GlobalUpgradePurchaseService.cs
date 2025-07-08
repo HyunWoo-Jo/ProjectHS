@@ -12,10 +12,7 @@ namespace GamePlay
         public bool TryPurchase(GlobalUpgradeType type) {
             int price = _globalUpgradeRepo.GetPrice(type);
             int curCristal = _crystalRepo.GetValue();
-            if (price <= curCristal) {
-                curCristal -= price;
-
-                _crystalRepo.SetValue(curCristal);
+            if (price <= curCristal && _crystalRepo.TrySpend(price)) {
                 int level = _globalUpgradeRepo.GetLevelLocal(type);
                 _globalUpgradeRepo.SetLevel(type, level + 1);
                 return true;

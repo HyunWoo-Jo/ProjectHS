@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using System;
 using UnityEngine;
 
 namespace CustomUtility
@@ -26,6 +29,21 @@ namespace CustomUtility
             int y = Mathf.RoundToInt(fy);
 
             return new Vector2Int(x, y);
+        }
+
+        /// <summary>
+        /// a -> b 吝埃 grid 积己
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static IEnumerable<Vector2Int> StepCells(Vector2Int a, Vector2Int b) {
+            int dx = Math.Sign(b.x - a.x);   // -1, 0, +1
+            int dy = Math.Sign(b.y - a.y);   // -1, 0, +1
+            int len = Mathf.Abs(b.x - a.x) + Mathf.Abs(b.y - a.y);
+
+            // 积己
+            return Enumerable.Range(1, len).Select(i => new Vector2Int(a.x + dx * i, a.y + dy * i));
         }
     }
 }

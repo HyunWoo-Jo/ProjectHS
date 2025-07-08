@@ -8,8 +8,6 @@ namespace UI
     public class RewardViewModel 
     {   
         public event Action<int> OnDataChanged; // 실행되면 계산해서 반환
-
-        [Inject] private ILoadManager _loadManager;
         [Inject] private IRewardService _rewardService;
         [Inject] private ISceneTransitionService _sts;
         public int RewardCrystal => _rewardService.CalculateRewardCrystal();

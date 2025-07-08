@@ -4,9 +4,8 @@ using Data;
 using System.Collections.Generic;
 using CustomUtility;
 using Cysharp.Threading.Tasks;
-using GamePlay;
 
-namespace GamePlay22
+namespace GamePlay
 {
     /// <summary>
     /// 맵을 생성해주는 클레스

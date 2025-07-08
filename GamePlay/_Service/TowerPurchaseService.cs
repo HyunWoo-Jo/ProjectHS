@@ -7,7 +7,7 @@ namespace GamePlay
     // 타워 구매를 행동
     public class TowerPurchaseService : ITowerPurchaseService {
         [Inject] private GoldModel _gold;
-        [Inject] private TowerSystem _towerSystem; // 타워 시스템
+        [Inject] private ITowerSystem _towerSystem; // 타워 시스템
         [Inject] private ITowerPricePolicy _pricePolicy; // 가격 정책
 
         public bool TryPurchase() { // 타워 구매 시도
