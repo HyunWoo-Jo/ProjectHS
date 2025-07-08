@@ -4,7 +4,7 @@
 - [2025.04.19 / 시스템 구조 설계](#전체-시스템-구조-설계)
 - [2025.04.19 / UI 설계 MVVM](#ui-설계)
 - [2025.04.19 / DI 선택](#didependency-injection)
-- [2025.04.24 / 확장성 고려 비지니스 로직](#확장성-고려)
+- [2025.04.24 / 확장성 고려 로직 설계](#확장성-고려)
 - [2025.04.28 / Core System 설계](#game-play-system-설계)
 #### 25.05
 - [2025.05.06 / Enemy System 설계](#enemy-system-설계dod구조)
@@ -13,7 +13,9 @@
 - [2025.05.15 / Tower System 설계](#tower-system-설계)
 - [2025.05.15 / GameDataHub 도입 배경 및 설계](#gamedatahub-도입-배경-및-설계)
 - [2025.05.19 / GameObjectPoolManager 도입 배경 및 설계](#gameobjectpoolmanager-도입-배경-및-설계)
-- [2025.05.26 / Upgrade System 설계](#upgrade-system-설계)
+- [2025.05.26 / ~~Upgrade System 설계~~ -> 6월 개발일지 Upgrade System 구조 변경](#upgrade-system-설계)
+#### 25.06~07
+- [6월~7월 개발 일지](/_Doc/DevelopmentLog_25_6.md)
 ---
 #### 2025.04.19
 ### 전체 시스템 구조 설계
@@ -94,7 +96,7 @@ DI를 사용한 핵심 이유는 다음과 같습니다.
 #### 2025.04.24
 ### 확장성 고려
 
-비즈니스 로직 중 향후 **플랫폼 환경에 따라 변경되거나 확장될 수 있는 부분**은 `Strategy 패턴`을 사용해 분리하였습니다.
+도메인 로직 중 향후 **플랫폼 환경에 따라 변경되거나 확장될 수 있는 부분**은 `Strategy 패턴`을 사용해 분리하였습니다.
 
 대표적인 예로, **입력(Input) 처리 로직**은 PC 환경과 Mobile 환경에서 요구 사항이 다르므로,
 이를 런타임 조건에 따라 유연하게 교체할 수 있도록 `IInputStrategy` 인터페이스 기반 구조로 설계하였습니다.
@@ -503,7 +505,8 @@ public class GameDataHub : IEnemyDataProvider
 
 ---
 #### 2025.05.26
-### Upgrade System 설계
+### ~~Upgrade System 설계~~
+6월 개발일지 확인 (구조 변경)
 1. **설계 내용**
 `Upgrade System`의 경우 계정 전체에 적용이 되는 `Global Upgrade`와 세션 단위로 초기화, 관리 되는 `SessionUpgrade`가 존재합니다.</br>
 `Global Upgrade`의 경우 `Repository` 패턴을 이용해 데이터를 관리합니다.</br>
