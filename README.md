@@ -19,6 +19,7 @@
   - DOTween
   - Google Play Games SDK
   - Firebase SDK
+  - Unity Test Runner
 #### Tool
   - Github
 #### Server
