@@ -4,6 +4,8 @@ using Zenject;
 using System;
 using TMPro;
 using ModestTree;
+using Data;
+using System.Diagnostics;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI
@@ -36,7 +38,7 @@ namespace UI
 #endif
         // UI 갱신
         private void UpdateUI(int value) {
-            _goldText.text = value.ToString();
+            _goldText.text = GoldStyle.GoldToString(value);
         }
 ////////////////////////////////////////////////////////////////////////////////////
         // your logic here

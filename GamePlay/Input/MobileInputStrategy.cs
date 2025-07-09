@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Data;
+using Contracts;
 namespace GamePlay
 {
     public class MobileInputStrategy : InputBase {
@@ -25,7 +26,7 @@ namespace GamePlay
                         inputType = InputType.First;
                         firstFramePosition = touch.position;
                         clickStartTime = Time.time;
-                        if (TryRaycastTowerAtScreenPos(Input.mousePosition, out RaycastHit hit)) { // Tower인가 체크
+                        if (TryRaycastAtScreenPos(towerMask,Input.mousePosition, out RaycastHit hit)) { // Tower인가 체크
                             inputTargetType = InputTargetType.Tower;
                             hitObject = hit.collider.gameObject;
                         } else {
@@ -38,6 +39,12 @@ namespace GamePlay
                     // 해당 터치가 이번 프레임에 끝났는지 확인 (손가락을 뗐거나 취소됨)
                     if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) {
                         inputType = InputType.End;
+
+                        // UI면 OnPointerUp 호출 시도
+                        if (TryUIRaycast(Input.mousePosition, out RaycastResult hit)) {
+                            hit.gameObject.GetComponent<IPointerUP>()?.OnPointerUP();
+                        }
+
                     }
                 } else {
                     inputType = InputType.None;

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Data;
+using Contracts;
 namespace GamePlay
 {
     public class PcInputStrategy : InputBase {
@@ -11,7 +12,7 @@ namespace GamePlay
                 inputType = InputType.First;
                 clickStartTime = Time.time;
                 firstFramePosition = GetPosition();
-                if (TryRaycastTowerAtScreenPos(Input.mousePosition, out RaycastHit hit)){ // Tower인가 체크
+                if (TryRaycastAtScreenPos(towerMask,Input.mousePosition, out RaycastHit hit)){ // Tower인가 체크
                     inputTargetType = InputTargetType.Tower;
                     hitObject = hit.collider.gameObject;
                 } else {
@@ -22,8 +23,13 @@ namespace GamePlay
             }
             if (Input.GetMouseButtonUp(0) && (inputType == InputType.First || inputType == InputType.Push)) { // UP 
                 inputType = InputType.End;
+                // UI면 OnPointerUp 호출 시도
+                if (TryUIRaycast(Input.mousePosition, out RaycastResult hit)) {
+                    hit.gameObject.GetComponent<IPointerUP>()?.OnPointerUP();
+                }
             } else if (inputType == InputType.End) {
                 inputType = InputType.None;
+
             }
 
             //// 확대, 축소 처리

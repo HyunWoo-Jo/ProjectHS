@@ -7,6 +7,7 @@ using ModestTree;
 using TMPro;
 using CustomUtility;
 using System.Runtime.CompilerServices;
+using Data;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI
@@ -42,7 +43,7 @@ namespace UI
 #endif
         // UI 갱신
         private void UpdateUI(int price) {
-            _priceText.text = price.ToString() + "G";
+            _priceText.text = GoldStyle.GoldToString(price);
         }
 ////////////////////////////////////////////////////////////////////////////////////
         // your logic here

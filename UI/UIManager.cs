@@ -45,7 +45,7 @@ namespace UI {
             _keyDictionary.Add(nameof(UpgradeView), "Upgrade_SubCanvas.prefab");
             _keyDictionary.Add(nameof(PausePanelView), "PausePanel_UI_Canvas.prefab");
             _keyDictionary.Add(nameof(RewardView), "RewardPanel_UI_Canvas.prefab");
-
+            _keyDictionary.Add(nameof(SellTowerView), "SellTower_UI.prefab");
         }
 
 

@@ -27,6 +27,7 @@ namespace Core
             Container.Bind<ExpModel>().AsCached();
             Container.Bind<HpModel>().AsCached();
             Container.Bind<SelectedUpgradeModel>().AsCached();
+            Container.Bind<TowerSaleModel>().AsCached();
 
             // System
             Container.BindInterfacesAndSelfTo<ScreenClickInputSystem>().FromComponentOn(_systemBase).AsCached();
@@ -43,7 +44,7 @@ namespace Core
             // Service
             Container.Bind<ITowerPurchaseService>().To<TowerPurchaseService>().AsCached();
             Container.Bind<IRewardService>().To<RewardService>().AsCached();
-
+            Container.Bind<ISellTowerService>().To<SellTowerService>().AsCached();
 
             // Play Scene에서만 사용되는  View Model
             Container.BindInterfacesAndSelfTo<TowerPurchaseViewModel>().AsCached();
@@ -54,6 +55,7 @@ namespace Core
             Container.BindInterfacesAndSelfTo<PausePanelViewModel>().AsCached();
             Container.BindInterfacesAndSelfTo<UpgradeViewModel>().AsCached();
             Container.BindInterfacesAndSelfTo<RewardViewModel>().AsCached();
+            Container.BindInterfacesAndSelfTo<SellTowerViewModel>().AsCached();
 
 
             // So 의존 주입

@@ -8,6 +8,7 @@ using Unity.Mathematics;
 using CustomUtility;
 using ModestTree;
 using System;
+using UI;
 namespace GamePlay
 {
     [DefaultExecutionOrder(80)]
@@ -16,10 +17,19 @@ namespace GamePlay
         [Inject] private GameDataHub _gameDataHub;
         [Inject] private DataManager _dataManager;
         [Inject] private DiContainer _container;
+        [Inject] private IUIFactory _uIFactory;
         private Dictionary<string, GameObject> _towerPrefabDictionary = new();
         private readonly string _towerLabel = "Tower"; // Addressable Label
 
         [SerializeField] private float3 _towerOffset = new Vector3(0f, 0.75f, 0f);
+
+        // UI
+        private GameObject _sellTowerViewObj;
+
+        // Model
+
+        [Inject] private TowerSaleModel _saleModel;
+
 
         private List<string> _towerKeyList = new List<string> { // Addressable Key
             "ArcherTower",
@@ -41,6 +51,9 @@ namespace GamePlay
                     _towerPrefabDictionary[prefab.name] = prefab; 
                 }
             });
+            // Sell UI 생성
+            _sellTowerViewObj = _uIFactory.InstanceUI<SellTowerView>(0).gameObject;
+            _sellTowerViewObj.SetActive(false);
         }
 
         private void OnDestroy() {
@@ -71,7 +84,7 @@ namespace GamePlay
 
             // 등록
             RegisterTowerToSlot(towerObj, index);
- 
+            
             return true;
         }
 
@@ -89,12 +102,26 @@ namespace GamePlay
             RegisterTowerToSlot(towerData2.towerObj, index1);
         }
 
-        public void RemoveTower(int index) {
-
+        /// <summary>
+        /// 타어 제거 시도
+        /// </summary>
+        /// <param name="tower"></param>
+        /// <returns></returns>
+        public bool TryRemoveTower(out int cost) {
+            if (_seletedTower == null) {
+                cost = 0;
+                return false;
+            }
+            cost = _seletedTower.Price;
+            var slot = _gameDataHub.GetSlotData(_seletedTower.index);
+            slot.SetTowerData(null);
+            Destroy(_seletedTower.gameObject);
+            return true;
         }
 
         // 타워를 선택 했을때 호출됨
         public void SelectTower(GameObject hitObject) {
+           
             if (_seletedTower == null || hitObject.GetInstanceID() != _seletedTower.GetInstanceID()) {
                 _seletedTower = hitObject.GetComponent<TowerBase>();
             }
@@ -103,11 +130,15 @@ namespace GamePlay
             UpdateDragTowerPosition();
             // shadow 표시
             UpdateTowerShadow();
+            // UI 표시
+            OnShowSelaUI();
         }
 
         // 포인터가 Up 되었을때 호출
         // 포인터 방향에서 Tower의 위치가 변경이 될 수 있도록 설정
         public void OnEndDrag() {
+            // UI 오프
+            _sellTowerViewObj?.SetActive(false);
             if (_seletedTower != null) {
                 // 배치 
                 int index = PositionToIndex(_seletedTower.transform.position);
@@ -128,11 +159,10 @@ namespace GamePlay
                 // 선택 타워 정보 제거
                 _seletedTower.isStop = false;
                 _seletedTower = null;
-                
-                // 그림자 제거
-                _towerShadowObjRenderer.gameObject.SetActive(false);
-                _isOnShadow = false;
             }
+            // 그림자 제거
+            _towerShadowObjRenderer.gameObject.SetActive(false);
+            _isOnShadow = false;
         }
         #region private
         /// <summary>
@@ -180,6 +210,13 @@ namespace GamePlay
             RegisterTowerToSlot(_seletedTower, index);
         }
 
+
+        private void OnShowSelaUI() {
+            _sellTowerViewObj?.SetActive(true);
+            _saleModel.costObservable.Value = _seletedTower.Price;
+        }
+
+
         /// <summary>
         /// 타워 데이터를 Slot에 등록
         /// </summary>
@@ -217,6 +254,7 @@ namespace GamePlay
         private float3 IndexToTowerPosition(int index) {
             return _gameDataHub.GetIndexToWorldPosition(index) + _towerOffset;
         }
+
 
 
 

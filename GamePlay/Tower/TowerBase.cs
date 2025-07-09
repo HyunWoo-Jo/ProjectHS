@@ -14,7 +14,7 @@ namespace GamePlay
         [SerializeField] protected TowerData towerData;
         [Inject] protected IEnemyDataService enemyDataService;
         [ReadEditor] [SerializeField] protected int targetIndex = -1;
-        [SerializeField] private int sellPrice; // 판매 가격
+        [SerializeField] private int price; // 판매 가격
         [SerializeField] private SpriteRenderer _towerBaseRenderer; // 본체 Renerder (그림자에 사용)
         [SerializeField] protected Animator anim;
         protected static int ShootAnimHashKey = Animator.StringToHash("Shoot"); 
@@ -35,6 +35,8 @@ namespace GamePlay
             SetAttackSpeed(towerData.attackSpeed.Value);
             towerData.attackSpeed.OnValueChanged += SetAttackSpeed;
         }
+
+        public int Price => price;
 
         public Sprite GetTowerBaseSprite() => _towerBaseRenderer.sprite;
         protected bool IsPause() {
