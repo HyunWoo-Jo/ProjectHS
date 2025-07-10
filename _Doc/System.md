@@ -1,4 +1,5 @@
 ## 설계 범위
+프로젝트의 전체적인 설계 범위는 다음과 같습니다.
 ### Usecase Diagram
 ```mermaid
 graph LR
@@ -12,7 +13,7 @@ graph LR
     UC_PlayStage([스테이지 플레이])
     UC_BuildManageTower([타워 건설/관리])
     UC_UpgradeUnitInGame([게임 중 유닛 업그레이드])
-    UC_TriggerWave(["웨이브 시작 (수동/자동)"]) 
+    UC_TriggerWave(["웨이브 시작"]) 
   end
 
   subgraph Main Lobby 씬 활동
@@ -58,6 +59,7 @@ graph LR
 
   InternalProcesses["내부 처리 (자동)"] -- 네트워크 연결/ 데이터 관리 --> NetworkMgmt(["네트워크 연결/ 데이터 관리"])
 ```
+---
 
 ## 네임스페이스 설계
 **분리 목적:** 각 모듈의 책임을 명확히 하고, 의존성을 줄여 유지보수성과 재사용성을 높이기 위해 네임스페이스를 분리했습니다.
@@ -121,6 +123,30 @@ EditorOnly --> Test;
 역할: Unity 에디터 환경에서만 사용되는 스크립트. </br>
 주요 내용: 테스트 코드.
 
+---
+## DI(Dependency Injection)
+1. **사용 목적**
+
+프로젝트 전반에서 의존성을 명확히 관리하고, **테스트, 재사용성**을 높이기 위해 도입했습니다.</br>
+DI 도구로는 [`Zenject`](https://github.com/modesttree/Zenject?tab=readme-ov-file#installation-)를 사용했습니다.
+
+2. **관리 내용**
+
+DI로 관리하는 내용은 보통 다음과 같습니다. (모든 `Installer`는 `Core` 단에서 초기화)
+* `System, Manager Class`: 핵심 로직을 관리하는 클레스로 단일 객체로 관리.
+* `Service` : 어플리케이션 로직. – 예: `PurchaseTowerService`
+* `Policy` : 비즈니스 로직. – 예: `GoldPolicy`(킬 보상 계산)
+* `Strategy` : 실행 단계에서 교체 가능한 로직 객체. - 예: `PcInputStrategy`, `MobileInputStrategy`
+* `Style` : UI에서 디자인에 사용되는 Style을 관리. (Color, Size 등)
+* `Repo`, `Model`: Data의 관리, 저장.
+* `ViewModel`: UI (MVVM) 관리.
+* `Tag` : Scene마다 변화되는 (Main Cavnas 등)을 관리하기 위해 사용. 
+
+3. **바인딩 규칙**
+
+- 단일-인스턴스 전역 객체 : `AsSingle()`
+- 씬 전용 객체 : AsCached() (씬 컨텍스트가 파괴될 때 함께 소멸)
+- 초기화가 필요한 경우 : `IInitializable`, `IDisposable`를 구현하고 BindInterfacesAndSelfTo를 통해 Interface를 Bind
 ---
 
 ## UI
@@ -190,12 +216,3 @@ end
     %% --|> : Inheritance 상속
     %% ..> : Dependency / Interaction 
 ```
-
-## DI(Dependency Injection)
-의존 주입 분류 **(모든 Installer는 Core 단에서 초기화)**
-#### (Project 단위)
-- Manager Class: 전역으로 관리해야 되는것들을 AsSingle로 관리
-- Repository Class: Data를 Repository 패턴으로 관리, 각 상황에 맞게 Bind
-#### (Scene 단위)
-- (SceneName)Scene Class: 각 Scene에서 사용되는 ViewModel을 AsTransient로 Bind (생성을 요청 받았을때만)
-- Scene Class: 각 씬에 들어가면 새로 Bind하여 관리함 (예: MainCanvas 등)
