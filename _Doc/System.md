@@ -125,12 +125,12 @@ EditorOnly --> Test;
 
 ---
 ## DI(Dependency Injection)
-1. **사용 목적**
+### 1. **사용 목적**
 
 프로젝트 전반에서 의존성을 명확히 관리하고, **테스트, 재사용성**을 높이기 위해 도입했습니다.</br>
 DI 도구로는 [`Zenject`](https://github.com/modesttree/Zenject?tab=readme-ov-file#installation-)를 사용했습니다.
 
-2. **관리 내용**
+### 2. **관리 내용**
 
 DI로 관리하는 내용은 보통 다음과 같습니다. (모든 `Installer`는 `Core` 단에서 초기화)
 * `System, Manager Class`: 핵심 로직을 관리하는 클레스로 단일 객체로 관리.
@@ -142,7 +142,7 @@ DI로 관리하는 내용은 보통 다음과 같습니다. (모든 `Installer`�
 * `ViewModel`: UI (MVVM) 관리.
 * `Tag` : Scene마다 변화되는 (Main Cavnas 등)을 관리하기 위해 사용. 
 
-3. **바인딩 규칙**
+### 3. **바인딩 규칙**
 
 - 단일-인스턴스 전역 객체 : `AsSingle()`
 - 씬 전용 객체 : AsCached() (씬 컨텍스트가 파괴될 때 함께 소멸)
@@ -150,10 +150,39 @@ DI로 관리하는 내용은 보통 다음과 같습니다. (모든 `Installer`�
 ---
 
 ## UI
-**설계:** UI는 처리해야 할 데이터가 많거나 향후 확장 가능성이 높은 경우, 재사용성과 유지보수성, 테스트 용이성을 높이기 위해 **MVVM(Model-View-ViewModel)** 구조를 채택했습니다.</br>
-반면, 구조가 단순하고 변경 가능성이 낮은 UI는 MonoBehaviour 기반으로 간결하게 설계하였습니다 개발 효율성을 높였습니다.
 
-MVVM 구조에서 Model은 Repository 패턴을 사용하여 데이터를 관리하고, Repository는 DI(Dependency Injection)을 통해 주입받는 방식으로 설계하였습니다.
+### 1. **설계 목적**
+UI는 복잡도와 확장 가능성에 따라 두 가지 방식으로 구성합니다.
+
+- **MVVM(Model-View-ViewModel)**  
+  데이터 규모가 크고, 향후 기능 추가·유지보수 가능성이 높은 화면에 적용합니다.  
+  테스트 용이성, 재사용성, 의존성 분리 측면에서 유리합니다.
+
+- **MonoBehaviour 단일 구조**  
+  화면이 단순하고 로직이 고정적인 `UI`는 `MonoBehaviour` 하나로 구현하여 개발 효율을 높입니다.
+
+
+### 2. **MVVM 계층 역할**
+**Model**  
+- UI에서 사용할 상태 값을 보관합니다.  
+- 외부 데이터(Firebase 등)는 **Repository 패턴**으로 캡슐화합니다.  
+- 인게임 전용 데이터는 DI(의존성 주입)로 전달받아 관리합니다.
+
+**ViewModel**  
+- `View`와 `Model` 사이의 중재자입니다.  
+- `Event`을 사용해 `View`와 데이터 바인딩을 수행합니다.  
+- 복잡한 도메인 로직은 **`Service`**를 주입받아 실행합니다.
+
+**View**  
+- Unity UI 요소를 실제로 렌더링하고 입력을 수집합니다.  
+- `ViewModel`의 `Event`를 구독해 UI만 업데이트합니다.
+- 버튼을 `ViewModel`의 로직을 받아와 초기화 합니다.
+
+### 3. 의존성 주입 흐름
+1. **Repository**는 외부 데이터(Firebase 등)에 대한 모든 접근을 담당해 `ViewModel`에서 직접 접근하지 않습니다.  
+2. **ViewModel**은 `Repository/Model`에서 데이터를 받아와 가공하고, 필요한 경우 `Service`를 호출합니다.  
+3. 모든 의존성은 **Zenject**로 주입하며, 테스트 환경에서도 대체 가능한 구조를 유지합니다.
+
 ### UI Class Diagram
 ```mermaid
 classDiagram
