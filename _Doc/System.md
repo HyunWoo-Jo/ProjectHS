@@ -1,3 +1,10 @@
+## 목차
+1. [설계 범위](#설계-범위)
+2. [네임스페이스 설계](#네임스페이스-설계)
+3. [DI(Dependency Injection)](#didependency-injection)
+4. [UI](#ui)
+5. [Test](#test)
+---
 ## 설계 범위
 프로젝트의 전체적인 설계 범위는 다음과 같습니다.
 ### Usecase Diagram
@@ -190,58 +197,68 @@ classDiagram
         <<Unity Engine>>
     }
 
-    class Test.UITest {
-        + TestFunc()
-    }
-subgraph VVM
     class View {
         <<MonoBehaviour>>
         - UnityUIReference
-        - ViewModel _viewModel // DI로 Inject
-
-        - void Awake()
-        - void OnDestroy()
-        - void UpdateUI(Data )
+        - ViewModel  // Inject
+        + Awake()
+        + OnDestroy()
+        + UpdateUI(data)
     }
 
     class ViewModel {
-        - IRepository _repo // DI로 Inject
-        + event Action OnDataChanged // View가 구독
-
-        + void SetData(data)  // 외부에서 호출
-        - void NotifyViewDataChanged() // View에 알림
+        - IRepository // Inject
+        - IService // Inject
+        + event Action OnDataChanged
+        + SetData(data)
+        - NotifyViewDataChanged()
     }
-end
-subgraph DataAcess
-    class Data.IRepository {
+
+ 
+    class IRepository {
         <<interface>>
-        + SetValue(Data)
         + GetValue() Data
-    }
-    class Data.Repository {
-        - Model
         + SetValue(Data)
+        + AddListener(handle)
+        + RemoveListener(handle)
+    }
+
+    class Repository {
+        - Model _model
         + GetValue() Data
+        + SetValue(Data)
+        + AddListener(handle)
+        + RemoveListener(handle)
     }
-    class Data.Model {
-        + Data
-        + Set(data) // 데이터 변경
+
+    class Model {
+        + Observable_Data  
     }
-end
+
+ 
+    class IService {
+        <<interface>>
+        + Execute()
+    }
+
+    class Service {
+        + Execute()
+    }
 
 
-    MonoBehaviour <|-- View 
-    View o--> ViewModel
+    class UITest {
+        + TestFunc()
+    }
 
-    ViewModel o..> Data.IRepository
-    Data.IRepository <|-- Data.Repository
-    Data.Repository o--> Data.Model
-    
-    Test.UITest ..> ViewModel : tests
-    
 
-    %% Notes:
-    %% o-- : Composition/Aggregation 
-    %% --|> : Inheritance 상속
-    %% ..> : Dependency / Interaction 
+    MonoBehaviour <|-- View       
+    View o--> ViewModel               
+    ViewModel --> IRepository : Observe  
+         
+    ViewModel --> IService              
+    IRepository <|-- Repository     
+    Repository o--> Model : Observe  
+    ViewModel --> Model : Observe           
+    UITest ..> ViewModel : tests  
+    IService <|-- Service
 ```
