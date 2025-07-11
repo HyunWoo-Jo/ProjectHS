@@ -1,6 +1,7 @@
 ## 목차 
 1. [System](#system)
-
+2. [Policy](#policy)
+3. [Service](#service)
 --- 
 ## System
 System은 Play Scene에서 사용 되며 게임 흐름의 핵심 부분입니다. </br>
@@ -15,7 +16,7 @@ System의 역할을 다음과 같습니다.</br>
 - [**UpgradeSystem:**](../GamePlay/System/UpgradeSystem.cs) 업그레이드
 
 각 시스템은 [`PlaySceneSystemManager`](../GamePlay/PlaySceneSystemManager.cs)에서 이벤트 구독 초기화를 통해 연결됩니다.</br>
-PlaySceneSystemManager에서 연결 되는 목록은 다음과 같습니다. 
+`PlaySceneSystemManager`에서 연결 되는 목록은 다음과 같습니다. 
 ```mermaid
 flowchart TD
     S(Stage System)
@@ -28,5 +29,33 @@ flowchart TD
 
     ScreenClickInputSystem --Camera제어--> CameraSystem
 ```
+---
+## Policy
+`Policy`는 게임의 비지니스 로직 영역을 정의하는 부분입니다. </br>
+주로 경험치, 게임 재화, 체력 등 인게임에서 사용되는 부분을 정의합니다.</br> 
+전체적 구조는 다음과 같습니다.</br>
+```mermaid
+classDiagram
+class IPolicy {
+    <<interface>>
+    GetPolicy() : value
+}
+class Policy{
+    GetPolicy() : value
+}
+IPolicy <|-- Policy
+Service --> IPolicy
+```
+Policy는 구현 계층에 해당하며, 각 난이도(예: Easy, Normal, Hard)에 맞게 확장 가능하도록 설계되었습니다.</br>
+난이도별로 적절한 Policy를 바인딩(Bind)하여 사용할 수 있도록 설계된 구조입니다.</br>
+Bind 예시 [NormarInstaller](../Core/NormarInstaller.cs)</br>
+Policy를 교체함으로써 난이도에 따른 로직 변경이 용이하며, 유연한 확장성을 확보할 수 있습니다.</br>
+Policy 목록은 다음과 같습니다.</br>
+- [ExpPolicy](../GamePlay/_Policy/ExpPolicy.cs)
+- [GoldPolicy ](../GamePlay/_Policy/GoldPolicy.cs)
+- [HpPolicy](../GamePlay/_Policy/HpPolicy.cs)
+- [RewardPolicy](../GamePlay/_Policy/RewardPolicy.cs)
+- [TowerPricePolicy](../GamePlay/_Policy/TowerPricePolicy.cs)
 
 ---
+## Service
