@@ -4,6 +4,8 @@
 3. [DI(Dependency Injection)](#didependency-injection)
 4. [UI](#ui)
 5. [Test](#test)
+## Link
+1. [내부 설계 문서](../_Doc/GamePlayDoc.md)
 ---
 ## 설계 범위
 프로젝트의 전체적인 설계 범위는 다음과 같습니다.
