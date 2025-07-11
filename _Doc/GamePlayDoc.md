@@ -14,8 +14,8 @@ System의 역할을 다음과 같습니다.</br>
 - [**TowerSystem:**](../GamePlay/System/TowerSystem.cs) 타워 생성, 제거, 위치 변경
 - [**UpgradeSystem:**](../GamePlay/System/UpgradeSystem.cs) 업그레이드
 
-각 시스템은 [`PlaySceneSystemManager`](../GamePlay/PlaySceneSystemManager.cs)에서 이벤트 구독 초기화를 통해 연결됩니다. 
-게임의 흐름은 다음과 같습니다.
+각 시스템은 [`PlaySceneSystemManager`](../GamePlay/PlaySceneSystemManager.cs)에서 이벤트 구독 초기화를 통해 연결됩니다.</br>
+PlaySceneSystemManager에서 연결 되는 목록은 다음과 같습니다. 
 ```mermaid
 flowchart TD
     S(Stage System)
@@ -25,6 +25,8 @@ flowchart TD
     S --Stage 시작 알림--> W 
     W --Enemy 생성--> H
     E --Data 제어--> H
+
+    ScreenClickInputSystem --Camera제어--> CameraSystem
 ```
 
 ---
