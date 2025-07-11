@@ -8,7 +8,7 @@ using System;
 using Contracts;
 namespace GamePlay
 {
-    public class UpgradeSystem : MonoBehaviour, IUpgradeService {
+    public class UpgradeSystem : MonoBehaviour, IUpgradeSystem {
         [Inject] private IUIFactory _uiFactory;
         [Inject] private GameDataHub _gameDataHub;
         [Inject] private IGlobalUpgradeRepository _globalUpgradeRepository;
@@ -27,6 +27,7 @@ namespace GamePlay
         public void QueueUpgradeRequest(int level) {
             if (level <= 0) return;
             _remainingUpgradeSelections++;
+            // 중첩 생성 방지
             if(_remainingUpgradeSelections == 1) {
                 ShowRandomUpgradeSelection();
             }
@@ -52,26 +53,25 @@ namespace GamePlay
         /// </summary>
         /// <param name="count"></param>
         /// <returns></returns>
-        private List<UpgradeDataSO> GetRandomUpgradeDataList(int count) {
+        public List<UpgradeDataSO> GetRandomUpgradeDataList(int count) {
             var ableUpgradeList = _upgradeDataList.Where((data) => data.CheckUnlock()).OrderBy(_ => UnityEngine.Random.value).Take(count).ToList(); // 중복없이 사용가능한 것만 가지고옴
             return ableUpgradeList;
         }
 
-        public void Reroll(int index) {
-            var list = GetRandomUpgradeDataList(1);
-            if (list.Count > 0) {
-                _selectedUpgradeModel.observableUpgradeDatas[index].Value = list[0];
-            }
-            // model 업데이트
-            _selectedUpgradeModel.observableRerollCount.Value -= 1;
+
+        public void ConsumeRemainingCount() {
+            _remainingUpgradeSelections--;
         }
 
-        public void ApplyUpgrade(int index) {
-            _selectedUpgradeModel.observableUpgradeDatas[index].Value.ApplyUpgrade();
-            _remainingUpgradeSelections--;
-            if(_remainingUpgradeSelections > 0) {
+        /// <summary>
+        /// 남은 업그레이드 출력
+        /// </summary>
+        public bool TryShowRemainUpgradeSelection() {
+            if (_remainingUpgradeSelections > 0) {
                 ShowRandomUpgradeSelection();
+                return true;
             }
+            return false;
         }
     }
 }

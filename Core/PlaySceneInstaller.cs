@@ -45,6 +45,7 @@ namespace Core
             Container.Bind<ITowerPurchaseService>().To<TowerPurchaseService>().AsCached();
             Container.Bind<IRewardService>().To<RewardService>().AsCached();
             Container.Bind<ISellTowerService>().To<SellTowerService>().AsCached();
+            Container.Bind<IUpgradeService>().To<UpgradeService>().AsCached();
 
             // Play Scene에서만 사용되는  View Model
             Container.BindInterfacesAndSelfTo<TowerPurchaseViewModel>().AsCached();

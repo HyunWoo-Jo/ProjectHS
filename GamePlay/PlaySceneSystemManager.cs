@@ -135,6 +135,12 @@ namespace GamePlay
                 }
             };
 
+            // next exp
+            _expModel.levelObservable.OnValueChanged += (value) => {
+                int nextLevel = _expPolicy.GetNextLevelExp(value);
+                _expModel.nextExpObservable.Value = nextLevel;
+            };
+
             // UpgradeSystem
             _expModel.levelObservable.OnValueChanged += _upgradeSystem.QueueUpgradeRequest;
 

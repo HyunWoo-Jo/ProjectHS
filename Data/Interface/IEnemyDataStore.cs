@@ -4,7 +4,7 @@ using System.Collections;
 using Unity.Collections;
 using Unity.Mathematics;
 namespace Data {
-    public interface IEnemyDataService {
+    public interface IEnemyDataStore {
         EnemyData GetEnemyData(int index);
         int EnemiesLength();
         bool IsEnemyData();

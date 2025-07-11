@@ -7,7 +7,7 @@ using System.Linq;
 using System;
 namespace Data
 {
-    public class GameDataHub : IEnemyDataService, IPositionService {
+    public class GameDataHub : IEnemyDataStore {
         private List<ObjectPoolItem> _enemyPoolItemList = new();
 
         // Data
