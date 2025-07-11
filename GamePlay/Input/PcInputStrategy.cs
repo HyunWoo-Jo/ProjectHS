@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Data;
-using Contracts;
+using UI;
 namespace GamePlay
 {
     public class PcInputStrategy : InputBase {
