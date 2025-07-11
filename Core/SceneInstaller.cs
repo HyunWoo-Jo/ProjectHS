@@ -10,6 +10,7 @@ namespace Core
     public class SceneInstaller : MonoInstaller
     {
         public override void InstallBindings() {
+
             // Tag를 통해 원하는것을 바인딩
             Container.Bind<IMainCanvasTag>().To<MainCanvasTag>().FromComponentInHierarchy().AsCached(); // 메인 캔버스 바인딩
           

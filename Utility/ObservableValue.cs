@@ -19,5 +19,9 @@ namespace CustomUtility
         public ObservableValue(T initialValue = default) {
             _value = initialValue;
         }
+
+        public void RemoveAllListeners() {
+            OnValueChanged = null;
+        }
     }
 }

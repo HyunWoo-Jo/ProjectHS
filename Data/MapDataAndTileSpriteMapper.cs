@@ -9,28 +9,6 @@ using Zenject;
 
 namespace Data
 {
-
-    public enum MapTema {
-        Spring,
-        Winter,
-        Desert,
-    }
-
-    public enum TileType {
-        Ground = 0,
-        Road_Vertical,
-        Road_Horizontal,
-        Road_Cross,
-        Road_HorizontalUp,
-        Road_VerticalLeft,
-        Road_VerticalRight,
-        Road_HorizontalDown,
-        Road_RightDown,
-        Road_LeftUp,
-        Road_RightUp,
-        Road_LeftDown,
-    }
-
     public struct MapData
     {
         public Vector3 position;

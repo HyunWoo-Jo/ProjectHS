@@ -1,0 +1,16 @@
+{
+    "name": "Contracts",
+    "rootNamespace": "Contracts",
+    "references": [
+        "GUID:43f884ac021a63f428b5d9347564300e"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

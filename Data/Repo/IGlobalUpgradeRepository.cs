@@ -1,10 +1,21 @@
+using CustomUtility;
+using Cysharp.Threading.Tasks;
+using System;
 using UnityEngine;
 
 namespace Data
 {
-    public interface IGlobalUpgradeRepository : IDataGetterKey<float, UpgradeType>
+    public interface IGlobalUpgradeRepository
     {
-        // float GetValue(UpgradeType type); IDataGetterKey 정의 되어있음
-        void SetValue(UpgradeType type, float value);
+        UniTask LoadValue();
+        void SetLevel(GlobalUpgradeType type, int value);
+        
+        int GetLevelLocal(GlobalUpgradeType type);
+        int GetPrice(GlobalUpgradeType type);
+        int GetAbilityValue(GlobalUpgradeType type);
+       
+
+        void AddChangedListener(Action handler);
+        void RemoveChangedListener(Action handler);
     }
 }

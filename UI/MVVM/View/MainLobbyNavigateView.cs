@@ -13,7 +13,7 @@ namespace UI
 {
     public class MainLobbyNavigateView : MonoBehaviour
     {
-        [SerializeField] private NavigateStyleSettings _style;
+        [SerializeField] private NavigateStyleSettingsSO _style;
 
         [Inject] private MainLobbyNavigateViewModel _viewModel;
 
@@ -93,7 +93,7 @@ namespace UI
                 new Action(() => _viewModel.OnClickPanelMoveButton(MainLobbyNavigateViewModel.PanelType.Upgrade)), // 버튼 기능 바인딩
                 className, methodName + "_upgrade");
 
-            _playButton.AddTrigger(EventTriggerType.PointerClick, _viewModel.OnClickPlayButton, // 버튼 기능 바인딩
+            _playButton.AddTrigger(EventTriggerType.PointerClick, OnClickPlayButton, // 버튼 기능 바인딩
                 className, methodName + "_playButton");
         }
 
@@ -116,6 +116,13 @@ namespace UI
                 return _upgradeButton;
             }
             return null;
+        }
+
+        /// <summary>
+        /// Play Button 클릭
+        /// </summary>
+        public void OnClickPlayButton() {
+            _viewModel.ChangeScene();
         }
     }
 }

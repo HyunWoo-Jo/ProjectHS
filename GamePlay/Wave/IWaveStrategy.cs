@@ -8,7 +8,7 @@ namespace GamePlay
     /// </summary>
     public interface IWaveStrategy
     {
-        SpawnData GetSpawnData(int stageLevel, float3 spawnPosition);
+        SpawnData GetSpawnData(int stageLevel, float3 spawnPosition, float spawnTimeout);
     }
 
 }

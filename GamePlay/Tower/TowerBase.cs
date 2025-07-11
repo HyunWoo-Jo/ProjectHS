@@ -7,31 +7,46 @@ using Unity.Collections;
 using Unity.Jobs;
 using System;
 using CustomUtility;
-using Unity.Android.Gradle.Manifest;
+using UnityEngine.Assertions;
 namespace GamePlay
 {
     public abstract class TowerBase : MonoBehaviour {
         [SerializeField] protected TowerData towerData;
         [Inject] protected IEnemyDataService enemyDataService;
         [ReadEditor] [SerializeField] protected int targetIndex = -1;
-        // upgrade data
+        [SerializeField] private int price; // 판매 가격
+        [SerializeField] private SpriteRenderer _towerBaseRenderer; // 본체 Renerder (그림자에 사용)
+        [SerializeField] protected Animator anim;
+        protected static int ShootAnimHashKey = Animator.StringToHash("Shoot"); 
 
+        // upgrade data
+        public int index;
         protected float curAttackTime = 0; // 현재 장전 시간
 
+        public bool isStop = false;
+
         protected virtual void Awake() {
+#if UNITY_EDITOR
+            Assert.IsNotNull(_towerBaseRenderer);
+#endif
+
             // Binding
+            towerData.towerObj = this.gameObject;
             SetAttackSpeed(towerData.attackSpeed.Value);
             towerData.attackSpeed.OnValueChanged += SetAttackSpeed;
+        }
+
+        public int Price => price;
+
+        public Sprite GetTowerBaseSprite() => _towerBaseRenderer.sprite;
+        protected bool IsPause() {
+            return GameSettings.IsPause || isStop;
         }
 
         public TowerData GetTowerData() {
             return towerData;
         }
 
-        public void SetPosition(Vector2 pos) { // 위치 설정
-
-
-        }
 
         public virtual void Attack() {
             if (IsAttackAble()) { // 공격이 가능한 상태이면
@@ -40,20 +55,17 @@ namespace GamePlay
         }
         public abstract void AttackLogic();
 
-
+        public void SetAttackSpeed(float speed) { // 공격 속도 설정
+            anim.speed = speed;
+        }
         private bool IsAttackAble() { // 공격 가능 여부
             if (targetIndex != -1 && curAttackTime >= towerData.attackTime) return true;
             return false;
         }
 
        
-        
-
-
-        public abstract void SetAttackSpeed(float speed); // 공격 속도 설정
-
-
         protected virtual void Update() {
+            if (IsPause()) return;
             if (enemyDataService.IsEnemyData()) {
                 SerchIsRangeEnemiesIndex(); // 조건에 따라 매프레임 범위 안에 들어온 적 검색
                 Attack(); // 공격 
@@ -96,7 +108,7 @@ namespace GamePlay
             public void Execute() {
                 for (int i = 0; i < enemies.Length; i++) {
                     if (!enemies[i].isSpawn) return;
-                    if (enemies[i].isDead) continue;
+                    if (enemies[i].isDead || enemies[i].nextTempHp <= 0) continue;
                     if (math.distance(enemies[i].position, position) <= range) {
                         resultIndex[0] = i;
                         return;

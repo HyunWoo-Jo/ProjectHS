@@ -28,7 +28,7 @@ namespace GamePlay {
         public MapTema MapTema { get; private set; }
 
 
-        [Inject] IUIFactory _uiManager;
+        [Inject] IUIFactory _uiFactory;
         [Inject] ILoadManager _loadManager;
 
         public Vector2Int MapSize { get; private set; } = new Vector2Int(20, 20);
@@ -53,11 +53,10 @@ namespace GamePlay {
         /// 씬 전환이 일어날때 이펙트 발생
         /// </summary>
         private void LoadSceneEffect(Scene scene, LoadSceneMode mode) {
-            if (SceneManager.GetActiveScene().name != SceneName.LoadScene.ToString()) { // 로드 씬이 아닐경우
-                if(_loadManager.GetPreSceneName() != _loadManager.GetNextSceneName()) { // 처음 로드한 씬이 아닌경우 이펙트 실행
-                    IWipeUI wipeUI = _uiManager.InstanceUI<WipeUI>(20);
-                    wipeUI.Wipe(WipeDirection.FillRight, 0.5f, true);
-                }
+            if (SceneManager.GetActiveScene().name != SceneName.LoadScene.ToString() && 
+                _loadManager.GetPreSceneName() != _loadManager.GetNextSceneName()) { // 로드 씬이 아닐경우 , 처음 로드한 씬이 아닌경우 이펙트 실행
+                IWipeUI wipeUI = _uiFactory.InstanceUI<WipeUI>(100);
+                wipeUI.Wipe(WipeDirection.FillRight, 0.5f, true);
 
             }
         }

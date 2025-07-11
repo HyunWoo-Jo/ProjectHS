@@ -2,7 +2,10 @@
     "name": "Network",
     "rootNamespace": "Network",
     "references": [
-        "Zenject"
+        "Zenject",
+        "Data",
+        "Utility",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

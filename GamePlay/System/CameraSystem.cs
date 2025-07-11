@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace GamePlay
@@ -17,10 +18,14 @@ namespace GamePlay
 
         private CameraBoundery _boundery; // 카메라가 이동 가능한 경계 설정
         
+
         public float cameraSpeed = 400f; // 카메라 이동 속도
 
         public float cameraLerpSpeed = 2f; // 카메라 보간 속도
 
+        public float maxOrthographicSize = 7f;
+        public float minOrthographicSize = 3f;
+        public float closeUpSpeed = 1.0f;
         public Vector3 CameraOffset {  get; private set; }
 
         public void SetCameraOffset(Vector3 pos) {
@@ -55,6 +60,11 @@ namespace GamePlay
             );
             // 보간
             _camera.transform.position = Vector3.Lerp(_camera.transform.position, targetPos, cameraLerpSpeed * Time.deltaTime);
+        }
+        // 카메라 확대축소
+        public void HandleCameraCloseUpDown(float value) {
+            float newSize = _camera.orthographicSize - (value * closeUpSpeed * Time.deltaTime);
+            _camera.orthographicSize = Mathf.Clamp(newSize, minOrthographicSize, maxOrthographicSize);
         }
     }
 }

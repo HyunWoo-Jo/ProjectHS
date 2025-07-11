@@ -1,3 +1,5 @@
+using Contracts;
+using GamePlay;
 using UI;
 using UnityEngine;
 using Zenject;
@@ -11,7 +13,12 @@ namespace Core
     {
         public override void InstallBindings() {
             // UI ViewModel¿ª Bind
-            Container.Bind<MainLobbyNavigateViewModel>().AsTransient().NonLazy();
+            Container.Bind<MainLobbyNavigateViewModel>().AsTransient();
+            Container.BindInterfacesAndSelfTo<MainLobbyUpgradeViewModel>().AsCached();
+
+            // Service;
+            Container.Bind<IGlobalUpgradePurchaseService>().To<GlobalUpgradePurchaseService>().AsCached();
+           
         }
     }
 }

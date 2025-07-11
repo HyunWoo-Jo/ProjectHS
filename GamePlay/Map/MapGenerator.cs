@@ -4,19 +4,16 @@ using Data;
 using System.Collections.Generic;
 using CustomUtility;
 using Cysharp.Threading.Tasks;
-using GamePlay;
 
-namespace GamePlay22
+namespace GamePlay
 {
     /// <summary>
     /// 맵을 생성해주는 클레스
     /// </summary>
     public class MapGenerator {
         private IPathStrategy _pathStrategy; // Path 생성 규약
-        public MapGenerator(IPathStrategy pathStrategy) {
-            _pathStrategy = pathStrategy;
-        }
-        public void SetPathGenerate(IPathStrategy pathStrategy) {
+
+        public void SetPathStrategy(IPathStrategy pathStrategy) {
             _pathStrategy = pathStrategy;
         }
 
@@ -115,7 +112,7 @@ namespace GamePlay22
                 for (int x = 0; x < sizeX; x++) {
                     int calculatedOrder = (BASE_ORDER - (y * ORDER_PER_ROW) + x) - (BASE_ORDER + ORDER_PER_ROW); // order이 - 값이 되도록 계산
                     MapData data = new() {
-                        position = GridToWorldPosition(x,y),
+                        position = GridUtility.GridToWorldPosition(x,y),
                         type = finalGrid[x, y],
                         orderBy = calculatedOrder
                     };
@@ -126,19 +123,12 @@ namespace GamePlay22
 
             // Path를 최종 위치로 변경
             foreach(Vector2Int pos in pathWaypointList) {
-                pathList.Add(GridToWorldPosition(pos.x, pos.y) + new Vector3(0, 0.7f,0));
+                pathList.Add(GridUtility.GridToWorldPosition(pos.x, pos.y) + new Vector3(0, 0.7f,0));
 
             }
             
 
             return mapDataList; // 완성된 맵 데이터 리스트 반환
-        }
-
-        /// <summary>
-        /// 오브젝트 이미지에 맞춰 위치를 변경해주는 함수
-        /// </summary>
-        public Vector3 GridToWorldPosition(int x, int y) {
-            return new Vector3((x * 1.25f) + (y * 1.25f), (y * 0.75f) - (x * 0.75f), 0);
         }
 
 

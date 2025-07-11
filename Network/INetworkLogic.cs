@@ -1,14 +1,26 @@
 using UnityEngine;
 using System.Threading.Tasks;
+using Firebase.Database;
+using Cysharp.Threading.Tasks;
 namespace Network
 {
     public interface INetworkLogic
     {
-        public void Initialize();
-        public Task GuestLoginAsync();
+        
+        void Initialize();
+        void Dispose();
 
-        public Task<bool> IsConnectedAsync();
+        UniTask GuestLoginAsync();
 
-        public void Dispose();
+        UniTask<bool> IsConnectedAsync();
+
+        UniTask<DataSnapshot> GetUserCrystal();
+        UniTask SetUserCrystal(int value);
+
+        UniTask<DataSnapshot> GetAllUpgrade();
+        UniTask SetUpgrade<T>(string key, T value);
+
+        UniTask<DataSnapshot> GetVersion();
+        UniTask<DataSnapshot> GetUpgradeTable();
     }
 }

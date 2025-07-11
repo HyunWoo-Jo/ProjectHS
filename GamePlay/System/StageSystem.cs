@@ -12,6 +12,8 @@ namespace GamePlay
     public class StageSystem : MonoBehaviour
     {
         [Inject] private WaveStatusModel _waveStatusModel;
+        [Inject] private StageSettingsModel _stageSettingsModel;
+
 
         public event Action<StageType, int> OnStageStart; // 스테이지가 시작될때 발생되는 Event
         public event Action<int> OnStageEnd; // 스테이지가 끝날때 발생되는 Event
@@ -27,7 +29,6 @@ namespace GamePlay
         private IStageTypeStrategy _stageTypeStrategy;
         private IStageEndStrategy _stageEndStrategy;
 
-        private const float stageStandardTime = 40f;
 
         public StageType CurStageType { get; private set;}
 
@@ -54,9 +55,6 @@ namespace GamePlay
                 case StageType.Boss:
                 _stageEndStrategy = new BossStageEndStrategy();
                 break;
-                case StageType.Timer:
-                _stageEndStrategy = new TimerStageEndStrategy();
-                break;
             }
         }
 
@@ -76,7 +74,7 @@ namespace GamePlay
         /// </summary>
         private void EndStage() {
             OnStageEnd?.Invoke(StageLevel); // Event 실행
-            WaveTime = stageStandardTime; // 남은 시간 초기화
+            WaveTime = _stageSettingsModel.stageDelayTime; // 남은 시간 초기화
             ++StageLevel; // 다음 스테이지
         }
 
@@ -86,6 +84,7 @@ namespace GamePlay
         }
 
         private void Update() {
+            if (GameSettings.IsPause) return;
             float time = WaveTime;
             // 시간 계산 (추후 게임 속도, 일시정지 등이 추가 될 수 있음)
             time -= Time.deltaTime;

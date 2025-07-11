@@ -15,9 +15,7 @@ namespace UI
     public interface IWipeUI {
         void Wipe(WipeDirection direction, float targetTime, bool isAutoActiveClose);
     }
-    public class WipeUI : MonoBehaviour, IWipeUI{
-
-        [Inject] private UIEvent _uiEvent;
+    public class WipeUI : MonoBehaviour, IWipeUI{   
 
         [SerializeField] private Image _wipePanel;
         private WipeDirection _direction = WipeDirection.Left;
@@ -65,7 +63,7 @@ namespace UI
                 yield return null;
             }
             if (isAutoDestroy) {
-                Close();
+                Destroy(this.gameObject);
             }
         }
         private void SetMatPro(float value) {
@@ -73,9 +71,6 @@ namespace UI
         }
        
 
-        public void Close() {
-            _uiEvent.CloseUI(this.gameObject); // 제거 이벤트 발생
-        }
 
        
     }

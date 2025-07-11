@@ -3,6 +3,8 @@ using Firebase.Auth;
 using Firebase.Database;
 using System.Threading.Tasks;
 using System;
+using Firebase.Extensions;
+using Cysharp.Threading.Tasks;
 namespace Network
 {
 
@@ -18,7 +20,7 @@ namespace Network
         /// <summary>
         /// 로그인 시도 (Email Password 로그인 시도 -> 등록 시도
         /// </summary>
-        public async Task GuestLoginAsync() {
+        public async UniTask GuestLoginAsync() {
             try {
                 // Email, Password 로그인 시도
                 string systemUID;
@@ -64,14 +66,14 @@ namespace Network
         /// </summary>
         /// <returns></returns>
 
-        public async Task<bool> IsConnectedAsync() {
-            if(_auth.CurrentUser == null) { // 로그인 되어있지 않은 경우
+        public async UniTask<bool> IsConnectedAsync() {
+            if(_auth.CurrentUser == null || _user == null) { // 로그인 되어있지 않은 경우
                 return false;
             }
 
-            Task<string> task = _user.TokenAsync(true); // 토큰 갱신 요청
+            UniTask<string> task = _user.TokenAsync(true).AsUniTask(); // 토큰 갱신 요청
             await task;
-            if (task.IsFaulted || task.IsCanceled) { // 유효 하지 않은 섹션이면
+            if (task.Status.IsFaulted() || task.Status.IsCanceled()) { // 유효 하지 않은 섹션이면
                 return false;
             }
 
@@ -84,6 +86,38 @@ namespace Network
         }
 
 
+     
 
+        // UserData
+        public UniTask<DataSnapshot> GetUserCrystal() {
+            return GetCrystalRef().GetValueAsync().AsUniTask();
+        }
+
+        public async UniTask SetUserCrystal(int value) {
+            await GetCrystalRef().SetValueAsync(value);
+        }
+
+        private DatabaseReference GetCrystalRef() {
+            return _databaseReference.Child("UserData").Child(_user.UserId).Child("Crystal");
+        }
+
+        // Upgrade
+        public UniTask<DataSnapshot> GetAllUpgrade() {
+            return GetUpgradeRef().GetValueAsync().AsUniTask();
+        }
+
+        public async UniTask SetUpgrade<T>(string key, T value) {
+            await GetUpgradeRef().Child(key).SetValueAsync(value);
+        }
+        private DatabaseReference GetUpgradeRef() {
+            return _databaseReference.Child("UserData").Child(_user.UserId).Child("Upgrade");
+        }
+
+        public UniTask<DataSnapshot> GetVersion() {
+            return _databaseReference.Child("UpgradeTable").Child("Version").GetValueAsync().AsUniTask();
+        }
+        public UniTask<DataSnapshot> GetUpgradeTable() {
+            return _databaseReference.Child("UpgradeTable").GetValueAsync().AsUniTask();
+        }
     }
 }
