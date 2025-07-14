@@ -5,7 +5,7 @@
 ## 플레이
 
 
-## 설계
+## 설계 문서
 - [기획](/_Doc/Planning.md)
 - [개발일지](/_Doc/DevelopmentLog.md)
 - [시스템 설계](/_Doc/System.md)
