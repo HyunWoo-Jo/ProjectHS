@@ -5,6 +5,7 @@
 3. [Service](#service)
 4. [Upgrade](#upgrade)
 5. [Network](#network)
+6. [UI](#ui)
 --- 
 ## System
 System은 Play Scene에서 사용 되며 게임 흐름의 핵심 부분입니다. </br>
@@ -223,6 +224,103 @@ NetworkManager --> INetworkLogic
 INetworkLogic <|-- FirebaseLogic
 
 ```
-
-
 ---
+
+## UI
+1. **설계 목적** </br>
+UI는 복잡도와 확장 가능성에 따라 두 가지 방식으로 구성합니다.
+
+- **MVVM(Model-View-ViewModel)**  
+  데이터 규모가 크고, 향후 기능 추가·유지보수 가능성이 높은 화면에 적용합니다.  
+  테스트 용이성, 재사용성, 의존성 분리 측면에서 유리합니다.
+
+- **MonoBehaviour 단일 구조**  
+  화면이 단순하고 로직이 고정적인 `UI`는 `MonoBehaviour` 하나로 구현하여 개발 효율을 높입니다.
+
+
+2. **MVVM 계층 역할** </br>
+
+| 계층            | 역할 요약  | 상세 설명                                                                                                          |
+| ------------- | ------ | -------------------------------------------------------------------------------------------------------------- |
+| **Model**     | 상태 관리  | - UI에서 사용할 상태 값을 보관<br>- 외부 데이터(Firebase 등)는 **Repository 패턴**으로 캡슐화<br>- 인게임 전용 데이터는 DI(의존성 주입)으로 전달받아 관리     |
+| **ViewModel** | 중재자 역할 | - `View`와 `Model` 사이의 중재자 역할 수행<br>- `Event`를 사용하여 `View`와 데이터 바인딩<br>- 복잡한 도메인 로직은 \*\*`Service`\*\*를 주입받아 실행 |
+| **View**      | UI 렌더링 | - Unity UI 요소를 렌더링하고 입력을 수집<br>- `ViewModel`의 `Event`를 구독해 UI 업데이트<br>- 버튼 등 UI 요소는 `ViewModel`의 로직을 통해 초기화    |
+
+3.**의존성 주입 흐름** </br>
+
+1. **Repository**는 외부 데이터(Firebase 등)에 대한 모든 접근을 담당해 `ViewModel`에서 직접 접근하지 않습니다.  
+2. **ViewModel**은 `Repository/Model`에서 데이터를 받아와 가공하고, 필요한 경우 `Service`를 호출합니다.  
+3. 모든 의존성은 **Zenject**로 주입하며, 테스트 환경에서도 대체 가능한 구조를 유지합니다.
+
+### UI Class Diagram
+```mermaid
+classDiagram
+    class MonoBehaviour {
+        <<Unity Engine>>
+    }
+
+    class View {
+        <<MonoBehaviour>>
+        - UnityUIReference
+        - ViewModel  // Inject
+        + Awake()
+        + OnDestroy()
+        + UpdateUI(data)
+    }
+
+    class ViewModel {
+        - IRepository // Inject
+        - IService // Inject
+        + event Action OnDataChanged
+        + SetData(data)
+        - NotifyViewDataChanged()
+    }
+
+ 
+    class IRepository {
+        <<interface>>
+        + GetValue() Data
+        + SetValue(Data)
+        + AddListener(handle)
+        + RemoveListener(handle)
+    }
+
+    class Repository {
+        - Model _model
+        + GetValue() Data
+        + SetValue(Data)
+        + AddListener(handle)
+        + RemoveListener(handle)
+    }
+
+    class Model {
+        + Observable_Data  
+    }
+
+ 
+    class IService {
+        <<interface>>
+        + Execute()
+    }
+
+    class Service {
+        + Execute()
+    }
+
+
+    class UITest {
+        + TestFunc()
+    }
+
+
+    MonoBehaviour <|-- View       
+    View o--> ViewModel               
+    ViewModel --> IRepository : Observe  
+         
+    ViewModel --> IService              
+    IRepository <|-- Repository     
+    Repository o--> Model : Observe  
+    ViewModel --> Model : Observe           
+    UITest ..> ViewModel : tests  
+    IService <|-- Service
+```
