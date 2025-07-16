@@ -4,18 +4,22 @@
 2. [Policy](#policy)
 3. [Service](#service)
 4. [Upgrade](#upgrade)
+5. [Network](#network)
 --- 
 ## System
 System은 Play Scene에서 사용 되며 게임 흐름의 핵심 부분입니다. </br>
 System의 역할을 다음과 같습니다.</br>
-- [**`MapSystem`**](../GamePlay/System/MapSystem.cs) : 맵 데이터 생성, 맵 오브젝트 생성
-- [**`ScreenClickInputSystem`**](../GamePlay/System/ScreenClickInputSystem.cs) : Input 관리
-- [**`EnemySystem`**](../GamePlay/System/EnemySystem.cs) : Enemy 행동 제어(DOD(Data Oriented Design) 구조)
-- [**`StageSystem`**](../GamePlay/System/StageSystem.cs) : 스테이지 시작과 종료
-- [**`WaveSystem`**](../GamePlay/System/WaveSystem.cs) : 스테이지 Level에 맞는 Wave(enemy) 생성
-- [**`CameraSystem`**](../GamePlay/System/CameraSystem.cs) : 카메라 제어
-- [**`TowerSystem`**](../GamePlay/System/TowerSystem.cs) : 타워 생성, 제거, 위치 변경
-- [**`UpgradeSystem`**](../GamePlay/System/UpgradeSystem.cs) : 업그레이드
+  
+| 클래스                                              | 설명                      |
+| ------------------------------------------------ | ----------------------- |
+| [**`MapSystem`**](../GamePlay/System/MapSystem.cs)                             | 맵 데이터 생성, 맵 오브젝트 생성 |
+| [**`ScreenClickInputSystem`**](../GamePlay/System/ScreenClickInputSystem.cs)   | Input 관리 |
+| [**`EnemySystem`**](../GamePlay/System/EnemySystem.cs)                         | Enemy 행동 제어(DOD(Data Oriented Design) 구조) |
+| [**`StageSystem`**](../GamePlay/System/StageSystem.cs)                         | 스테이지 시작과 종료 |
+| [**`WaveSystem`**](../GamePlay/System/WaveSystem.cs)                           | 스테이지 Level에 맞는 Wave(enemy) 생성 |
+| [**`CameraSystem`**](../GamePlay/System/CameraSystem.cs)                       | 카메라 제어 |
+| [**`TowerSystem`**](../GamePlay/System/TowerSystem.cs)                         | 타워 생성, 제거, 위치 변경 |
+| [**`UpgradeSystem`**](../GamePlay/System/UpgradeSystem.cs)                     | 업그레이드 |
 
 각 시스템은 [`PlaySceneSystemManager`](../GamePlay/PlaySceneSystemManager.cs)에서 이벤트 구독 초기화를 통해 연결됩니다.</br>
 `PlaySceneSystemManager`에서 연결 되는 목록은 다음과 같습니다. 
@@ -55,29 +59,40 @@ Policy는 구현 계층에 해당하며, 각 난이도(예: Easy, Normal, Hard)�
 Policy를 교체함으로써 난이도에 따른 로직 변경이 용이하며, 유연한 확장성을 확보할 수 있습니다.</br>
 
 Policy 목록은 다음과 같습니다.</br>
-- [`ExpPolicy`](../GamePlay/_Policy/ExpPolicy.cs) : 경험치 정책
-- [`GoldPolicy`](../GamePlay/_Policy/GoldPolicy.cs) : 골드 정책
-- [`HpPolicy`](../GamePlay/_Policy/HpPolicy.cs) : Hp 정책
-- [`RewardPolicy`](../GamePlay/_Policy/RewardPolicy.cs) : 보상 정책
-- [`TowerPricePolicy`](../GamePlay/_Policy/TowerPricePolicy.cs) : 타워 정책
+
+| 클래스                                              | 설명                      |
+| ------------------------------------------------ | ----------------------- |
+| [`ExpPolicy`](../GamePlay/_Policy/ExpPolicy.cs) | 경험치 정책 |
+| [`GoldPolicy`](../GamePlay/_Policy/GoldPolicy.cs) | 골드 정책 |
+| [`HpPolicy`](../GamePlay/_Policy/HpPolicy.cs) | Hp 정책 |
+| [`RewardPolicy`](../GamePlay/_Policy/RewardPolicy.cs) | 보상 정책 |
+| [`TowerPricePolicy`](../GamePlay/_Policy/TowerPricePolicy.cs) | 타워 정책 |
+
 
 ---
 ## Service
 `Service` 어플리케이션 로직을 정의하며 각 데이터를 참고해 특정 작업을 수행해줍니다.</br>
-- [`TowerPurchaseService`](../GamePlay/_Service/TowerPurchaseService.cs) : 타워 구매
-- [`SellTowerService`](../GamePlay/_Service/SellTowerService.cs) : 타워 판매
-- [`SceneTransitionService`](../GamePlay/_Service/SceneTransitionService.cs) : 씬 이동
-- [`RewardService`](../GamePlay/_Service/RewardService.cs) : 보상 획득
-- [`UpgradeService`](../GamePlay/_Service/UpgradeService.cs) : 업그레이드 적용, 리롤    
-- [`GlobalUpgradePurchaseService`](../GamePlay/_Service/GlobalUpgradePurchaseService.cs) : 글로벌 업그레이드 적용
-- [`NetworkManager`](../Network/NetworkManager.cs) : 각종 Network 관련 Service들
+
+| 클래스                                              | 설명                      |
+| ------------------------------------------------ | ----------------------- |
+| [`TowerPurchaseService`](../GamePlay/_Service/TowerPurchaseService.cs) | 타워 구매 |
+| [`SellTowerService`](../GamePlay/_Service/SellTowerService.cs) | 타워 판매 |
+| [`SceneTransitionService`](../GamePlay/_Service/SceneTransitionService.cs) | 씬 이동 |
+| [`RewardService`](../GamePlay/_Service/RewardService.cs) | 보상 획득 |
+| [`UpgradeService`](../GamePlay/_Service/UpgradeService.cs) | 업그레이드 적용, 리롤 |    
+| [`GlobalUpgradePurchaseService`](../GamePlay/_Service/GlobalUpgradePurchaseService.cs) | 글로벌 업그레이드 적용 |
+| [`NetworkManager`](../Network/NetworkManager.cs) | 각종 Network 관련 Service들 |
 
 ---
-## System 
+## Upgrade
 1. **Upgrade 구조** </br>
 Upgrade 확장은 `Unlock` 조건과 `Apply` 적용으로 나눠집니다.
-- [**`UnlockStrategyBaseSO`**](../Data/Upgrade/UnlockStrategyBaseSO.cs) : 해금 조건으로 특정 조건을 만족했을때 업그레이드 선택 목록에 나타남 (특정 스테이지 이상, 특정 HP 이하 등)
-- [**`UpgradeStrategyBaseSO`**](../Data/Upgrade/UpgradeStrategyBaseSO.cs) : 적용으로 업그레이드를 실제 수행함 (Tower 공격력 증가, 골드 증가 등)
+
+| 클래스                                              | 설명                      |
+| ------------------------------------------------ | ----------------------- |
+| [`UnlockStrategyBaseSO`](../Data/Upgrade/UnlockStrategyBaseSO.cs) | 해금 조건으로 특정 조건을 만족했을때 업그레이드 선택 목록에 나타남 (특정 스테이지 이상, 특정 HP 이하 등) |
+| [`UpgradeStrategyBaseSO`](../Data/Upgrade/UpgradeStrategyBaseSO.cs) | 적용으로 업그레이드를 실제 수행함 (Tower 공격력 증가, 골드 증가 등) | 
+
 `Abstruct` 클래스인 `Base`를 상속받아서 각 구현하여 확장해 나갑니다.
 
 2. **Class Diagram**
@@ -149,3 +164,65 @@ UpgradeModifier --> UpgradeStrategyBaseSO
 개발자는 `UnlockStrategyBaseSO`, `UpgradeStrategyBaseSO`을 상속받아 구현하고, 기획자가 직접 인스펙터에서 조합하여 수정할수 있도록 하였습니다.
 <img width="391" height="314" alt="image" src="https://github.com/user-attachments/assets/c222f176-39f6-4a41-8b81-713e5cafed0f" />
 
+---
+## Network
+Network 계층은 Firebase의 Realtime Database와 Authentication을 기반으로 구현되었습니다. </br>
+추후 AWS, 로컬 서버 등 다른 백엔드 서비스로의 확장을 고려해 유연하고 모듈화된 구조로 설계되었습니다.
+
+1. **`Firebasse Database`** 구조 </br>
+- `UpgradeTable`
+  - `[Global Upgrade Data]` : 글로벌 업그레이드 수치 데이터
+  - `Version` : Version을 확인하여 업데이트를 할지 결정
+- `UserData`
+  - `[UID]` : 유저별 고유 식별자 UID를 기준으로 데이터 저장
+      - `Crystal` :  보유 크리스탈 수
+      - `Upgrade` : 유저가 보유한 업그레이드 정보
+          - [Data]  : 업그레이드 타입별 레벨 정보 저장
+
+2. **Network 구조** </br>
+Network 계층은 다음과 같은 구성으로 설계되어 있으며, 의존성 주입(Dependency Injection)을 통해 외부에서 로직 구현체를 변경할 수 있도록 유연하게 처리했습니다.
+
+| 클래스                                              | 설명                      |
+| ------------------------------------------------ | ----------------------- |
+| [`NetworkManager`](../Network/NetworkManager.cs) | 외부에서 호출 가능한 네트워크 진입점    |
+| [`INetworkLogic`](../Network/INetworkLogic.cs)   | 네트워크 동작에 대한 인터페이스 정의    |
+| [`FirebaseLogic`](../Network/FirebaseLogic.cs)   | 실제 Firebase 로직을 구현한 클래스 |
+
+- **설계 배경** </br>
+Firebase 외에도 AWS, 로컬 서버 등 다른 백엔드로의 교체 가능성을 고려해, </br>
+모든 핵심 기능은 INetworkLogic 인터페이스를 통해 추상화되었습니다.
+
+- **핵심 목표**</br>
+ INetworkLogic 인터페이스를 기준으로 다양한 구현체 (FirebaseLogic, LocalNetworkLogic, AwsNetworkLogic 등)를 생성하여 유연하게 교체 가능하여 확장성을 열어 뒀습니다.
+
+```mermaid
+classDiagram
+class INetworkServices {
+    <<Interface>>
+}
+class NetworkManager{
+    INetworkLogic // Inject
+    LoginAsync()
+    GetSetLogic()
+}
+
+class INetworkLogic {
+    <<Interface>>
+    Initialize()
+    AuthLogics()
+    GetSetLogics()
+}
+
+class FirebaseLogic {
+    Initialize()
+    AuthLogics()
+    GetSetLogics()
+}
+INetworkServices <|-- NetworkManager : 각 서비스들을 상속
+NetworkManager --> INetworkLogic 
+INetworkLogic <|-- FirebaseLogic
+
+```
+
+
+---
