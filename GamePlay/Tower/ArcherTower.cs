@@ -33,7 +33,7 @@ namespace GamePlay
         }
         private void AimLookAtEnemy() {
             if(targetIndex != -1) { 
-                EnemyData enemyData = enemyDataService.GetEnemyData(targetIndex);
+                EnemyData enemyData = enemyDataStore.GetEnemyData(targetIndex);
                 _lookAtTarget.AimLookAtEnemy(enemyData.position);
             }
         }

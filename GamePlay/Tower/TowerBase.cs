@@ -12,7 +12,7 @@ namespace GamePlay
 {
     public abstract class TowerBase : MonoBehaviour {
         [SerializeField] protected TowerData towerData;
-        [Inject] protected IEnemyDataService enemyDataService;
+        [Inject] protected IEnemyDataStore enemyDataStore;
         [ReadEditor] [SerializeField] protected int targetIndex = -1;
         [SerializeField] private int price; // 판매 가격
         [SerializeField] private SpriteRenderer _towerBaseRenderer; // 본체 Renerder (그림자에 사용)
@@ -66,7 +66,7 @@ namespace GamePlay
        
         protected virtual void Update() {
             if (IsPause()) return;
-            if (enemyDataService.IsEnemyData()) {
+            if (enemyDataStore.IsEnemyData()) {
                 SerchIsRangeEnemiesIndex(); // 조건에 따라 매프레임 범위 안에 들어온 적 검색
                 Attack(); // 공격 
             }
@@ -74,8 +74,8 @@ namespace GamePlay
         }
 
         private void SerchIsRangeEnemiesIndex() { // 범위안에 들어온 적 찾기
-            if (targetIndex != -1 && enemyDataService.EnemiesLength() > targetIndex) { // 타겟이 존재하면 
-                EnemyData enemyData = enemyDataService.GetEnemyData(targetIndex);
+            if (targetIndex != -1 && enemyDataStore.EnemiesLength() > targetIndex) { // 타겟이 존재하면 
+                EnemyData enemyData = enemyDataStore.GetEnemyData(targetIndex);
                 if (enemyData.isDead || math.distance(enemyData.position, transform.position) > towerData.range) { // 죽었거나 공격 범위를 초과했으면 초기화
                     targetIndex = -1;
                 }
@@ -83,7 +83,7 @@ namespace GamePlay
                 int[] temp = new int[1] { -1 };
                 NativeArray<int> resultIndex = new NativeArray<int>(temp, Allocator.TempJob);
                 var handle = new EnemiesSerchJob {
-                    enemies = enemyDataService.GetEnemiesData(),
+                    enemies = enemyDataStore.GetEnemiesData(),
                     position = transform.position,
                     range = towerData.range,
                     resultIndex = resultIndex

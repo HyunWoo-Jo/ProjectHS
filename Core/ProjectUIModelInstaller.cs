@@ -4,7 +4,9 @@ using UnityEngine;
 using Zenject;
 namespace Core
 {
-    // UI를 바인드
+    /// <summary>
+    /// UI를 바인드
+    /// </summary>
     public class ProjectUIInstaller : MonoInstaller
     {
         public override void InstallBindings() {
