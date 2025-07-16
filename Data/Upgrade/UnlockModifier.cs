@@ -5,7 +5,7 @@ namespace Data
 {
 
     [Serializable]
-    public class UnlockModifier : MonoBehaviour
+    public class UnlockModifier
     {
         public float value;
         [SerializeField] private UnlockStrategyBaseSO _unlockStrategy;
