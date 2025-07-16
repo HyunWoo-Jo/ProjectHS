@@ -1,7 +1,7 @@
 # ProjectHS
 **프로젝트 목적** - 이 프로젝트는 단순한 기능 구현을 넘어서, 확장성과 유지보수성을 고려한 구조적 설계에 중점을 두고 개발되었습니다.
 
-# 설계 문서
+# 설계 문서 (link)
 - [기획](/_Doc/Planning.md)
 - [개발일지](/_Doc/DevelopmentLog.md)
 - [시스템 설계](/_Doc/System.md)
