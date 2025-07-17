@@ -55,8 +55,7 @@ namespace Network
                 if (task.Exists) {
                     completeAction?.Invoke(Convert.ToInt32(task.Value));
                 }
-            });
-           
+            });     
         }
 
         public async UniTask SaveUseCrystalAsync(int userCrystal) {

@@ -28,6 +28,7 @@ namespace Network
             // 업그레이드 단계를 불러옴 user 정보
             await _upgradeService.GetAllUpgradeTableAsync(_tableSO);
 
+            // Upgrade Level을 읽어옴
             await _upgradeService.GetAllUpgradeLevelAsync((data) => {  
                 _model.SetNewData(data);
             });
@@ -35,6 +36,7 @@ namespace Network
             _OnValueChanged?.Invoke();
 
         }
+
         /// Value
         public int GetPrice(GlobalUpgradeType type) {
             return GetLevelLocal(type) * _tableSO.GetPriceIncrement(type) + _tableSO.GetStartPrice(type); 

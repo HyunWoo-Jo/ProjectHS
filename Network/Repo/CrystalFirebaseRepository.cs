@@ -33,16 +33,18 @@ namespace Network
         }
 
         public async UniTask LoadValue() {
-            await _userService.GetUserCrystalAsync(SetValue);
+            await _userService.GetUserCrystalAsync((value) => {
+                _model.valueObservable.Value = (value);
+            });
         }
 
         public bool TrySpend(int price) {
-            _model.valueObservable.Value -= price;
+            SetValue(GetValue() - price);
             return true;
         }
 
         public bool TryEarn(int value) {
-            _model.valueObservable.Value += value;
+            SetValue(GetValue() + value);
             return true;
         }
     }

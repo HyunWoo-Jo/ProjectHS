@@ -30,10 +30,13 @@ namespace GamePlay
 
         // 네트워크 초기화 까지 대기
         private async void InitLogicAsync() {
+            
             // 연결 확인
             await CheckCnnectedLoop();
+            // 지연
+            await UniTask.Delay(500);
             // UpgradeTable 읽기
-            await GetUgradeTableLoop();
+            await GetGlobalUgradeLoop();
             // UserData 읽기
             await GetUserDataLoop();
             // 메인 로비로 이동
@@ -53,10 +56,9 @@ namespace GamePlay
                 await UniTask.Delay(100);
             }
         }
-        private async UniTask GetUgradeTableLoop() {
-            // upgradeTable 로드
+        private async UniTask GetGlobalUgradeLoop() {
             _initSceneUI.UpdateTextFromThread("Update Table");
-            // 내부에서 버전 체크를 진행(다를경우에만 업데이트)
+            // upgradeTable, Level을 로드
             await _globalUpgradeRepository.LoadValue();
         }
         private async UniTask GetUserDataLoop() {
