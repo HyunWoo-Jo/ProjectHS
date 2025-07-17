@@ -6,6 +6,14 @@
 - [개발일지](/_Doc/DevelopmentLog.md)
 - [시스템 설계](/_Doc/System.md)
 ---
+# 목차
+- [프로젝트 핵심 특징](#프로젝트-핵심-특징)
+- [영상](#영상)
+- [향후 프로젝트 개선 방향](#향후-프로젝트-개선-방향)
+- [기술 스택](#기술-스택)
+- [Open Sources, Pakage](#open-sources-pakage)
+---
+
 # 프로젝트 핵심 특징
 1. [부분 DOD(Data Oriented Designe) 구조](#1-부분-doddata-oriented-designe-구조)
 2. [Upgrade 모듈화](#2-upgrade-모듈화)
@@ -203,8 +211,8 @@ classDiagram
     IService <|-- Service
 ```
 ---
-# 플레이 영상
-
+# 영상
+- [Youtube](https://youtu.be/n4xDhSQGeQM)
 ---
 # 향후 프로젝트 개선 방향
 프로젝트는 구조적 완성도와 시스템 설계에 초점을 맞추어 개발되었으나, 향후 콘텐츠 측면에서 다음 두 가지 보강이 필요합니다.
