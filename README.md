@@ -15,11 +15,11 @@
 ---
 
 # 프로젝트 핵심 특징
-1. [부분 DOD(Data Oriented Designe) 구조](#1-부분-doddata-oriented-design-구조)
+1. [부분 DOD(Data Oriented Design) 구조](#1-부분-doddata-oriented-design-구조)
 2. [Upgrade 모듈화](#2-upgrade-모듈화)
 3. [MVVM(Model/View/ViewModel) 구조 UI](3-mvvmmodelviewviewmodel-구조-ui)
 ---
-## 1. 부분 DOD(Data Oriented Designe) 구조
+## 1. 부분 DOD(Data Oriented Design) 구조
 
 ProjectHS는 성능 최적화와 대규모 데이터 처리 효율성을 위해 일부 시스템에 DOD 구조를 적용하였습니다.  
 특히, Enemy System은 고반복 계산을 병렬화하기에 적합한 구조로 설계되었습니다.
