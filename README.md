@@ -15,7 +15,7 @@
 ---
 
 # 프로젝트 핵심 특징
-1. [부분 DOD(Data Oriented Designe) 구조](#1-부분-doddata-oriented-designe-구조)
+1. [부분 DOD(Data Oriented Designe) 구조](#1-부분-doddata-oriented-design-구조)
 2. [Upgrade 모듈화](#2-upgrade-모듈화)
 3. [MVVM(Model/View/ViewModel) 구조 UI](3-mvvmmodelviewviewmodel-구조-ui)
 ---
