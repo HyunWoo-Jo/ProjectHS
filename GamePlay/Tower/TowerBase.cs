@@ -8,6 +8,8 @@ using Unity.Jobs;
 using System;
 using CustomUtility;
 using UnityEngine.Assertions;
+using Cysharp.Threading.Tasks;
+using R3;
 namespace GamePlay
 {
     public abstract class TowerBase : MonoBehaviour {
@@ -33,7 +35,9 @@ namespace GamePlay
             // Binding
             towerData.towerObj = this.gameObject;
             SetAttackSpeed(towerData.attackSpeed.Value);
-            towerData.attackSpeed.OnValueChanged += SetAttackSpeed;
+            towerData.attackSpeed
+                .Subscribe(SetAttackSpeed)
+                .AddTo(this.gameObject);
         }
 
         public int Price => price;

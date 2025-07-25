@@ -23,25 +23,23 @@ namespace UI
             RefAssert();
 #endif
             // 버튼 초기화
-            _viewModel.OnLevelEvent += UpdateWaveTextUI;
-            ButtonInit();
+            _giveUpButton.AddTrigger(EventTriggerType.PointerClick, OnGiveUpButton, GetType().Name, nameof(OnGiveUpButton));
+            _returnButton.AddTrigger(EventTriggerType.PointerClick, OnReturnButton, GetType().Name, nameof(OnReturnButton));
         }
 
 
         private void OnEnable() {
             _isAction = false;
             GameSettings.IsPause = true;
-            _viewModel.UpdatePanel(); // 패널 갱신 요청
+            // UI 갱신
+            UpdateWaveTextUI(_viewModel.Level);
         }
 
         private void OnDisable() {
             _isAction = false;
             GameSettings.IsPause = false;
         }
-        private void OnDestroy() {
-            _viewModel.OnLevelEvent -= UpdateWaveTextUI;
-            _viewModel = null; // 참조 해제
-        }
+
 
 #if UNITY_EDITOR
         // 검증
@@ -57,11 +55,6 @@ namespace UI
         }
 ////////////////////////////////////////////////////////////////////////////////////
         // your logic here
-        private void ButtonInit() {
-            // 버튼 초기화
-            _giveUpButton.AddTrigger(EventTriggerType.PointerClick, OnGiveUpButton, GetType().Name, nameof(OnGiveUpButton));
-            _returnButton.AddTrigger(EventTriggerType.PointerClick, OnReturnButton, GetType().Name, nameof(OnReturnButton));
-        }
 
         private void OnGiveUpButton() {
             if (_isAction) return;

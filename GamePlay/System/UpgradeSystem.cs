@@ -37,9 +37,9 @@ namespace GamePlay
         /// </summary>
         private void ShowRandomUpgradeSelection() {
             var randUpgleList = GetRandomUpgradeDataList(3);
-            for (int i = 0; i < _selectedUpgradeModel.observableUpgradeDatas.Length; i++) {
+            for (int i = 0; i < _selectedUpgradeModel.upgradeDatasObservable.Length; i++) {
                 // 모델에 업그레이드 갱신
-                _selectedUpgradeModel.observableUpgradeDatas[i].Value = randUpgleList.Count > i ? randUpgleList[i] : null;
+                _selectedUpgradeModel.upgradeDatasObservable[i].Value = randUpgleList.Count > i ? randUpgleList[i] : null;
             }
             _uiFactory.InstanceUI<UpgradeView>(40); // UI 생성
         }

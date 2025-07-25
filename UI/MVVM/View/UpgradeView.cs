@@ -5,6 +5,7 @@ using Data;
 using CustomUtility;
 using TMPro;
 using ModestTree;
+using R3;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI {
@@ -23,11 +24,18 @@ namespace UI {
 #endif
             _cards = GetComponentsInChildren<UpgradeCard_UI>();
             
+            // UI 초기화
+            for(int i = 0; i < _cards.Length; i++) {
+                int capturedIndex = i;
+                _viewModel.GetRO_UpgradeDataObservable(i)
+                    .Subscribe(data => UpdateUI(capturedIndex, data))
+                    .AddTo(this);
+            }
+            _viewModel.RO_RerollCountObservable
+                .Subscribe(UpdateRerollUI)
+                .AddTo(this);
+
             // 버튼 초기화
-            _viewModel.OnDataChanged += UpdateUI;
-
-            _viewModel.OnRerollCountChanged += UpdateRerollUI;
-
             string className = GetType().Name;
             for (int i = 0; i < _cards.Length; i++) {
                 int index = i;
@@ -49,17 +57,11 @@ namespace UI {
                     className, 
                     nameof(Reroll)
                 );
-
-                UpdateUI(i); // card 개수 만큼 UI 초기화 호출
             }
-            UpdateRerollUI(_viewModel.RerollCount);
+            // UI 갱신
+            _viewModel.Notify();
         }
-
-        private void OnDestroy() {
-            _viewModel.OnDataChanged -= UpdateUI;
-            _viewModel.OnRerollCountChanged -= UpdateRerollUI;
-            _viewModel = null; // 참조 해제
-        }
+        
 
 #if UNITY_EDITOR
         // 검증
@@ -68,9 +70,8 @@ namespace UI {
         }
 #endif
         // UI 갱신
-        private void UpdateUI(int index) {
-            if (_cards.Length <= index) return;
-            UpgradeDataSO upgradeData = _viewModel.GetUpgradeData(index);
+        private void UpdateUI(int index, UpgradeDataSO updateData) {
+            UpgradeDataSO upgradeData = updateData;
             UpgradeCard_UI card = _cards[index];
             if (upgradeData != null) {
                 card.SetSprite(upgradeData.sprite);

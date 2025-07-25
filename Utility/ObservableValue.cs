@@ -4,24 +4,25 @@ using UnityEngine;
 
 namespace CustomUtility
 {
-    public class ObservableValue<T> {
-        private T _value;
-        public event Action<T> OnValueChanged;
+    /// R3·Î º¯°æ
+    //public class ObservableValue<T> {
+    //    private T _value;
+    //    public event Action<T> OnValueChanged;
 
-        public T Value {
-            get => _value;
-            set {
-                _value = value;
-                OnValueChanged?.Invoke(value);
-            }
-        }
+    //    public T Value {
+    //        get => _value;
+    //        set {
+    //            _value = value;
+    //            OnValueChanged?.Invoke(value);
+    //        }
+    //    }
 
-        public ObservableValue(T initialValue = default) {
-            _value = initialValue;
-        }
+    //    public ObservableValue(T initialValue = default) {
+    //        _value = initialValue;
+    //    }
 
-        public void RemoveAllListeners() {
-            OnValueChanged = null;
-        }
-    }
+    //    public void RemoveAllListeners() {
+    //        OnValueChanged = null;
+    //    }
+    //}
 }

@@ -7,6 +7,8 @@ using CustomUtility;
 using Data;
 using Zenject;
 using DG.Tweening;
+using Cysharp.Threading.Tasks;
+using R3;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI
@@ -34,15 +36,14 @@ namespace UI
 #endif
             // 버튼 초기화
 
-            _viewModel.OnDataChanged += UpdateButtonAndPanelUI;
+            _viewModel.RO_CurrentActivePanelObservable
+                .Subscribe(UpdateButtonAndPanelUI)
+                .AddTo(this);
             InitButton();
 
         }
 
         private void OnDestroy() {
-            _viewModel.OnDataChanged -= UpdateButtonAndPanelUI;
-            _viewModel = null; // 참조 해제
-
             // Tween 해제
             DOTween.Kill(_mainPanel.gameObject);
             DOTween.Kill(_worldButton.gameObject);
@@ -62,18 +63,18 @@ namespace UI
         }
 #endif
         // UI 갱신 Button / Panel
-        private void UpdateButtonAndPanelUI() {
+        private void UpdateButtonAndPanelUI(MainLobbyNavigateViewModel.PanelType currentActivePanel) {
             
-            if (_viewModel.CurrentActivePanel != _viewModel.PreActivePanel) { // 같은 패널이 아닐경우 에만 실행
+            if (currentActivePanel != _viewModel.PreActivePanel) { // 같은 패널이 아닐경우 에만 실행
                 // 패널 위치 조정
-                float targetPanelPosX = (int)_viewModel.CurrentActivePanel * _mainCanvas.GetRectTransform().sizeDelta.x; // canvas x 사이즈에 맞춰 타겟 위치 설정
+                float targetPanelPosX = (int)currentActivePanel * _mainCanvas.GetRectTransform().sizeDelta.x; // canvas x 사이즈에 맞춰 타겟 위치 설정
                 _mainPanel.DOLocalMoveX(-targetPanelPosX, _style.panelMoveDuration).SetEase(_style.panelMoveEase); // 패널 이동 애니메이션
 
                 // 버튼 애니메이션
                 EventTrigger preButton = GetButtonPanleType(_viewModel.PreActivePanel);
                 ButtionAnimation(preButton, _style.buttonOriginalSize, _style.buttonAnimDuration); // 이전 버튼을 작아지게
 
-                EventTrigger currentButton = GetButtonPanleType(_viewModel.CurrentActivePanel);
+                EventTrigger currentButton = GetButtonPanleType(currentActivePanel);
                 ButtionAnimation(currentButton, _style.buttonCloseUpSize, _style.buttonAnimDuration); // 클릭 버튼을 커지게
             }
         }

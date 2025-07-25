@@ -1,10 +1,11 @@
 using UnityEngine;
 using CustomUtility;
+using R3;
 namespace Data
 {
     public class WaveStatusModel
     {
-        public ObservableValue<int> waveLevelObservable { get; } = new(0); // 스테이지 레벨
-        public ObservableValue<float> waveTimeObservable { get; } = new(0); // 웨이브 타임
+        public ReactiveProperty<int> waveLevelObservable { get; } = new(0); // 스테이지 레벨
+        public ReactiveProperty<float> waveTimeObservable { get; } = new(0); // 웨이브 타임
     }
 }

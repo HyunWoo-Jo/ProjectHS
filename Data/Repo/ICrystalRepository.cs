@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using R3;
 using System;
 using System.Diagnostics;
 using UnityEngine;
@@ -9,8 +10,8 @@ namespace Data
     public interface ICrystalRepository {
 
 
-        void AddChangedListener(Action<int> handler);
-        void RemoveChangedListener(Action<int> handler);
+        ReadOnlyReactiveProperty<int> GetRO_ReactiveObservable();
+        void Notify();
         int GetValue();
 
         bool TrySpend(int price);

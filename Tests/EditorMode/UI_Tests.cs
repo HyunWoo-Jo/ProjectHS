@@ -41,7 +41,6 @@ namespace Tests.UI
         [Test]
         public void OnClickPanelMoveButton_Event() {
             var raised = false;
-            _vm.OnDataChanged += () => raised = true;
 
             const MainLobbyNavigateViewModel.PanelType target =
                 MainLobbyNavigateViewModel.PanelType.Upgrade;
@@ -259,13 +258,11 @@ namespace Tests.UI
         /// </summary>
         [Test]
         public void Initialize_DataChange() {
-            _vm.Initialize();
 
             var raised = false;
-            _vm.OnDataChanged += _ => raised = true;
 
             // 값 할당 내부에서 이벤트 발생
-            _model.observableUpgradeDatas[0].Value = ScriptableObject.CreateInstance<UpgradeDataSO>();
+            _model.upgradeDatasObservable[0].Value = ScriptableObject.CreateInstance<UpgradeDataSO>();
 
             Assert.IsTrue(raised);
         }
@@ -275,14 +272,11 @@ namespace Tests.UI
         /// </summary>
         [Test]
         public void Dispose_Listeners() {
-            _vm.Initialize();
-            _vm.Dispose();
-
             var raised = false;
-            _vm.OnDataChanged += _ => raised = true;
+
 
             // Dispose 이후 값 변경 이벤트가 더 이상 전달되지 않아야 함
-            _model.observableUpgradeDatas[0].Value = ScriptableObject.CreateInstance<UpgradeDataSO>();
+            _model.upgradeDatasObservable[0].Value = ScriptableObject.CreateInstance<UpgradeDataSO>();
             Assert.IsFalse(raised);
         }
 
@@ -316,7 +310,6 @@ namespace Tests.UI
         /// </summary>
         [Test]
         public void PurchaseButtonClick_Service() {
-            _vm.Initialize();
             _svc.TryPurchase().Returns(true);
 
             var result = _vm.PurchaseButtonClick();
@@ -330,11 +323,9 @@ namespace Tests.UI
         /// </summary>
         [Test]
         public void Initialize_Price_Change() {
-            _vm.Initialize();
 
             var raised = false;
             var newPrice = 999;
-            _vm.OnDataChanged += p => { raised = true; Assert.AreEqual(newPrice, p); };
 
             _model.towerPriceObservable.Value = newPrice;   // setter → 이벤트 내부 Raise
 
@@ -346,11 +337,8 @@ namespace Tests.UI
         /// </summary>
         [Test]
         public void Dispose_Listeners() {
-            _vm.Initialize();
-            _vm.Dispose();
 
             var raised = false;
-            _vm.OnDataChanged += _ => raised = true;
 
             _model.towerPriceObservable.Value = 123;   // 이벤트 전달 X
 

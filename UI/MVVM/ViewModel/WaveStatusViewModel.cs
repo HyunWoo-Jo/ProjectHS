@@ -3,39 +3,20 @@ using Zenject;
 using System;
 using Data;
 using System.Diagnostics;
+using R3;
 namespace UI
 {
-    public class WaveStatusViewModel : IInitializable, IDisposable
+    public class WaveStatusViewModel
     {
         [Inject] private WaveStatusModel _model;
 
-        public event Action<int> OnWaveLevelChanged; // 데이터가 변경될떄 호출될 액션 (상황에 맞게 변수명을 변경해서 사용)
-        public event Action<float> OnTimeChanged;
+        public ReadOnlyReactiveProperty<int> RO_WaveLevelObservable => _model.waveLevelObservable;
+        public ReadOnlyReactiveProperty<float> RO_WaveTimeObservable => _model.waveTimeObservable;
 
-
-        // Zenject에서 관리
-        public void Initialize() {
-            // Model에 자동 Bind 되도록 설정
-            _model.waveLevelObservable.OnValueChanged += UpdateWaveLevel;
-            _model.waveTimeObservable.OnValueChanged += UpdateWaveTime;
-
-            _model.waveLevelObservable.Value = 0;
-            _model.waveTimeObservable.Value = 0;
+        public void Notify() {
+            _model.waveTimeObservable.ForceNotify();
+            _model.waveLevelObservable.ForceNotify();
         }
-
-        // Zenject에서 관리
-        public void Dispose() {
-            _model.waveLevelObservable.OnValueChanged -= UpdateWaveLevel;
-            _model.waveTimeObservable.OnValueChanged -= UpdateWaveTime;
-        }
-
-        private void UpdateWaveLevel(int level) {
-            OnWaveLevelChanged?.Invoke(level);
-        }
-        private void UpdateWaveTime(float time) {
-            OnTimeChanged?.Invoke(time);
-        }
-
 
     }
 } 

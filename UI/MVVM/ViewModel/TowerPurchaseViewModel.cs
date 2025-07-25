@@ -3,14 +3,17 @@ using Zenject;
 using System;
 using Data;
 using Contracts;
+using R3;
 namespace UI
 {
-    public class TowerPurchaseViewModel : IInitializable, IDisposable
+    public class TowerPurchaseViewModel 
     {
         [Inject] private TowerPurchaseModel _model;
         [Inject] private ITowerPurchaseService _towerPurchaseService;
         public event Func<bool> OnPurchaseButtonClick;
-        public event Action<int> OnDataChanged;
+
+
+        public ReadOnlyReactiveProperty<int> RO_TowerPriceObservable => _model.towerPriceObservable;
 
         /// <summary>
         /// 버튼 클릭
@@ -19,24 +22,16 @@ namespace UI
             return OnPurchaseButtonClick?.Invoke() ?? false; // 실패시 false
         }
 
-        public void Update() {
-            NotifyDataChanged(_model.towerPriceObservable.Value);
+
+        /// <summary>
+        /// 갱신
+        /// </summary>
+        public void Notify() {
+            _model.towerPriceObservable.ForceNotify();
         }
 
-        private void NotifyDataChanged(int value) {
-            OnDataChanged?.Invoke(value);
-        }
 
 
-        // Jenject에서 관리
-        public void Initialize() {
-            _model.towerPriceObservable.OnValueChanged += NotifyDataChanged;
-            OnPurchaseButtonClick += _towerPurchaseService.TryPurchase;
-        }
-        public void Dispose() {
-            _model.towerPriceObservable.OnValueChanged -= NotifyDataChanged;
-            OnPurchaseButtonClick -= _towerPurchaseService.TryPurchase;
-        }
 
 
     }

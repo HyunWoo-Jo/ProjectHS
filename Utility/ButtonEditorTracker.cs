@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.EventSystems;
-
 namespace CustomUtility
 {
 
@@ -35,8 +34,7 @@ namespace CustomUtility
                 eventID = type
             };
             entry.callback.AddListener(e => { action?.Invoke(); });
-            trigger.triggers.Add(entry);
-
+            trigger.triggers.Add(entry);       
 #if UNITY_EDITOR
             // 진입점 체크
             trigger.gameObject.AddEventTracker(className, methodName);

@@ -23,9 +23,13 @@ namespace UI
 #if UNITY_EDITOR // Assertion
             RefAssert();
 #endif
-            // 버튼 초기화
+            // UI Bind
             _viewModel.OnDataChanged += UpdatCrystalUI;
-            InitButton();
+
+            // 버튼 초기화
+            _enterButton.AddTrigger(EventTriggerType.PointerClick, EnterButton, GetType().Name, nameof(EnterButton));
+
+            
             UpdatCrystalUI(_viewModel.RewardCrystal);
         }
 
@@ -49,10 +53,7 @@ namespace UI
             Assert.IsNotNull(_enterButton);
         }
 #endif
-        // 버튼 초기화
-        private void InitButton() {
-            _enterButton.AddTrigger(EventTriggerType.PointerClick, EnterButton, GetType().Name, nameof(EnterButton));
-        }
+
 
         private void EnterButton() {
             if (_isMove) return;
