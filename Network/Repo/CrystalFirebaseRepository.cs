@@ -4,6 +4,7 @@ using Zenject;
 using Data;
 using Cysharp.Threading.Tasks;
 using System.Diagnostics;
+using R3;
 namespace Network
 {
     public class CrystalFirebaseRepository : ICrystalRepository {
@@ -19,12 +20,9 @@ namespace Network
             return _model.valueObservable.Value;
         }
 
-        public void AddChangedListener(Action<int> handler) {
-            _model.valueObservable.OnValueChanged += handler;
-        }
-
-        public void RemoveChangedListener(Action<int> handler) {
-            _model.valueObservable.OnValueChanged -= handler;
+        // Bind 전용으로 Readonly 객체로 반환
+        public ReadOnlyReactiveProperty<int> GetRO_ReactiveObservable() {
+            return _model.valueObservable;
         }
 
         public void SetValue(int value) {
@@ -46,6 +44,10 @@ namespace Network
         public bool TryEarn(int value) {
             SetValue(GetValue() + value);
             return true;
+        }
+
+        public void Notify() {
+            _model.valueObservable.ForceNotify();
         }
     }
 }

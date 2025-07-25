@@ -7,6 +7,9 @@ using UI;
 using UnityEngine.Assertions;
 using CustomUtility;
 using Contracts;
+using Cysharp.Threading.Tasks;
+using R3;
+using Unity.VisualScripting.YamlDotNet.Core.Tokens;
 namespace GamePlay
 {
     /// <summary>
@@ -128,21 +131,21 @@ namespace GamePlay
             };
 
             // 게임 End 처리
-            _hpModel.curHpObservable.OnValueChanged += (value) => {
-                if (value <= 0) {
-                    _uIFactory.InstanceUI<RewardView>(92);
-                    _rewardViewModel.ProcessFinalReward();
-                }
-            };
+            _hpModel.curHpObservable
+                .ThrottleLastFrame(1)
+                .Subscribe(GameEnd)
+                .AddTo(this);
 
-            // next exp
-            _expModel.levelObservable.OnValueChanged += (value) => {
-                int nextLevel = _expPolicy.GetNextLevelExp(value);
-                _expModel.nextExpObservable.Value = nextLevel;
-            };
+            // 다음 레벨 경험치 등록
+            _expModel.levelObservable 
+                .Select(_expPolicy.GetNextLevelExp)
+                .Subscribe(nextLevel => _expModel.nextExpObservable.Value = nextLevel)
+                .AddTo(this);
 
             // UpgradeSystem
-            _expModel.levelObservable.OnValueChanged += _upgradeSystem.QueueUpgradeRequest;
+            _expModel.levelObservable
+                .Subscribe(_upgradeSystem.QueueUpgradeRequest)
+                .AddTo(this);
 
             // TowerSystem
             // Ray에 Tower가 충돌했을때
@@ -177,10 +180,19 @@ namespace GamePlay
             _hpModel.curHpObservable.Value = startHp;
 
             // 초기 reroll 횟수 추가
-            _selectedUpgradeModel.observableRerollCount.Value = 1;
+            _selectedUpgradeModel.rerollCountObservable.Value = 1;
         }
  
-
+        /// <summary>
+        /// 게임이 종료 되는 조건
+        /// </summary>
+        /// <param name="curHp"></param>
+        public void GameEnd(int curHp) {
+            if (curHp <= 0) {
+                _uIFactory.InstanceUI<RewardView>(92);
+                _rewardViewModel.ProcessFinalReward();
+            }
+        }
 
     }
 }

@@ -4,23 +4,18 @@ using System.Diagnostics;
 using System;
 using Zenject;
 using Contracts;
+using R3;
 
 namespace UI
 {
     // 메인로비의 Navigate UI 를 관리
     public class MainLobbyNavigateViewModel
     {
-        public event Action OnDataChanged; // 데이터가 변경될떄 호출될 액션
-        [Inject] private ISceneTransitionService _sts; 
+        [Inject] private ISceneTransitionService _sts;
 
-        /// <summary>
-        /// 데이터 변경 알림
-        /// </summary>
-        private void NotifyViewDataChanged() {
-            OnDataChanged?.Invoke();
-        }
-
-        public PanelType CurrentActivePanel { get; private set; } = PanelType.World; //  어떤 패널이 현재 활성화되어야 하는지를 나타내는 상태 속성
+        private ReactiveProperty<PanelType> _currentActivePanelObservable = new();//  어떤 패널이 현재 활성화되어야 하는지를 나타내는 상태 속성
+        public ReadOnlyReactiveProperty<PanelType> RO_CurrentActivePanelObservable => _currentActivePanelObservable;
+        public PanelType CurrentActivePanel => _currentActivePanelObservable.CurrentValue;
         public PanelType PreActivePanel { get; private set; } = PanelType.World; // 이전 패널이 같은 타입인지 확인용 속성
         public enum PanelType {
             World,
@@ -33,9 +28,7 @@ namespace UI
         /// </summary>
         /// <param name="panelType"></param>
         public void OnClickPanelMoveButton(PanelType panelType) {
-            CurrentActivePanel = panelType; // 패널 이동
-            NotifyViewDataChanged();
-            
+            _currentActivePanelObservable.Value = panelType;
             // Last pre 패널 갱신
             PreActivePanel = panelType; // 
         }

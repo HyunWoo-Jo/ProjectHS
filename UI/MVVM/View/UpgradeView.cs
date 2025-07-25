@@ -5,6 +5,8 @@ using Data;
 using CustomUtility;
 using TMPro;
 using ModestTree;
+using R3;
+using System;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI {
@@ -23,43 +25,40 @@ namespace UI {
 #endif
             _cards = GetComponentsInChildren<UpgradeCard_UI>();
             
+            // UI 초기화
+            for(int i = 0; i < _cards.Length; i++) {
+                int capturedIndex = i;
+                _viewModel.GetRO_UpgradeDataObservable(i)
+                    .Subscribe(data => UpdateUI(capturedIndex, data))
+                    .AddTo(this);
+            }
+            _viewModel.RO_RerollCountObservable
+                .Subscribe(UpdateRerollUI)
+                .AddTo(this);
+
             // 버튼 초기화
-            _viewModel.OnDataChanged += UpdateUI;
-
-            _viewModel.OnRerollCountChanged += UpdateRerollUI;
-
             string className = GetType().Name;
             for (int i = 0; i < _cards.Length; i++) {
-                int index = i;
+                int capturedIndex = i;
                 // 버튼 초기화
-                _cards[i].Button.AddTrigger(
-                    UnityEngine.EventSystems.EventTriggerType.PointerClick,
-                    () => {
-                        Selecte(index);
-                    },
-                    className,
-                    nameof(Selecte)
-                );
+                _cards[i].Button.ToObservableEventTrigger(className, nameof(Selecte))
+                    .OnPointerClickAsObservable()
+                    .Take(1)
+                    .Subscribe(_ => Selecte(capturedIndex))
+                    .AddTo(this);
+
                 // 리롤 버튼 초기화
-                _cards[i].RerollButton.AddTrigger(
-                    UnityEngine.EventSystems.EventTriggerType.PointerClick,
-                    () => {
-                        Reroll(index);
-                    },
-                    className, 
-                    nameof(Reroll)
-                );
+                _cards[i].RerollButton.ToObservableEventTrigger(className, nameof(Reroll))
+                    .OnPointerClickAsObservable()
+                    .ThrottleFirst(TimeSpan.FromSeconds(1))
+                    .Subscribe(_ => Reroll(capturedIndex))
+                    .AddTo(this);
 
-                UpdateUI(i); // card 개수 만큼 UI 초기화 호출
             }
-            UpdateRerollUI(_viewModel.RerollCount);
+            // UI 갱신
+            _viewModel.Notify();
         }
-
-        private void OnDestroy() {
-            _viewModel.OnDataChanged -= UpdateUI;
-            _viewModel.OnRerollCountChanged -= UpdateRerollUI;
-            _viewModel = null; // 참조 해제
-        }
+        
 
 #if UNITY_EDITOR
         // 검증
@@ -68,9 +67,8 @@ namespace UI {
         }
 #endif
         // UI 갱신
-        private void UpdateUI(int index) {
-            if (_cards.Length <= index) return;
-            UpgradeDataSO upgradeData = _viewModel.GetUpgradeData(index);
+        private void UpdateUI(int index, UpgradeDataSO updateData) {
+            UpgradeDataSO upgradeData = updateData;
             UpgradeCard_UI card = _cards[index];
             if (upgradeData != null) {
                 card.SetSprite(upgradeData.sprite);

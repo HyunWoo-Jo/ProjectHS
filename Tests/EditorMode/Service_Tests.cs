@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UI;
 using UnityEngine;
+using R3;
 
 namespace Tests.Service
 {
@@ -258,7 +259,7 @@ namespace Tests.Service
         [Test]
         public void Reroll() {
     
-            _selectedModel.observableRerollCount.Value = 2;
+            _selectedModel.rerollCountObservable.Value = 2;
             _mockUpgradeSystem.GetRandomUpgradeDataList(1)
                 .Returns(new List<UpgradeDataSO> { _dummyUpgradeData });
 
@@ -266,14 +267,14 @@ namespace Tests.Service
             _upgradeService.Reroll(1);
 
             // 체크
-            Assert.AreEqual(_dummyUpgradeData, _selectedModel.observableUpgradeDatas[1].Value);
-            Assert.AreEqual(1, _selectedModel.observableRerollCount.Value);
+            Assert.AreEqual(_dummyUpgradeData, _selectedModel.upgradeDatasObservable[1].Value);
+            Assert.AreEqual(1, _selectedModel.rerollCountObservable.Value);
         }
 
         [Test]
         public void ApplyUpgrade() {
             var mockData = Substitute.For<UpgradeDataSO>();
-            _selectedModel.observableUpgradeDatas[0].Value = mockData;
+            _selectedModel.upgradeDatasObservable[0].Value = mockData;
 
             // 업그레이드 적용
             _upgradeService.ApplyUpgrade(0);
@@ -295,7 +296,7 @@ namespace Tests.Service
             // Mock 및 모델 초기화
             _mockTowerSystem = Substitute.For<ITowerSystem>();
             _goldModel = new GoldModel();
-            _goldModel.goldObservable = new ObservableValue<int>(100); // 초기 골드 100
+            _goldModel.goldObservable = new ReactiveProperty<int>(100); // 초기 골드 100
 
             // 테스트 대상 클래스 생성 및 의존성 주입
             _sellTowerService = new SellTowerService();

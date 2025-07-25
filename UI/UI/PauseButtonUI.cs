@@ -1,8 +1,10 @@
 using CustomUtility;
+using R3;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using Zenject;
+using System;
 
 namespace UI
 {
@@ -18,7 +20,11 @@ namespace UI
 #endif
 
             // 버튼 초기화
-            _pauseButton.AddTrigger(EventTriggerType.PointerDown, OnInstancePauseUI, GetType().Name, nameof(OnInstancePauseUI));
+            _pauseButton.ToObservableEventTrigger(GetType().Name, nameof(OnInstancePauseUI))
+                .OnPointerDownAsObservable()
+                .ThrottleFirst(TimeSpan.FromSeconds(1))
+                .Subscribe(_ => OnInstancePauseUI())
+                .AddTo(this);
         }
 
         private void OnInstancePauseUI() {

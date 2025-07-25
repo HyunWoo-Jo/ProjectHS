@@ -5,6 +5,7 @@ using System;
 using UnityEngine.UI;
 using TMPro;
 using ModestTree;
+using R3;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI
@@ -20,15 +21,15 @@ namespace UI
 #if UNITY_EDITOR // Assertion
             RefAssert();
 #endif
-            // 버튼 초기화
-            _viewModel.OnWaveLevelChanged += UpdateWaveLevel;
-            _viewModel.OnTimeChanged += UpdateTime;
-        }
+            // UI Bind
+            _viewModel.RO_WaveLevelObservable
+                .Subscribe(UpdateWaveLevel)
+                .AddTo(this);
 
-        private void OnDestroy() {
-            _viewModel.OnWaveLevelChanged -= UpdateWaveLevel;
-            _viewModel.OnTimeChanged -= UpdateTime;
-            _viewModel = null; // 참조 해제
+            _viewModel.RO_WaveTimeObservable
+                .Subscribe(UpdateTime)
+                .AddTo(this);
+
         }
 
 #if UNITY_EDITOR

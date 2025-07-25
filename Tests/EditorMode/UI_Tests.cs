@@ -13,6 +13,7 @@ using Zenject;
 using Contracts;
 using NSubstitute;
 using Data;
+using R3;
 
 namespace Tests.UI
 {
@@ -21,47 +22,50 @@ namespace Tests.UI
         private MainLobbyNavigateViewModel _vm;
         private ISceneTransitionService _sts;
 
-        /// <summary>
-        /// ViewModel 인스턴스 및 Substitute 초기화, 수동 DI 수행
-        /// </summary>
         [SetUp]
         public void Setup() {
             _vm = new MainLobbyNavigateViewModel();
             _sts = Substitute.For<ISceneTransitionService>();
 
-            // 수동 주입
+            // 수동 DI
             typeof(MainLobbyNavigateViewModel)
                 .GetField("_sts", BindingFlags.NonPublic | BindingFlags.Instance)!
                 .SetValue(_vm, _sts);
         }
 
         /// <summary>
-        /// 패널 상태(Current·Pre) 업데이트, OnDataChanged 이벤트 발생 검증
+        /// 버튼 클릭 시 ReactiveProperty 값 & PreActivePanel 이 올바르게 갱신되는지 검증
         /// </summary>
         [Test]
-        public void OnClickPanelMoveButton_Event() {
-            var raised = false;
-            _vm.OnDataChanged += () => raised = true;
+        public void OnClick_UpdatesState() {
+            // 변화 감지를 위한 구독
+            MainLobbyNavigateViewModel.PanelType observed = _vm.CurrentActivePanel;
+            var d = _vm.RO_CurrentActivePanelObservable
+                       .Skip(1)                    // 초기 값 스킵
+                       .Subscribe(x => observed = x);
 
             const MainLobbyNavigateViewModel.PanelType target =
                 MainLobbyNavigateViewModel.PanelType.Upgrade;
 
+            // 메서드 호출
             _vm.OnClickPanelMoveButton(target);
 
-            Assert.IsTrue(raised, "OnDataChanged 이벤트가 발생해야 합니다.");
+            // 검증
+            Assert.AreEqual(target, observed, "ReactiveProperty 값이 갱신돼야 합니다.");
             Assert.AreEqual(target, _vm.CurrentActivePanel);
             Assert.AreEqual(target, _vm.PreActivePanel);
+
+            d.Dispose(); // 구독 해제
         }
 
         /// <summary>
-        /// ChangeScene이 Service.LoadScene(PlayScene)을 호출하는지 검증
+        /// Service를 1회 호출하는지 검증
         /// </summary>
         [Test]
-        public void ChangeScene_LoadScene() {
+        public void ChangeScene_CallsLoadScene() {
             _vm.ChangeScene();
             _sts.Received(1).LoadScene(SceneName.PlayScene);
         }
-
     }
 
     [TestFixture]
@@ -184,26 +188,8 @@ namespace Tests.UI
             _ps.Received(1).TryPurchase(type);
         }
 
-        /// <summary>
-        /// repo에 이벤트가 등록 되는지 확인
-        /// </summary>
-        [Test]
-        public void Initialize_Registers_RepoListener() {
-            _vm.Initialize();
 
-            _repo.Received(1).AddChangedListener(Arg.Any<Action>());
-        }
-        /// <summary>
-        /// repo에 이벤트가 해제되는지 확인
-        /// </summary>
-        [Test]
-        public void Dispose_Removes_RepoListener() {
-            _vm.Initialize();
-            _vm.Dispose();
 
-            // 델리게이트가 전달됐는지 확인
-            _repo.Received(1).RemoveChangedListener(_capturedListener);
-        }
 
         /// <summary>
         /// Repo가 이벤트가 전달되는지 확인
@@ -254,38 +240,6 @@ namespace Tests.UI
             _us.Received(1).ApplyUpgrade(idx);
         }
 
-        /// <summary>
-        /// Initialize 이후 Model 값 변경이 OnDataChanged 이벤트로 전파되는지 검증
-        /// </summary>
-        [Test]
-        public void Initialize_DataChange() {
-            _vm.Initialize();
-
-            var raised = false;
-            _vm.OnDataChanged += _ => raised = true;
-
-            // 값 할당 내부에서 이벤트 발생
-            _model.observableUpgradeDatas[0].Value = ScriptableObject.CreateInstance<UpgradeDataSO>();
-
-            Assert.IsTrue(raised);
-        }
-
-        /// <summary>
-        /// Dispose 호출 시 repo에 이벤트가 해제되는지 검증
-        /// </summary>
-        [Test]
-        public void Dispose_Listeners() {
-            _vm.Initialize();
-            _vm.Dispose();
-
-            var raised = false;
-            _vm.OnDataChanged += _ => raised = true;
-
-            // Dispose 이후 값 변경 이벤트가 더 이상 전달되지 않아야 함
-            _model.observableUpgradeDatas[0].Value = ScriptableObject.CreateInstance<UpgradeDataSO>();
-            Assert.IsFalse(raised);
-        }
-
     }
 
     [TestFixture]
@@ -316,45 +270,14 @@ namespace Tests.UI
         /// </summary>
         [Test]
         public void PurchaseButtonClick_Service() {
-            _vm.Initialize();
             _svc.TryPurchase().Returns(true);
 
-            var result = _vm.PurchaseButtonClick();
+            var result = _vm.TryPurchase();
 
             Assert.IsTrue(result);
             _svc.Received(1).TryPurchase();
         }
 
-        /// <summary>
-        /// Model 가격이 변경되면 OnDataChanged 이벤트가 전파되는지 검증.
-        /// </summary>
-        [Test]
-        public void Initialize_Price_Change() {
-            _vm.Initialize();
 
-            var raised = false;
-            var newPrice = 999;
-            _vm.OnDataChanged += p => { raised = true; Assert.AreEqual(newPrice, p); };
-
-            _model.towerPriceObservable.Value = newPrice;   // setter → 이벤트 내부 Raise
-
-            Assert.IsTrue(raised);
-        }
-
-        /// <summary>
-        /// Dispose 호출 뒤에는 이벤트가 해제되어 더 이상 전달되지 않는지 검증.
-        /// </summary>
-        [Test]
-        public void Dispose_Listeners() {
-            _vm.Initialize();
-            _vm.Dispose();
-
-            var raised = false;
-            _vm.OnDataChanged += _ => raised = true;
-
-            _model.towerPriceObservable.Value = 123;   // 이벤트 전달 X
-
-            Assert.IsFalse(raised);
-        }
     }
 }

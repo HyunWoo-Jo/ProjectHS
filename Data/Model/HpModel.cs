@@ -1,11 +1,11 @@
 using CustomUtility;
 using UnityEngine;
-
+using R3;
 namespace Data
 {
     public class HpModel
     {
-        public ObservableValue<int> curHpObservable = new(20);
-        public ObservableValue<int> maxHpObservable = new(20);
+        public ReactiveProperty<int> curHpObservable = new(20);
+        public ReactiveProperty<int> maxHpObservable = new(20);
     }
 }

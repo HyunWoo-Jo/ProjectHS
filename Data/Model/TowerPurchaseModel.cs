@@ -1,8 +1,9 @@
 using UnityEngine;
 using CustomUtility;
+using R3;
 namespace Data
 {
     public class TowerPurchaseModel {
-        public ObservableValue<int> towerPriceObservable = new (1);
+        public ReactiveProperty<int> towerPriceObservable = new (1);
     }
 }

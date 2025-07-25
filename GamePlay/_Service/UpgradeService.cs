@@ -12,14 +12,14 @@ namespace GamePlay
         public void Reroll(int index) {
             var list = _upgradeSystem.GetRandomUpgradeDataList(1);
             if (list.Count > 0) {
-                _selectedUpgradeModel.observableUpgradeDatas[index].Value = list[0];
+                _selectedUpgradeModel.upgradeDatasObservable[index].Value = list[0];
             }
             // model 업데이트
-            _selectedUpgradeModel.observableRerollCount.Value -= 1;
+            _selectedUpgradeModel.rerollCountObservable.Value -= 1;
         }
 
         public void ApplyUpgrade(int index) {
-            _selectedUpgradeModel.observableUpgradeDatas[index].Value.ApplyUpgrade();
+            _selectedUpgradeModel.upgradeDatasObservable[index].Value.ApplyUpgrade();
 
             // 업그레이드 소모
             _upgradeSystem.ConsumeRemainingCount();

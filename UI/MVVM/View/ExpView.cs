@@ -5,6 +5,7 @@ using System;
 using UnityEngine.UI;
 using UnityEngine.Assertions;
 using TMPro;
+using R3;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI
@@ -18,18 +19,20 @@ namespace UI
 #if UNITY_EDITOR // Assertion
             RefAssert();
 #endif
-            // 버튼 초기화
-            _viewModel.OnLevelChanged += UpdateLevelUI;
-            _viewModel.OnExpChanged += UpdateExpUI;
+            // UI Bind
+            _viewModel.RO_LevelObservable
+                .ThrottleLastFrame(1)
+                .Subscribe(UpdateLevelUI)
+                .AddTo(this);
 
-            _viewModel.Update();
+            _viewModel.RO_CurExpObservable
+                .ThrottleLastFrame(1)
+                .Subscribe(UpdateExpUI)
+                .AddTo(this);
+
+            _viewModel.Notify();
         }
 
-        private void OnDestroy() {
-            _viewModel.OnLevelChanged -= UpdateLevelUI;
-            _viewModel.OnExpChanged -= UpdateExpUI;
-            _viewModel = null; // 참조 해제
-        }
 
 #if UNITY_EDITOR
         // 검증
