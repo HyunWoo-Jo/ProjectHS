@@ -155,32 +155,28 @@ classDiagram
         - UnityUIReference
         - ViewModel  // Inject
         + Awake()
-        + OnDestroy()
         + UpdateUI(data)
     }
 
     class ViewModel {
         - IRepository // Inject
         - IService // Inject
-        + event Action OnDataChanged
-        + SetData(data)
-        - NotifyViewDataChanged()
+        + RO_P() ReadOnlyReactiveProperty
+        + Notify()
     }
 
     class IRepository {
         <<interface>>
         + GetValue() Data
         + SetValue(Data)
-        + AddListener(handle)
-        + RemoveListener(handle)
+        + RO_P() ReadOnlyReactiveProperty
     }
 
     class Repository {
         - Model _model
         + GetValue() Data
         + SetValue(Data)
-        + AddListener(handle)
-        + RemoveListener(handle)
+        + RO_P() ReadOnlyReactiveProperty
     }
 
     class Model {
