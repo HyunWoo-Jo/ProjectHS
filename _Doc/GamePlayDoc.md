@@ -254,6 +254,7 @@ UI는 복잡도와 확장 가능성에 따라 두 가지 방식으로 구성합�
 
 4. **UI Class Diagram**
 ```mermaid
+classDiagram
 class MonoBehaviour {
         <<Unity Engine>>
     }
