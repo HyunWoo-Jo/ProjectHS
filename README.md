@@ -184,7 +184,7 @@ classDiagram
     }
 
     class Model {
-        + Observable_Data  
+        + ReactiveProperty // R3
     }
 
     class IService {
