@@ -155,36 +155,32 @@ classDiagram
         - UnityUIReference
         - ViewModel  // Inject
         + Awake()
-        + OnDestroy()
         + UpdateUI(data)
     }
 
     class ViewModel {
         - IRepository // Inject
         - IService // Inject
-        + event Action OnDataChanged
-        + SetData(data)
-        - NotifyViewDataChanged()
+        + RO_P() ReadOnlyReactiveProperty
+        + Notify()
     }
 
     class IRepository {
         <<interface>>
         + GetValue() Data
         + SetValue(Data)
-        + AddListener(handle)
-        + RemoveListener(handle)
+        + RO_P() ReadOnlyReactiveProperty
     }
 
     class Repository {
         - Model _model
         + GetValue() Data
         + SetValue(Data)
-        + AddListener(handle)
-        + RemoveListener(handle)
+        + RO_P() ReadOnlyReactiveProperty
     }
 
     class Model {
-        + Observable_Data  
+        + ReactiveProperty // R3
     }
 
     class IService {
@@ -254,6 +250,8 @@ classDiagram
 
 # Open Sources, Pakage
 - [UniTask](https://github.com/Cysharp/UniTask) - 유니티 쓰레드 관리
+- [R3](https://github.com/Cysharp/R3) - 리액티브 프로그래밍
 - [DOTween](https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676) - 연출
 - [Extenject](https://github.com/modesttree/Zenject?tab=readme-ov-file#installation-) - 의존성 주입
 - [NSubstitute](https://github.com/Thundernerd/Unity3D-NSubstitute) - 테스트 용으로 사용
+
