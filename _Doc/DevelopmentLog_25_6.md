@@ -317,6 +317,9 @@ UpgradeView --> UpgradeViewModel : 구독, 버튼 event 요청
   * UI 처리 등 한 프레임에서 한번만 처리해야 되는 경우에도 값이 변경 되면 계속하여 처리
   * R3 도입을 통해 이러한 문제를 해결하고자함
   * 가독성과 중복 코드를 줄이기 위해 도입
+
+  * 기존 EventTrigger에서 UI의 Input Event에서 딜레이, Frame처리 등 다양한 처리를 하기위해 ObservableEventTrigger 사용
 #### 2. 도입 위치
 - **UI** : CrystalView / HPBar 등 실시간 갱신 컴포넌트  
 - **Model** : 기존 `ObservableValue` → `ReactiveProperty<T>`
+- **View** : 버튼 처리를 능동적으로 하기 위해 사용
