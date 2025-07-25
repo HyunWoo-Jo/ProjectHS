@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine.Assertions;
 using CustomUtility;
 using Data;
+using R3;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI
@@ -23,8 +24,19 @@ namespace UI
             RefAssert();
 #endif
             // 버튼 초기화
-            _giveUpButton.AddTrigger(EventTriggerType.PointerClick, OnGiveUpButton, GetType().Name, nameof(OnGiveUpButton));
-            _returnButton.AddTrigger(EventTriggerType.PointerClick, OnReturnButton, GetType().Name, nameof(OnReturnButton));
+            string name = GetType().Name;
+
+            _giveUpButton.ToObservableEventTrigger(name, nameof(OnGiveUpButton))
+                .OnPointerClickAsObservable()
+                .Take(1)
+                .Subscribe(OnGiveUpButton)
+                .AddTo(this);
+
+            _returnButton.ToObservableEventTrigger(name, nameof(OnReturnButton))
+                .OnPointerClickAsObservable()
+                .Take(1)
+                .Subscribe(OnReturnButton)
+                .AddTo(this);
         }
 
 
@@ -49,20 +61,17 @@ namespace UI
             Assert.IsNotNull(_waveText);
         }
 #endif
-        // UI 갱신
-        private void UpdateUI() {
-            
-        }
+
 ////////////////////////////////////////////////////////////////////////////////////
         // your logic here
 
-        private void OnGiveUpButton() {
+        private void OnGiveUpButton(PointerEventData data) {
             if (_isAction) return;
             _isAction = true;
             _viewModel.ChangeScene();
         }
 
-        private void OnReturnButton() {
+        private void OnReturnButton(PointerEventData data) {
             if (_isAction) return;
             Destroy(this.gameObject);
         }

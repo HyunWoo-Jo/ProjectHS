@@ -86,16 +86,23 @@ namespace UI
         private void InitButton() {
             string className = GetType().Name;
             string methodName = nameof(InitButton);
-            _worldButton.AddTrigger(EventTriggerType.PointerDown,
-                new Action(() => _viewModel.OnClickPanelMoveButton(MainLobbyNavigateViewModel.PanelType.World)), // 버튼 기능 바인딩
-                className, methodName + "_world");
+            _worldButton.ToObservableEventTrigger(className, methodName + "_world")
+                .OnPointerDownAsObservable()
+                .ThrottleFirstFrame(1)
+                .Subscribe(_ => _viewModel.OnClickPanelMoveButton(MainLobbyNavigateViewModel.PanelType.World))
+                .AddTo(this);
 
-            _upgradeButton.AddTrigger(EventTriggerType.PointerDown,
-                new Action(() => _viewModel.OnClickPanelMoveButton(MainLobbyNavigateViewModel.PanelType.Upgrade)), // 버튼 기능 바인딩
-                className, methodName + "_upgrade");
+            _upgradeButton.ToObservableEventTrigger(className, methodName + "_upgrade")
+               .OnPointerDownAsObservable()
+               .ThrottleFirstFrame(1)
+               .Subscribe(_ => _viewModel.OnClickPanelMoveButton(MainLobbyNavigateViewModel.PanelType.Upgrade))
+               .AddTo(this);
 
-            _playButton.AddTrigger(EventTriggerType.PointerClick, OnClickPlayButton, // 버튼 기능 바인딩
-                className, methodName + "_playButton");
+            _playButton.ToObservableEventTrigger(className, methodName + "_playButton")
+               .OnPointerDownAsObservable()
+               .Take(1)
+               .Subscribe(_ => OnClickPlayButton())
+               .AddTo(this);
         }
 
         /// <summary>

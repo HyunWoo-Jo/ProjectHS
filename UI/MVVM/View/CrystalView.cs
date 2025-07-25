@@ -22,7 +22,7 @@ namespace UI
             // UI Bind
 
             _viewModel.RO_CrystalObservable
-                .ThrottleFirstLastFrame(1)
+                .ThrottleLastFrame(1)
                 .ObserveOnMainThread()
                 .Subscribe(UpdateUI)
                 .AddTo(this);

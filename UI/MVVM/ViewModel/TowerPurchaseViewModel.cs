@@ -10,18 +10,14 @@ namespace UI
     {
         [Inject] private TowerPurchaseModel _model;
         [Inject] private ITowerPurchaseService _towerPurchaseService;
-        public event Func<bool> OnPurchaseButtonClick;
+
 
 
         public ReadOnlyReactiveProperty<int> RO_TowerPriceObservable => _model.towerPriceObservable;
 
-        /// <summary>
-        /// 버튼 클릭
-        /// </summary>
-        public bool PurchaseButtonClick() {
-            return OnPurchaseButtonClick?.Invoke() ?? false; // 실패시 false
+        public bool TryPurchase() {
+            return _towerPurchaseService.TryPurchase();
         }
-
 
         /// <summary>
         /// 갱신
@@ -29,10 +25,6 @@ namespace UI
         public void Notify() {
             _model.towerPriceObservable.ForceNotify();
         }
-
-
-
-
 
     }
 } 

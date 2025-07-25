@@ -29,7 +29,11 @@ namespace UI
                 .AddTo(this);
 
             // 버튼 초기화
-            _button.AddTrigger<bool>(EventTriggerType.PointerClick, _viewModel.PurchaseButtonClick, OnPurchaseButton, GetType().Name, nameof(_viewModel.PurchaseButtonClick));
+            _button.ToObservableEventTrigger(GetType().Name, nameof(OnClickPurchase))
+                .OnPointerClickAsObservable()
+                .ThrottleFirstFrame(1)
+                .Subscribe(_ => OnClickPurchase())
+                .AddTo(this);
         }
         private void Start() {
             _viewModel.Notify();
@@ -47,13 +51,11 @@ namespace UI
         private void UpdateUI(int price) {
             _priceText.text = GoldStyle.GoldToString(price);
         }
-////////////////////////////////////////////////////////////////////////////////////
-        // your logic here
 
-        private void OnPurchaseButton(bool isSuccess) {
-            if (isSuccess) { // 구매 성공 UI 이벤트
+        private void OnClickPurchase() {
+            if (_viewModel.TryPurchase()) { // 구매 성공
 
-            } else { // 구매 실패 UI 이벤트
+            } else { // 실패 
 
             }
         }

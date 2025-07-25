@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Data;
 using CustomUtility;
+using R3;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
@@ -47,10 +48,11 @@ namespace UI
             foreach (var slot in _slots) {
                 // 버튼에 기능 추가
                 var entTrigger = slot.GetEventTrigger();
-                entTrigger.AddTrigger(UnityEngine.EventSystems.EventTriggerType.PointerClick, () => {
-                    // 클릭했을때 업그레이드 구매 시도
-                    _viewModel.TryPurchase(slot.GetUpgradeType());
-                }, className, methodName);
+                entTrigger.ToObservableEventTrigger(className, methodName)
+                    .OnPointerClickAsObservable()
+                    .ThrottleFirstFrame(1)
+                    .Subscribe(_ => _viewModel.TryPurchase(slot.GetUpgradeType()))
+                    .AddTo(this);
             }
         }
 

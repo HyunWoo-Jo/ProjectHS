@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 using CustomUtility;
 using UnityEngine.SocialPlatforms;
 using static UnityEditor.Profiling.HierarchyFrameDataView;
+using R3;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI
@@ -27,7 +28,11 @@ namespace UI
             _viewModel.OnDataChanged += UpdatCrystalUI;
 
             // 버튼 초기화
-            _enterButton.AddTrigger(EventTriggerType.PointerClick, EnterButton, GetType().Name, nameof(EnterButton));
+            _enterButton.ToObservableEventTrigger(GetType().Name, nameof(OnClickButton))
+                .OnPointerDownAsObservable()
+                .Take(1)
+                .Subscribe(_ => OnClickButton())
+                .AddTo(this);
 
             
             UpdatCrystalUI(_viewModel.RewardCrystal);
@@ -55,7 +60,7 @@ namespace UI
 #endif
 
 
-        private void EnterButton() {
+        private void OnClickButton() {
             if (_isMove) return;
             _viewModel.ChangeScene();
         }

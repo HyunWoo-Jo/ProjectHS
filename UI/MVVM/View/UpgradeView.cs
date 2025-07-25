@@ -6,6 +6,7 @@ using CustomUtility;
 using TMPro;
 using ModestTree;
 using R3;
+using System;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI {
@@ -38,25 +39,21 @@ namespace UI {
             // 버튼 초기화
             string className = GetType().Name;
             for (int i = 0; i < _cards.Length; i++) {
-                int index = i;
+                int capturedIndex = i;
                 // 버튼 초기화
-                _cards[i].Button.AddTrigger(
-                    UnityEngine.EventSystems.EventTriggerType.PointerClick,
-                    () => {
-                        Selecte(index);
-                    },
-                    className,
-                    nameof(Selecte)
-                );
+                _cards[i].Button.ToObservableEventTrigger(className, nameof(Selecte))
+                    .OnPointerClickAsObservable()
+                    .Take(1)
+                    .Subscribe(_ => Selecte(capturedIndex))
+                    .AddTo(this);
+
                 // 리롤 버튼 초기화
-                _cards[i].RerollButton.AddTrigger(
-                    UnityEngine.EventSystems.EventTriggerType.PointerClick,
-                    () => {
-                        Reroll(index);
-                    },
-                    className, 
-                    nameof(Reroll)
-                );
+                _cards[i].RerollButton.ToObservableEventTrigger(className, nameof(Reroll))
+                    .OnPointerClickAsObservable()
+                    .ThrottleFirst(TimeSpan.FromSeconds(1))
+                    .Subscribe(_ => Reroll(capturedIndex))
+                    .AddTo(this);
+
             }
             // UI 갱신
             _viewModel.Notify();
