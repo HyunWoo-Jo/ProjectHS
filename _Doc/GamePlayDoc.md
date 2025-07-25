@@ -254,8 +254,7 @@ UI는 복잡도와 확장 가능성에 따라 두 가지 방식으로 구성합�
 
 4. **UI Class Diagram**
 ```mermaid
-classDiagram
-    class MonoBehaviour {
+class MonoBehaviour {
         <<Unity Engine>>
     }
 
@@ -264,40 +263,34 @@ classDiagram
         - UnityUIReference
         - ViewModel  // Inject
         + Awake()
-        + OnDestroy()
         + UpdateUI(data)
     }
 
     class ViewModel {
         - IRepository // Inject
         - IService // Inject
-        + event Action OnDataChanged
-        + SetData(data)
-        - NotifyViewDataChanged()
+        + RO_P() ReadOnlyReactiveProperty
+        + Notify()
     }
 
- 
     class IRepository {
         <<interface>>
         + GetValue() Data
         + SetValue(Data)
-        + AddListener(handle)
-        + RemoveListener(handle)
+        + RO_P() ReadOnlyReactiveProperty
     }
 
     class Repository {
         - Model _model
         + GetValue() Data
         + SetValue(Data)
-        + AddListener(handle)
-        + RemoveListener(handle)
+        + RO_P() ReadOnlyReactiveProperty
     }
 
     class Model {
-        + Observable_Data  
+        + ReactiveProperty // R3
     }
 
- 
     class IService {
         <<interface>>
         + Execute()
@@ -307,16 +300,13 @@ classDiagram
         + Execute()
     }
 
-
     class UITest {
         + TestFunc()
     }
 
-
     MonoBehaviour <|-- View       
     View o--> ViewModel               
     ViewModel --> IRepository : Observe  
-         
     ViewModel --> IService              
     IRepository <|-- Repository     
     Repository o--> Model : Observe  
