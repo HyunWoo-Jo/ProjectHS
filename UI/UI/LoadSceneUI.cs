@@ -1,4 +1,4 @@
-using Data;
+ï»¿using Data;
 using ModestTree;
 using TMPro;
 using UnityEngine;
@@ -8,7 +8,7 @@ using Zenject;
 namespace UI
 {
     /// <summary>
-    /// ·Îµå¾À UI
+    /// ë¡œë“œì”¬ UI
     /// </summary>
     public class LoadSceneUI : MonoBehaviour
     {
@@ -16,9 +16,9 @@ namespace UI
         [SerializeField] private Image _fillImage;
         [SerializeField] private TextMeshProUGUI _loadProgressText;
 
-        [SerializeField] private float _fakeLoadTime = 2f; // ÃÖ¼Ò ·Îµù ½Ã°£
-        private float _startTime = 0; // ½ÃÀÛ½Ã°£
-        private float _fakeProgress = 0; // °¡Â¥ ·Îµù 
+        [SerializeField] private float _fakeLoadTime = 2f; // ìµœì†Œ ë¡œë”© ì‹œê°„
+        private float _startTime = 0; // ì‹œì‘ì‹œê°„
+        private float _fakeProgress = 0; // ê°€ì§œ ë¡œë”© 
         private void Awake() {
 #if UNITY_EDITOR
             Assert.IsNotNull(_fillImage);
@@ -26,19 +26,19 @@ namespace UI
         }
 
         private void Update() {
-            // _startTimeÀÌ 0ÀÌ¸é ÇöÀç ½Ã°£À¸·Î ÃÊ±âÈ­
+            // _startTimeì´ 0ì´ë©´ í˜„ì¬ ì‹œê°„ìœ¼ë¡œ ì´ˆê¸°í™”
             if (_startTime <= 0f) _startTime = Time.time;
 
-            // ½ÇÁ¦ ·Îµù ÁøÇà·ü
+            // ì‹¤ì œ ë¡œë”© ì§„í–‰ë¥ 
             float realProgress = _loadManager.GetLoadingRation();
 
-            // °æ°ú ½Ã°£ °è»ê
+            // ê²½ê³¼ ì‹œê°„ ê³„ì‚°
             float elapsedTime = Time.time - _startTime;
 
-            // ÃÖ¼Ò ·Îµù ½Ã°£º¸´Ù ÂªÀ» °æ¿ì °¡Â¥ ·Îµù Àû¿ë
+            // ìµœì†Œ ë¡œë”© ì‹œê°„ë³´ë‹¤ ì§§ì„ ê²½ìš° ê°€ì§œ ë¡œë”© ì ìš©
             bool isFakeLoading = elapsedTime < _fakeLoadTime; 
 
-            // ÁøÇà·ü °áÁ¤
+            // ì§„í–‰ë¥  ê²°ì •
             float progress;
 
             if (isFakeLoading) {
@@ -48,10 +48,10 @@ namespace UI
                 progress = realProgress;
             }
 
-            // ·Îµå°¡ ÀÏÁ¤·® º¸´Ù ³ôÀ¸¸é 1·Î Ç¥½Ã
+            // ë¡œë“œê°€ ì¼ì •ëŸ‰ ë³´ë‹¤ ë†’ìœ¼ë©´ 1ë¡œ í‘œì‹œ
             if(progress >= 0.89f) progress = 1f;
 
-            // UI¿¡ Àû¿ë
+            // UIì— ì ìš©
             _fillImage.fillAmount = progress;
             _loadProgressText.text = $"{Mathf.RoundToInt(progress * 100f)}%";
         }

@@ -1,10 +1,10 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using System;
 using UnityEngine;
 
 namespace CustomUtility
 {
-    /// R3·Î º¯°æ
+    /// R3ë¡œ ë³€ê²½
     //public class ObservableValue<T> {
     //    private T _value;
     //    public event Action<T> OnValueChanged;

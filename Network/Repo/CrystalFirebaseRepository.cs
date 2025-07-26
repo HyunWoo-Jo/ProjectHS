@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using UnityEngine;
 using Zenject;
 using Data;
@@ -20,7 +20,7 @@ namespace Network
             return _model.valueObservable.Value;
         }
 
-        // Bind Àü¿ëÀ¸·Î Readonly °´Ã¼·Î ¹İÈ¯
+        // Bind ì „ìš©ìœ¼ë¡œ Readonly ê°ì²´ë¡œ ë°˜í™˜
         public ReadOnlyReactiveProperty<int> GetRO_ReactiveObservable() {
             return _model.valueObservable;
         }

@@ -1,18 +1,18 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Zenject;
 using Data;
 using UI;
 namespace Core
 {
     /// <summary>
-    /// Scene¿¡ µé¾î¿Ã¶§ ¹ÙÀÎµù ÇÏ´Â ¸ñ·ÏÀ» Á¤ÇÏ´Â Å¬·¹½º
+    /// Sceneì— ë“¤ì–´ì˜¬ë•Œ ë°”ì¸ë”© í•˜ëŠ” ëª©ë¡ì„ ì •í•˜ëŠ” í´ë ˆìŠ¤
     /// </summary>
     public class SceneInstaller : MonoInstaller
     {
         public override void InstallBindings() {
 
-            // Tag¸¦ ÅëÇØ ¿øÇÏ´Â°ÍÀ» ¹ÙÀÎµù
-            Container.Bind<IMainCanvasTag>().To<MainCanvasTag>().FromComponentInHierarchy().AsCached(); // ¸ŞÀÎ Äµ¹ö½º ¹ÙÀÎµù
+            // Tagë¥¼ í†µí•´ ì›í•˜ëŠ”ê²ƒì„ ë°”ì¸ë”©
+            Container.Bind<IMainCanvasTag>().To<MainCanvasTag>().FromComponentInHierarchy().AsCached(); // ë©”ì¸ ìº”ë²„ìŠ¤ ë°”ì¸ë”©
           
         }
     }

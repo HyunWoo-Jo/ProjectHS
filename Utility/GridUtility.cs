@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine;
@@ -8,13 +8,13 @@ namespace CustomUtility
     public static class GridUtility
     {
         /// <summary>
-        /// ¿ÀºêÁ§Æ® ÀÌ¹ÌÁö¿¡ ¸ÂÃç À§Ä¡¸¦ º¯°æÇØÁÖ´Â ÇÔ¼ö
+        /// ì˜¤ë¸Œì íŠ¸ ì´ë¯¸ì§€ì— ë§ì¶° ìœ„ì¹˜ë¥¼ ë³€ê²½í•´ì£¼ëŠ” í•¨ìˆ˜
         /// </summary>
         public static Vector3 GridToWorldPosition(int x, int y) {
             return new Vector3((x * 1.25f) + (y * 1.25f), (y * 0.75f) - (x * 0.75f), 0);
         }
         /// <summary>
-        /// world ÁÂÇ¥¸¦ grid ÁÂÇ¥·Î º¯È¯
+        /// world ì¢Œí‘œë¥¼ grid ì¢Œí‘œë¡œ ë³€í™˜
         /// </summary>
         /// <param name="worldPos"></param>
         /// <returns></returns>
@@ -22,7 +22,7 @@ namespace CustomUtility
             float p = worldPos.x / 1.25f;   // = x + y
             float q = worldPos.y / 0.75f;   // = y - x
 
-            float fx = (p - q) * 0.5f;      // ½Ç¼ö ÁÂÇ¥
+            float fx = (p - q) * 0.5f;      // ì‹¤ìˆ˜ ì¢Œí‘œ
             float fy = (p + q) * 0.5f;
 
             int x = Mathf.RoundToInt(fx);
@@ -32,7 +32,7 @@ namespace CustomUtility
         }
 
         /// <summary>
-        /// a -> b Áß°£ grid »ı¼º
+        /// a -> b ì¤‘ê°„ grid ìƒì„±
         /// </summary>
         /// <param name="a"></param>
         /// <param name="b"></param>
@@ -42,7 +42,7 @@ namespace CustomUtility
             int dy = Math.Sign(b.y - a.y);   // -1, 0, +1
             int len = Mathf.Abs(b.x - a.x) + Mathf.Abs(b.y - a.y);
 
-            // »ı¼º
+            // ìƒì„±
             return Enumerable.Range(1, len).Select(i => new Vector2Int(a.x + dx * i, a.y + dy * i));
         }
     }

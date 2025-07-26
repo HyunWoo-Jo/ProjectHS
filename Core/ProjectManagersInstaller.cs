@@ -1,4 +1,4 @@
-using Data;
+ï»¿using Data;
 using UnityEngine;
 using GamePlay;
 using Zenject;
@@ -8,25 +8,25 @@ using Contracts;
 namespace Core
 {
     /// <summary>
-    /// ProjectÀÇ ÀÇÁ¸¼ºÀ» ÁÖÀÔÇØÁÖ´Â Å¬·¹½º
+    /// Projectì˜ ì˜ì¡´ì„±ì„ ì£¼ì…í•´ì£¼ëŠ” í´ë ˆìŠ¤
     /// </summary>
     public class ProjectManagersInstaller : MonoInstaller
     {
         public override void InstallBindings() {
-            // µ¥ÀÌÅÍ ¹ÙÀÎµù Manager¸¦ ¹ÙÀÎµùÇÔ
-            // GameManager ¹ÙÀÎµù
+            // ë°ì´í„° ë°”ì¸ë”© Managerë¥¼ ë°”ì¸ë”©í•¨
+            // GameManager ë°”ì¸ë”©
             Container.Bind<GameManager>().FromNewComponentOn(this.gameObject).AsSingle().NonLazy();
-            // DataManager ¹ÙÀÎµù
+            // DataManager ë°”ì¸ë”©
             Container.Bind<DataManager>().FromNewComponentOn(this.gameObject).AsSingle().NonLazy();
-            // UIManager ¹ÙÀÎµù
+            // UIManager ë°”ì¸ë”©
             Container.Bind<UIEvent>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<UIManager>().FromNewComponentOn(this.gameObject).AsSingle().NonLazy();
-            // LoadManager ¹ÙÀÎµù
+            // LoadManager ë°”ì¸ë”©
             Container.BindInterfacesAndSelfTo<LoadManager>().FromNewComponentOn(this.gameObject).AsSingle().NonLazy();
             Container.Bind<ISceneTransitionService>().To<SceneTransitionService>().AsCached();
 
-            // Network ¹ÙÀÎµù
-            Container.Bind<INetworkLogic>().To<FirebaseLogic>().AsSingle().NonLazy(); // Network LogicÀ» °áÁ¤ÇÏ´Â ¹ÙÀÎµå // Firebase¸¦ »ç¿ë
+            // Network ë°”ì¸ë”©
+            Container.Bind<INetworkLogic>().To<FirebaseLogic>().AsSingle().NonLazy(); // Network Logicì„ ê²°ì •í•˜ëŠ” ë°”ì¸ë“œ // Firebaseë¥¼ ì‚¬ìš©
 
             Container.BindInterfacesAndSelfTo<NetworkManager>().FromNewComponentOn(this.gameObject).AsSingle().NonLazy();
         }

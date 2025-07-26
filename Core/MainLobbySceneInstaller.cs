@@ -1,4 +1,4 @@
-using Contracts;
+ï»¿using Contracts;
 using GamePlay;
 using UI;
 using UnityEngine;
@@ -7,12 +7,12 @@ using Zenject;
 namespace Core
 {
     /// <summary>
-    /// Main Lobby SceneÀÇ Bind¸¦ ÇÏ´Â Å¬·¹½º
+    /// Main Lobby Sceneì˜ Bindë¥¼ í•˜ëŠ” í´ë ˆìŠ¤
     /// </summary>
     public class MainLobbySceneInstaller : MonoInstaller
     {
         public override void InstallBindings() {
-            // UI ViewModelÀ» Bind
+            // UI ViewModelì„ Bind
             Container.Bind<MainLobbyNavigateViewModel>().AsTransient();
             Container.BindInterfacesAndSelfTo<MainLobbyUpgradeViewModel>().AsCached();
 

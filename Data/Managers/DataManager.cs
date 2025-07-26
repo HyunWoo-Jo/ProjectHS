@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using CustomUtility;
 using System.Collections.Generic;
 using UnityEditor;
@@ -11,7 +11,7 @@ using System;
 namespace Data
 {
     /// <summary>
-    /// Addressable ÄÁÆ®·Ñ Å¬·¹½º
+    /// Addressable ì»¨íŠ¸ë¡¤ í´ë ˆìŠ¤
     /// </summary>
     public class DataManager : MonoBehaviour { 
 
@@ -19,88 +19,88 @@ namespace Data
         private readonly Dictionary<string, int> _countDic = new(); // Address Key, ref count
 
 
-        private readonly Dictionary<string, AsyncOperationHandle> _labelHandleDic = new(); // Key: Addressable Label, Value: ¸®½ºÆ® ÇÚµé (AsyncOperationHandle<IList<T>>)
-        private readonly Dictionary<string, int> _labelCountDic = new(); // Key: Addressable Label, Value: ·¹ÀÌºí ÂüÁ¶ Ä«¿îÆ®
+        private readonly Dictionary<string, AsyncOperationHandle> _labelHandleDic = new(); // Key: Addressable Label, Value: ë¦¬ìŠ¤íŠ¸ í•¸ë“¤ (AsyncOperationHandle<IList<T>>)
+        private readonly Dictionary<string, int> _labelCountDic = new(); // Key: Addressable Label, Value: ë ˆì´ë¸” ì°¸ì¡° ì¹´ìš´íŠ¸
 
 
         #region Addressable Loading
         public T LoadAssetSync<T>(string key) where T : UnityEngine.Object {
             if (string.IsNullOrEmpty(key)) {
-                Debug.LogError("LoadAssetSync: Á¦°øµÈ Å°°¡ nullÀÌ°Å³ª ºñ¾î ÀÖ½À´Ï´Ù.");
+                Debug.LogError("LoadAssetSync: ì œê³µëœ í‚¤ê°€ nullì´ê±°ë‚˜ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤.");
                 return null;
             }
 
-            // ÀÌ¹Ì ÀÌ Å°¸¦ °ü¸®ÇÏ°í ÀÖ´ÂÁö È®ÀÎ
+            // ì´ë¯¸ ì´ í‚¤ë¥¼ ê´€ë¦¬í•˜ê³  ìˆëŠ”ì§€ í™•ì¸
             if (_handleDic.TryGetValue(key, out var existingHandle)) {
-                // ±âÁ¸ ÇÚµéÀÌ À¯È¿ÇÏ°í ¿Ï·áµÇ¾ú´ÂÁö È®ÀÎ
+                // ê¸°ì¡´ í•¸ë“¤ì´ ìœ íš¨í•˜ê³  ì™„ë£Œë˜ì—ˆëŠ”ì§€ í™•ì¸
                 if (!existingHandle.IsValid()) {
-                    // ÇÚµéÀÌ ¾î¶² ÀÌÀ¯·Îµç (¿¹: ´Ù¸¥ °÷¿¡¼­ Á¶±â ÇØÁ¦µÊ) À¯È¿ÇÏÁö ¾Ê°Ô µÊ
-                    // Ã£Áö ¸øÇÑ °ÍÀ¸·Î °£ÁÖÇÏ°í ¿À·¡µÈ Ç×¸ñ Á¦°Å
-                    Debug.LogWarning($"LoadAssetSync: Å° '{key}'¿¡ ´ëÇØ ±âÁ¸ ÇÚµéÀ» Ã£¾ÒÁö¸¸ À¯È¿ÇÏÁö ¾Ê½À´Ï´Ù. ´Ù½Ã ·ÎµåÇÕ´Ï´Ù.");
+                    // í•¸ë“¤ì´ ì–´ë–¤ ì´ìœ ë¡œë“  (ì˜ˆ: ë‹¤ë¥¸ ê³³ì—ì„œ ì¡°ê¸° í•´ì œë¨) ìœ íš¨í•˜ì§€ ì•Šê²Œ ë¨
+                    // ì°¾ì§€ ëª»í•œ ê²ƒìœ¼ë¡œ ê°„ì£¼í•˜ê³  ì˜¤ë˜ëœ í•­ëª© ì œê±°
+                    Debug.LogWarning($"LoadAssetSync: í‚¤ '{key}'ì— ëŒ€í•´ ê¸°ì¡´ í•¸ë“¤ì„ ì°¾ì•˜ì§€ë§Œ ìœ íš¨í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤. ë‹¤ì‹œ ë¡œë“œí•©ë‹ˆë‹¤.");
                     _handleDic.Remove(key);
                     _countDic.Remove(key);
-                    // ¾Æ·¡¿¡¼­ »õ·Î ·Îµå ÁøÇà...
+                    // ì•„ë˜ì—ì„œ ìƒˆë¡œ ë¡œë“œ ì§„í–‰...
                 } else {
-                    // ¸¸¾à ¾ÆÁ÷ ½ÇÇà ÁßÀÌ¶ó¸é ¿Ï·áµÉ ¶§±îÁö ´ë±â (µ¿±â Èå¸§¿¡¼­´Â µå¹® °æ¿ì)
+                    // ë§Œì•½ ì•„ì§ ì‹¤í–‰ ì¤‘ì´ë¼ë©´ ì™„ë£Œë  ë•Œê¹Œì§€ ëŒ€ê¸° (ë™ê¸° íë¦„ì—ì„œëŠ” ë“œë¬¸ ê²½ìš°)
                     existingHandle.WaitForCompletion();
 
                     if (existingHandle.Status == AsyncOperationStatus.Succeeded) {
                         T result = existingHandle.Result as T;
                         if (result != null) {
-                            // ±âÁ¸ ÇÚµé¿¡¼­ ¼º°øÀûÀ¸·Î °¡Á®¿È
+                            // ê¸°ì¡´ í•¸ë“¤ì—ì„œ ì„±ê³µì ìœ¼ë¡œ ê°€ì ¸ì˜´
                             _countDic[key]++;
-                            // Debug.Log($"LoadAssetSync: ¿¡¼Â '{key}' ÀÌ¹Ì ·ÎµåµÊ. Ä«¿îÆ® Áõ°¡: {_countDic[key]}.");
+                            // Debug.Log($"LoadAssetSync: ì—ì…‹ '{key}' ì´ë¯¸ ë¡œë“œë¨. ì¹´ìš´íŠ¸ ì¦ê°€: {_countDic[key]}.");
                             return result;
                         } else {
-                            // ÇÚµéÀÌ Á¸ÀçÇÏ°í ¼º°øÀûÀ¸·Î ¿Ï·áµÇ¾úÁö¸¸, °á°ú°¡ nullÀÌ°Å³ª Àß¸øµÈ Å¸ÀÔÀÎ °æ¿ì
-                            Debug.LogError($"LoadAssetSync: Å° '{key}'ÀÇ ±âÁ¸ ÇÚµéÀÌ ¼º°øÀûÀ¸·Î ¿Ï·áµÇ¾úÁö¸¸ °á°ú°¡ nullÀÌ°Å³ª {typeof(T)} Å¸ÀÔÀÌ ¾Æ´Õ´Ï´Ù. ÀúÀåµÈ Å¸ÀÔ: {existingHandle.Result?.GetType()}. Àß¸øµÈ ÇÚµéÀ» ÇØÁ¦ÇÕ´Ï´Ù.");
-                            // ¹®Á¦°¡ ÀÖ´Â ÇÚµéÀ» ÇØÁ¦ÇÏ°í ÃßÀû Á¦°Å
+                            // í•¸ë“¤ì´ ì¡´ì¬í•˜ê³  ì„±ê³µì ìœ¼ë¡œ ì™„ë£Œë˜ì—ˆì§€ë§Œ, ê²°ê³¼ê°€ nullì´ê±°ë‚˜ ì˜ëª»ëœ íƒ€ì…ì¸ ê²½ìš°
+                            Debug.LogError($"LoadAssetSync: í‚¤ '{key}'ì˜ ê¸°ì¡´ í•¸ë“¤ì´ ì„±ê³µì ìœ¼ë¡œ ì™„ë£Œë˜ì—ˆì§€ë§Œ ê²°ê³¼ê°€ nullì´ê±°ë‚˜ {typeof(T)} íƒ€ì…ì´ ì•„ë‹™ë‹ˆë‹¤. ì €ì¥ëœ íƒ€ì…: {existingHandle.Result?.GetType()}. ì˜ëª»ëœ í•¸ë“¤ì„ í•´ì œí•©ë‹ˆë‹¤.");
+                            // ë¬¸ì œê°€ ìˆëŠ” í•¸ë“¤ì„ í•´ì œí•˜ê³  ì¶”ì  ì œê±°
                             Addressables.Release(existingHandle);
                             _handleDic.Remove(key);
                             _countDic.Remove(key);
-                            // ¾Æ·¡¿¡¼­ »õ·Î ·Îµå ½Ãµµ...
+                            // ì•„ë˜ì—ì„œ ìƒˆë¡œ ë¡œë“œ ì‹œë„...
                         }
                     } else {
-                        // ±âÁ¸ ÇÚµéÀÌ ÀÌÀü¿¡ ½ÇÆĞÇßÀ½
-                        Debug.LogError($"LoadAssetSync: Å° '{key}'ÀÇ ±âÁ¸ ÇÚµéÀÌ ÀÌÀü¿¡ ½ÇÆĞÇß½À´Ï´Ù. »óÅÂ: {existingHandle.Status}, ¿À·ù: {existingHandle.OperationException}. ´Ù½Ã ·Îµå¸¦ ½ÃµµÇÕ´Ï´Ù.");
-                        // Àç½ÃµµÇÏ±â Àü¿¡ ½ÇÆĞÇÑ ÇÚµéÀ» ÇØÁ¦ÇÏ°í ÃßÀû Á¦°Å
+                        // ê¸°ì¡´ í•¸ë“¤ì´ ì´ì „ì— ì‹¤íŒ¨í–ˆìŒ
+                        Debug.LogError($"LoadAssetSync: í‚¤ '{key}'ì˜ ê¸°ì¡´ í•¸ë“¤ì´ ì´ì „ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤. ìƒíƒœ: {existingHandle.Status}, ì˜¤ë¥˜: {existingHandle.OperationException}. ë‹¤ì‹œ ë¡œë“œë¥¼ ì‹œë„í•©ë‹ˆë‹¤.");
+                        // ì¬ì‹œë„í•˜ê¸° ì „ì— ì‹¤íŒ¨í•œ í•¸ë“¤ì„ í•´ì œí•˜ê³  ì¶”ì  ì œê±°
                         Addressables.Release(existingHandle);
                         _handleDic.Remove(key);
                         _countDic.Remove(key);
-                        // ¾Æ·¡¿¡¼­ »õ·Î ·Îµå ÁøÇà...
+                        // ì•„ë˜ì—ì„œ ìƒˆë¡œ ë¡œë“œ ì§„í–‰...
                     }
                 }
             }
 
-            // ¿©±â±îÁö µµ´ŞÇß´Ù¸é, ÇÚµéÀÌ Á¸ÀçÇÏÁö ¾Ê¾Ò°Å³ª, À¯È¿ÇÏÁö ¾Ê¾Ò°Å³ª, ÀÌÀü¿¡ ½ÇÆĞÇÑ °æ¿ìÀÓ. »õ·Î ·Îµå.
+            // ì—¬ê¸°ê¹Œì§€ ë„ë‹¬í–ˆë‹¤ë©´, í•¸ë“¤ì´ ì¡´ì¬í•˜ì§€ ì•Šì•˜ê±°ë‚˜, ìœ íš¨í•˜ì§€ ì•Šì•˜ê±°ë‚˜, ì´ì „ì— ì‹¤íŒ¨í•œ ê²½ìš°ì„. ìƒˆë¡œ ë¡œë“œ.
             AsyncOperationHandle<T> newHandle = default;
             T loadedAsset = null;
             try {
-                // ·Îµå ÀÛ¾÷ ½ÃÀÛ
+                // ë¡œë“œ ì‘ì—… ì‹œì‘
                 newHandle = Addressables.LoadAssetAsync<T>(key);
-                // µ¿±âÀûÀ¸·Î ¿Ï·áµÉ ¶§±îÁö ´ë±â (¸ŞÀÎ ½º·¹µå ºí·ÎÅ·)
+                // ë™ê¸°ì ìœ¼ë¡œ ì™„ë£Œë  ë•Œê¹Œì§€ ëŒ€ê¸° (ë©”ì¸ ìŠ¤ë ˆë“œ ë¸”ë¡œí‚¹)
                 loadedAsset = newHandle.WaitForCompletion();
 
                 if (newHandle.Status == AsyncOperationStatus.Succeeded && loadedAsset != null) {
-                    // Ã³À½ ·Îµå ¼º°ø (¶Ç´Â ÀÌÀü ½ÇÆĞ/¹«È¿È­ ÈÄ)
-                    // ÇÚµéÀ» ÀúÀåÇÏ°í ÂüÁ¶ Ä«¿îÆ® ÃÊ±âÈ­
-                    _handleDic[key] = newHandle; // Æ¯Á¤ AsyncOperationHandle<T>¸¦ AsyncOperationHandle·Î ÀúÀå
+                    // ì²˜ìŒ ë¡œë“œ ì„±ê³µ (ë˜ëŠ” ì´ì „ ì‹¤íŒ¨/ë¬´íš¨í™” í›„)
+                    // í•¸ë“¤ì„ ì €ì¥í•˜ê³  ì°¸ì¡° ì¹´ìš´íŠ¸ ì´ˆê¸°í™”
+                    _handleDic[key] = newHandle; // íŠ¹ì • AsyncOperationHandle<T>ë¥¼ AsyncOperationHandleë¡œ ì €ì¥
                     _countDic[key] = 1;
-                    // Debug.Log($"LoadAssetSync: ¿¡¼Â '{key}' ·Îµå ¼º°ø. ÃÊ±â Ä«¿îÆ®: 1.");
+                    // Debug.Log($"LoadAssetSync: ì—ì…‹ '{key}' ë¡œë“œ ì„±ê³µ. ì´ˆê¸° ì¹´ìš´íŠ¸: 1.");
                     return loadedAsset;
                 } else {
-                    // ·Îµù ½ÇÆĞ
-                    Debug.LogError($"LoadAssetSync: Å° '{key}'·Î ¿¡¼Â ·Îµå ½ÇÆĞ. »óÅÂ: {newHandle.Status}, ¿À·ù: {newHandle.OperationException?.Message ?? "N/A"}");
-                    // ½ÇÆĞÇÑ ÀÛ¾÷ ÇÚµéÀÌ À¯È¿ÇÏ´Ù¸é ÇØÁ¦
+                    // ë¡œë”© ì‹¤íŒ¨
+                    Debug.LogError($"LoadAssetSync: í‚¤ '{key}'ë¡œ ì—ì…‹ ë¡œë“œ ì‹¤íŒ¨. ìƒíƒœ: {newHandle.Status}, ì˜¤ë¥˜: {newHandle.OperationException?.Message ?? "N/A"}");
+                    // ì‹¤íŒ¨í•œ ì‘ì—… í•¸ë“¤ì´ ìœ íš¨í•˜ë‹¤ë©´ í•´ì œ
                     if (newHandle.IsValid()) {
                         Addressables.Release(newHandle);
                     }
                     return null;
                 }
             } catch (Exception ex) {
-                // ·Îµù Áß ¹ß»ıÇÒ ¼ö ÀÖ´Â ¿¹¿Ü Ã³¸® (¿¹: Àß¸øµÈ Å°)
-                Debug.LogError($"LoadAssetSync: Å° '{key}'·Î ¿¡¼Â ·Îµå Áß ¿¹¿Ü ¹ß»ı. ¿À·ù: {ex.Message}\n{ex.StackTrace}");
-                // try ºí·Ï ³»¿¡¼­ »ı¼ºµÈ ÇÚµéÀÌ À¯È¿ÇÏ´Ù¸é ÇØÁ¦ º¸Àå
+                // ë¡œë”© ì¤‘ ë°œìƒí•  ìˆ˜ ìˆëŠ” ì˜ˆì™¸ ì²˜ë¦¬ (ì˜ˆ: ì˜ëª»ëœ í‚¤)
+                Debug.LogError($"LoadAssetSync: í‚¤ '{key}'ë¡œ ì—ì…‹ ë¡œë“œ ì¤‘ ì˜ˆì™¸ ë°œìƒ. ì˜¤ë¥˜: {ex.Message}\n{ex.StackTrace}");
+                // try ë¸”ë¡ ë‚´ì—ì„œ ìƒì„±ëœ í•¸ë“¤ì´ ìœ íš¨í•˜ë‹¤ë©´ í•´ì œ ë³´ì¥
                 if (newHandle.IsValid()) {
                     Addressables.Release(newHandle);
                 }
@@ -108,126 +108,126 @@ namespace Data
             }
         }
         /// <summary>
-        /// Addressable ¿¡¼ÂÀ» ºñµ¿±âÀûÀ¸·Î ·Îµå
-        /// ÀÌ¹Ì ·ÎµåµÇ¾ú°Å³ª ·Îµù ÁßÀÎ °æ¿ì ÂüÁ¶ Ä«¿îÆ®¸¦ Áõ°¡.
-        /// ·Îµù ½ÇÆĞ ¶Ç´Â ÀÛ¾÷ Ãë¼Ò ½Ã¿¡´Â ¿¹¿Ü¸¦ ¹ß»ı.
+        /// Addressable ì—ì…‹ì„ ë¹„ë™ê¸°ì ìœ¼ë¡œ ë¡œë“œ
+        /// ì´ë¯¸ ë¡œë“œë˜ì—ˆê±°ë‚˜ ë¡œë”© ì¤‘ì¸ ê²½ìš° ì°¸ì¡° ì¹´ìš´íŠ¸ë¥¼ ì¦ê°€.
+        /// ë¡œë”© ì‹¤íŒ¨ ë˜ëŠ” ì‘ì—… ì·¨ì†Œ ì‹œì—ëŠ” ì˜ˆì™¸ë¥¼ ë°œìƒ.
         /// </summary>
         public async UniTask<T> LoadAssetAsync<T>(string key, CancellationToken cancellationToken = default) where T : UnityEngine.Object {
             if (string.IsNullOrEmpty(key)) {
-                throw new ArgumentNullException(nameof(key), "Addressable Key´Â nullÀÌ°Å³ª ºñ¾î ÀÖÀ» ¼ö ¾ø½À´Ï´Ù.");
+                throw new ArgumentNullException(nameof(key), "Addressable KeyëŠ” nullì´ê±°ë‚˜ ë¹„ì–´ ìˆì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             }
 
-            // ÇÚµéÀÌ Á¸ÀçÇÏ´ÂÁö È®ÀÎ
+            // í•¸ë“¤ì´ ì¡´ì¬í•˜ëŠ”ì§€ í™•ì¸
             if (_handleDic.TryGetValue(key, out var existingHandle)) {
-                _countDic[key]++; // ÇÚµéÀÌ Á¸ÀçÇÏ¸é ÂüÁ¶ Ä«¿îÆ® Áõ°¡
+                _countDic[key]++; // í•¸ë“¤ì´ ì¡´ì¬í•˜ë©´ ì°¸ì¡° ì¹´ìš´íŠ¸ ì¦ê°€
 
                 try {
-                    // ±âÁ¸ ÇÚµéÀÇ ¿Ï·á ´ë±â
-                    // ½ÇÆĞÇÏ¸é ¿¡·¯ ¹ß»ı ºÎºĞ
+                    // ê¸°ì¡´ í•¸ë“¤ì˜ ì™„ë£Œ ëŒ€ê¸°
+                    // ì‹¤íŒ¨í•˜ë©´ ì—ëŸ¬ ë°œìƒ ë¶€ë¶„
                     await existingHandle.ToUniTask(cancellationToken: cancellationToken);
 
-                    // await°¡ ¼º°øÀûÀ¸·Î ¿Ï·áµÇ¸é ÇÚµé »óÅÂ È®ÀÎ
+                    // awaitê°€ ì„±ê³µì ìœ¼ë¡œ ì™„ë£Œë˜ë©´ í•¸ë“¤ ìƒíƒœ í™•ì¸
                     if (existingHandle.Status == AsyncOperationStatus.Succeeded) {
                         if (existingHandle.Result is T typedResult) {
                             return typedResult;
                         } else {
-                            // ·Îµå´Â ¼º°øÇßÀ¸³ª ¿äÃ»ÇÑ Å¸ÀÔ°ú ´Ù¸¥ °æ¿ì
-                            ReleaseAssetInternal(key); // ½ÇÆĞÇÑ ¿äÃ»¿¡ ´ëÇÑ ÂüÁ¶ Ä«¿îÆ® °¨¼Ò
-                            throw new InvalidCastException($"[DataManager] ¿¡¼Â '{key}' ·Îµå´Â ¼º°øÇßÀ¸³ª Å¸ÀÔÀÌ ´Ù¸¨´Ï´Ù. ¿äÃ» Å¸ÀÔ: {typeof(T)}, ½ÇÁ¦ Å¸ÀÔ: {existingHandle.Result?.GetType()}.");
+                            // ë¡œë“œëŠ” ì„±ê³µí–ˆìœ¼ë‚˜ ìš”ì²­í•œ íƒ€ì…ê³¼ ë‹¤ë¥¸ ê²½ìš°
+                            ReleaseAssetInternal(key); // ì‹¤íŒ¨í•œ ìš”ì²­ì— ëŒ€í•œ ì°¸ì¡° ì¹´ìš´íŠ¸ ê°ì†Œ
+                            throw new InvalidCastException($"[DataManager] ì—ì…‹ '{key}' ë¡œë“œëŠ” ì„±ê³µí–ˆìœ¼ë‚˜ íƒ€ì…ì´ ë‹¤ë¦…ë‹ˆë‹¤. ìš”ì²­ íƒ€ì…: {typeof(T)}, ì‹¤ì œ íƒ€ì…: {existingHandle.Result?.GetType()}.");
                         }
-                    } else { // ¿¡·¯ ¾øÀÌ ½ÇÆĞÇÒ °æ¿ì
-                        ReleaseAssetInternal(key); // ½ÇÆĞÇÑ ¿äÃ»¿¡ ´ëÇÑ ÂüÁ¶ Ä«¿îÆ® °¨¼Ò
-                        throw existingHandle.OperationException ?? new Exception($"[DataManager] ±âÁ¸ ÇÚµé '{key}' ÀÛ¾÷ ´ë±â ÈÄ ¿¹±âÄ¡ ¾ÊÀº ½ÇÆĞ. »óÅÂ: {existingHandle.Status}");
+                    } else { // ì—ëŸ¬ ì—†ì´ ì‹¤íŒ¨í•  ê²½ìš°
+                        ReleaseAssetInternal(key); // ì‹¤íŒ¨í•œ ìš”ì²­ì— ëŒ€í•œ ì°¸ì¡° ì¹´ìš´íŠ¸ ê°ì†Œ
+                        throw existingHandle.OperationException ?? new Exception($"[DataManager] ê¸°ì¡´ í•¸ë“¤ '{key}' ì‘ì—… ëŒ€ê¸° í›„ ì˜ˆê¸°ì¹˜ ì•Šì€ ì‹¤íŒ¨. ìƒíƒœ: {existingHandle.Status}");
                     }
                 } catch {
-                    // await Áß ¿¹¿Ü ¹ß»ı (Ãë¼Ò ¶Ç´Â ½ÇÆĞ)
-                    ReleaseAssetInternal(key); // ÂüÁ¶ Ä«¿îÆ® °¨¼Ò
-                    throw; // ¿¡·¯ ´Ù½Ã Àü´Ş
+                    // await ì¤‘ ì˜ˆì™¸ ë°œìƒ (ì·¨ì†Œ ë˜ëŠ” ì‹¤íŒ¨)
+                    ReleaseAssetInternal(key); // ì°¸ì¡° ì¹´ìš´íŠ¸ ê°ì†Œ
+                    throw; // ì—ëŸ¬ ë‹¤ì‹œ ì „ë‹¬
                 }
-            } else { // ÇÚµéÀÌ Á¸ÀçÇÏÁö ¾ÊÀ¸¸é »õ·Î ·Îµå ½ÃÀÛ
+            } else { // í•¸ë“¤ì´ ì¡´ì¬í•˜ì§€ ì•Šìœ¼ë©´ ìƒˆë¡œ ë¡œë“œ ì‹œì‘
  
-                AsyncOperationHandle<T> newHandle = default; // ÇÚµé º¯¼ö ¼±¾ğ
+                AsyncOperationHandle<T> newHandle = default; // í•¸ë“¤ ë³€ìˆ˜ ì„ ì–¸
                 try {
-                    // »õ·Î¿î ·Îµå ÀÛ¾÷À» ½ÃÀÛÇÕ´Ï´Ù.
+                    // ìƒˆë¡œìš´ ë¡œë“œ ì‘ì—…ì„ ì‹œì‘í•©ë‹ˆë‹¤.
                     newHandle = Addressables.LoadAssetAsync<T>(key);
 
-                    // »õ·Î Ãß°¡
+                    // ìƒˆë¡œ ì¶”ê°€
                     _handleDic.Add(key, newHandle);
                     _countDic.Add(key, 1);
 
-                    // »õ ÇÚµéÀÇ ¿Ï·á¸¦ ´ë±â
-                    // ½ÇÆĞÇÏ¸é ¿¡·¯ ¹ß»ı ºÎºĞ
+                    // ìƒˆ í•¸ë“¤ì˜ ì™„ë£Œë¥¼ ëŒ€ê¸°
+                    // ì‹¤íŒ¨í•˜ë©´ ì—ëŸ¬ ë°œìƒ ë¶€ë¶„
                     T result = await newHandle.ToUniTask(cancellationToken: cancellationToken);
 
-                    // await°¡ ¼º°øÀûÀ¸·Î ¿Ï·áµÇ¸é °á°ú ¹İÈ¯
+                    // awaitê°€ ì„±ê³µì ìœ¼ë¡œ ì™„ë£Œë˜ë©´ ê²°ê³¼ ë°˜í™˜
                     return result;
                 } catch {
-                    // ·Îµå Áß ¿¹¿Ü ¹ß»ı
-                    if (newHandle.IsValid() && _handleDic.ContainsKey(key)) { // ÇÚµéÀÌ À¯È¿ÇÏ°í µñ¼Å³Ê¸®¿¡ ¾ÆÁ÷ ÀÖ´Ù¸é
+                    // ë¡œë“œ ì¤‘ ì˜ˆì™¸ ë°œìƒ
+                    if (newHandle.IsValid() && _handleDic.ContainsKey(key)) { // í•¸ë“¤ì´ ìœ íš¨í•˜ê³  ë”•ì…”ë„ˆë¦¬ì— ì•„ì§ ìˆë‹¤ë©´
 
-                        ReleaseAssetInternal(key, true); // °­Á¦ Á¦°Å
+                        ReleaseAssetInternal(key, true); // ê°•ì œ ì œê±°
                     } else {
-                        // Á¤¸®
+                        // ì •ë¦¬
                         _handleDic.Remove(key);
                         _countDic.Remove(key);
                     }
-                    throw; // ¿¡·¯ ´Ù½Ã Àü´Ş
+                    throw; // ì—ëŸ¬ ë‹¤ì‹œ ì „ë‹¬
                 }
             }
         }
 
         public async UniTask<IList<T>> LoadAssetsByLabelAsync<T>(string label, CancellationToken cancellationToken = default) where T : UnityEngine.Object {
             if (string.IsNullOrEmpty(label)) {
-                throw new ArgumentNullException(nameof(label), "Addressable LabelÀº nullÀÌ°Å³ª ºñ¾î ÀÖÀ» ¼ö ¾ø½À´Ï´Ù.");
+                throw new ArgumentNullException(nameof(label), "Addressable Labelì€ nullì´ê±°ë‚˜ ë¹„ì–´ ìˆì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             }
 
-            // ·¹ÀÌºí ÇÚµéÀÌ Á¸ÀçÇÏ´ÂÁö È®ÀÎ
+            // ë ˆì´ë¸” í•¸ë“¤ì´ ì¡´ì¬í•˜ëŠ”ì§€ í™•ì¸
             if (_labelHandleDic.TryGetValue(label, out var existingHandle)) {
-                _labelCountDic[label]++; // ·¹ÀÌºí ÇÚµéÀÌ Á¸ÀçÇÏ¸é ÂüÁ¶ Ä«¿îÆ® Áõ°¡
+                _labelCountDic[label]++; // ë ˆì´ë¸” í•¸ë“¤ì´ ì¡´ì¬í•˜ë©´ ì°¸ì¡° ì¹´ìš´íŠ¸ ì¦ê°€
 
                 try {
-                    // ±âÁ¸ ·¹ÀÌºí ÇÚµéÀÇ ¿Ï·á ´ë±â
+                    // ê¸°ì¡´ ë ˆì´ë¸” í•¸ë“¤ì˜ ì™„ë£Œ ëŒ€ê¸°
                     await existingHandle.ToUniTask(cancellationToken: cancellationToken);
 
                     if (existingHandle.Status == AsyncOperationStatus.Succeeded) {
-                        // °á°ú°¡ IList<T> Å¸ÀÔÀÎÁö È®ÀÎ (Áß¿ä: LoadAssetsAsync ÇÚµéÀÇ Result´Â IList<T>ÀÓ)
+                        // ê²°ê³¼ê°€ IList<T> íƒ€ì…ì¸ì§€ í™•ì¸ (ì¤‘ìš”: LoadAssetsAsync í•¸ë“¤ì˜ ResultëŠ” IList<T>ì„)
                         if (existingHandle.Result is IList<T> typedResult) {
                             return typedResult;
                         } else {
-                            // ·Îµå´Â ¼º°øÇßÀ¸³ª ¿¹»óÄ¡ ¸øÇÑ Å¸ÀÔ
+                            // ë¡œë“œëŠ” ì„±ê³µí–ˆìœ¼ë‚˜ ì˜ˆìƒì¹˜ ëª»í•œ íƒ€ì…
                             ReleaseAssetsByLabel(label);
-                            throw new InvalidCastException($"[DataManager] ·¹ÀÌºí '{label}' ·Îµå´Â ¼º°øÇßÀ¸³ª °á°ú Å¸ÀÔÀÌ IList<{typeof(T)}>°¡ ¾Æ´Õ´Ï´Ù. ½ÇÁ¦ Å¸ÀÔ: {existingHandle.Result?.GetType()}.");
+                            throw new InvalidCastException($"[DataManager] ë ˆì´ë¸” '{label}' ë¡œë“œëŠ” ì„±ê³µí–ˆìœ¼ë‚˜ ê²°ê³¼ íƒ€ì…ì´ IList<{typeof(T)}>ê°€ ì•„ë‹™ë‹ˆë‹¤. ì‹¤ì œ íƒ€ì…: {existingHandle.Result?.GetType()}.");
                         }
                     } else {
-                        ReleaseAssetsByLabel(label); // ½ÇÆĞ ½Ã ÀÌ ¿äÃ»Àº ½ÇÆĞ, Ä«¿îÆ® °¨¼Ò
-                        throw existingHandle.OperationException ?? new Exception($"[DataManager] ±âÁ¸ ·¹ÀÌºí ÇÚµé '{label}' ÀÛ¾÷ ´ë±â ÈÄ ¿¹±âÄ¡ ¾ÊÀº ½ÇÆĞ. »óÅÂ: {existingHandle.Status}");
+                        ReleaseAssetsByLabel(label); // ì‹¤íŒ¨ ì‹œ ì´ ìš”ì²­ì€ ì‹¤íŒ¨, ì¹´ìš´íŠ¸ ê°ì†Œ
+                        throw existingHandle.OperationException ?? new Exception($"[DataManager] ê¸°ì¡´ ë ˆì´ë¸” í•¸ë“¤ '{label}' ì‘ì—… ëŒ€ê¸° í›„ ì˜ˆê¸°ì¹˜ ì•Šì€ ì‹¤íŒ¨. ìƒíƒœ: {existingHandle.Status}");
                     }
                 } catch {
-                    ReleaseAssetsByLabel(label); // ¿¹¿Ü ¹ß»ı ½Ã ÀÌ ¿äÃ»Àº ½ÇÆĞ, Ä«¿îÆ® °¨¼Ò
-                    throw; // ¿¹¿Ü ´Ù½Ã Àü´Ş
+                    ReleaseAssetsByLabel(label); // ì˜ˆì™¸ ë°œìƒ ì‹œ ì´ ìš”ì²­ì€ ì‹¤íŒ¨, ì¹´ìš´íŠ¸ ê°ì†Œ
+                    throw; // ì˜ˆì™¸ ë‹¤ì‹œ ì „ë‹¬
                 }
-            } else { // ·¹ÀÌºí ÇÚµéÀÌ Á¸ÀçÇÏÁö ¾ÊÀ¸¸é »õ·Î ·Îµå ½ÃÀÛ     
+            } else { // ë ˆì´ë¸” í•¸ë“¤ì´ ì¡´ì¬í•˜ì§€ ì•Šìœ¼ë©´ ìƒˆë¡œ ë¡œë“œ ì‹œì‘     
                 AsyncOperationHandle<IList<T>> newHandle = default;
                 try {
-                    // Áß¿ä: LoadAssetsAsyncÀÇ µÎ ¹øÂ° ÆÄ¶ó¹ÌÅÍ´Â °¢ ¿¡¼Â ·Îµå ½Ã Äİ¹éÀÌ¸ç, ¿©±â¼­´Â »ç¿ëÇÏÁö ¾ÊÀ¸¹Ç·Î null Àü´Ş
+                    // ì¤‘ìš”: LoadAssetsAsyncì˜ ë‘ ë²ˆì§¸ íŒŒë¼ë¯¸í„°ëŠ” ê° ì—ì…‹ ë¡œë“œ ì‹œ ì½œë°±ì´ë©°, ì—¬ê¸°ì„œëŠ” ì‚¬ìš©í•˜ì§€ ì•Šìœ¼ë¯€ë¡œ null ì „ë‹¬
                     newHandle = Addressables.LoadAssetsAsync<T>(label, null);
 
-                    // ·¹ÀÌºí ÇÚµé/Ä«¿îÆ® Ãß°¡ (ÇÚµé Å¸ÀÔÀº AsyncOperationHandle·Î ÀúÀåÇØµµ ¹«¹æ)
+                    // ë ˆì´ë¸” í•¸ë“¤/ì¹´ìš´íŠ¸ ì¶”ê°€ (í•¸ë“¤ íƒ€ì…ì€ AsyncOperationHandleë¡œ ì €ì¥í•´ë„ ë¬´ë°©)
                     _labelHandleDic.Add(label, newHandle);
                     _labelCountDic.Add(label, 1);
 
-                    // »õ ·¹ÀÌºí ÇÚµéÀÇ ¿Ï·á ´ë±â
+                    // ìƒˆ ë ˆì´ë¸” í•¸ë“¤ì˜ ì™„ë£Œ ëŒ€ê¸°
                     IList<T> result = await newHandle.ToUniTask(cancellationToken: cancellationToken);
-                    return result; // ¼º°ø ½Ã °á°ú ¸®½ºÆ® ¹İÈ¯
+                    return result; // ì„±ê³µ ì‹œ ê²°ê³¼ ë¦¬ìŠ¤íŠ¸ ë°˜í™˜
                 } catch {
-                    // ¿¹¿Ü ¹ß»ı ½Ã Á¤¸®
+                    // ì˜ˆì™¸ ë°œìƒ ì‹œ ì •ë¦¬
                     if (newHandle.IsValid() && _labelHandleDic.ContainsKey(label)) {
-                        ReleaseAssetsByLabel(label, true); // °­Á¦ Á¦°Å
+                        ReleaseAssetsByLabel(label, true); // ê°•ì œ ì œê±°
                     } else {
                         _labelHandleDic.Remove(label);
                         _labelCountDic.Remove(label);
                     }
-                    throw; // ¿¹¿Ü ´Ù½Ã Àü´Ş
+                    throw; // ì˜ˆì™¸ ë‹¤ì‹œ ì „ë‹¬
                 }
             }
         }
@@ -237,46 +237,46 @@ namespace Data
         #region Release
 
         /// <summary>
-        /// ÁöÁ¤µÈ Å°ÀÇ Addressable ¿¡¼Â ÂüÁ¶ Ä«¿îÆ®¸¦ °¨¼Ò
-        /// ÂüÁ¶ Ä«¿îÆ®°¡ 0ÀÌ µÇ¸é ½ÇÁ¦ ¿¡¼Â ¸Ş¸ğ¸® ÇØÁ¦¸¦ ¿äÃ»
+        /// ì§€ì •ëœ í‚¤ì˜ Addressable ì—ì…‹ ì°¸ì¡° ì¹´ìš´íŠ¸ë¥¼ ê°ì†Œ
+        /// ì°¸ì¡° ì¹´ìš´íŠ¸ê°€ 0ì´ ë˜ë©´ ì‹¤ì œ ì—ì…‹ ë©”ëª¨ë¦¬ í•´ì œë¥¼ ìš”ì²­
         /// </summary>
         public void ReleaseAsset(string key) {
             if (string.IsNullOrEmpty(key)) {
-                Debug.LogWarning("[DataManager] ReleaseAsset È£Ãâ ½Ã key°¡ nullÀÌ°Å³ª ºñ¾î ÀÖ½À´Ï´Ù.");
+                Debug.LogWarning("[DataManager] ReleaseAsset í˜¸ì¶œ ì‹œ keyê°€ nullì´ê±°ë‚˜ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤.");
                 return;
             }
             ReleaseAssetInternal(key);
         }
 
         /// <summary>
-        /// ³»ºÎ ·ÎÁ÷: ÂüÁ¶ Ä«¿îÆ® °¨¼Ò ¹× Á¶°ÇºÎ ÇÚµé ÇØÁ¦
+        /// ë‚´ë¶€ ë¡œì§: ì°¸ì¡° ì¹´ìš´íŠ¸ ê°ì†Œ ë° ì¡°ê±´ë¶€ í•¸ë“¤ í•´ì œ
         /// </summary>
         private void ReleaseAssetInternal(string key, bool forceRemove = false) {
             if (!_countDic.TryGetValue(key, out int count)) {
-                _handleDic.Remove(key); // ÇÚµé¸¸ ³²¾ÆÀÖÀ» °æ¿ì Á¦°Å
+                _handleDic.Remove(key); // í•¸ë“¤ë§Œ ë‚¨ì•„ìˆì„ ê²½ìš° ì œê±°
                 return;
             }
             count--;
 
-            if (count <= 0 || forceRemove) { // ÂüÁ¶ Ä«¿îÅÍ 0 ¶Ç´Â °­Á¦ Á¦°Å
+            if (count <= 0 || forceRemove) { // ì°¸ì¡° ì¹´ìš´í„° 0 ë˜ëŠ” ê°•ì œ ì œê±°
                 if (_handleDic.TryGetValue(key, out var handle)) {
                     if (handle.IsValid()) { 
-                        Addressables.Release(handle); // Çîµé Á¦°Å È£Ãâ
+                        Addressables.Release(handle); // í—¨ë“¤ ì œê±° í˜¸ì¶œ
                     }
-                    _handleDic.Remove(key); // ÇÚµé µñ¼Å³Ê¸®¿¡¼­ Á¦°Å
+                    _handleDic.Remove(key); // í•¸ë“¤ ë”•ì…”ë„ˆë¦¬ì—ì„œ ì œê±°
                 }
-                _countDic.Remove(key); // Ä«¿îÆ® µñ¼Å³Ê¸®¿¡¼­ Á¦°Å
+                _countDic.Remove(key); // ì¹´ìš´íŠ¸ ë”•ì…”ë„ˆë¦¬ì—ì„œ ì œê±°
             } else {
-                // ÂüÁ¶ Ä«¿îÆ®°¡ ³²¾ÆÀÖÀ¸¸é ¾÷µ¥ÀÌÆ®
+                // ì°¸ì¡° ì¹´ìš´íŠ¸ê°€ ë‚¨ì•„ìˆìœ¼ë©´ ì—…ë°ì´íŠ¸
                 _countDic[key] = count;
             }
         }
         /// <summary>
-        /// ·¹ÀÌºí ¿¡¼Â ÂüÁ¶ Ä«¿îÆ® °¨¼Ò ¹× Á¶°ÇºÎ ÇÚµé ÇØÁ¦
+        /// ë ˆì´ë¸” ì—ì…‹ ì°¸ì¡° ì¹´ìš´íŠ¸ ê°ì†Œ ë° ì¡°ê±´ë¶€ í•¸ë“¤ í•´ì œ
         /// </summary>
         public void ReleaseAssetsByLabel(string label, bool forceRemove = false) {
             if (!_labelCountDic.TryGetValue(label, out int count)) {
-                _labelHandleDic.Remove(label); // Ä«¿îÆ® ¾øÀ¸¸é ÇÚµéµµ Á¦°Å ½Ãµµ
+                _labelHandleDic.Remove(label); // ì¹´ìš´íŠ¸ ì—†ìœ¼ë©´ í•¸ë“¤ë„ ì œê±° ì‹œë„
                 return;
             }
             count--;
@@ -284,7 +284,7 @@ namespace Data
             if (count <= 0 || forceRemove) {
                 if (_labelHandleDic.TryGetValue(label, out var handle)) {
                     if (handle.IsValid()) {
-                        // ·¹ÀÌºí ÇÚµé ÇØÁ¦ ½Ã ÇØ´ç ·¹ÀÌºí·Î ·ÎµåµÈ ¸ğµç ¿¡¼ÂÀÌ ÇØÁ¦µÊ
+                        // ë ˆì´ë¸” í•¸ë“¤ í•´ì œ ì‹œ í•´ë‹¹ ë ˆì´ë¸”ë¡œ ë¡œë“œëœ ëª¨ë“  ì—ì…‹ì´ í•´ì œë¨
                         Addressables.Release(handle);
                     }
                     _labelHandleDic.Remove(label);
@@ -295,7 +295,7 @@ namespace Data
             }
         }
         public void ReleaseAllAssets() {
-            // Key ±â¹İ ¿¡¼Â ÇØÁ¦
+            // Key ê¸°ë°˜ ì—ì…‹ í•´ì œ
             var keyEnumerator = _handleDic.GetEnumerator();
             while (keyEnumerator.MoveNext()) {
                 if (keyEnumerator.Current.Value.IsValid()) {
@@ -305,7 +305,7 @@ namespace Data
             _handleDic.Clear();
             _countDic.Clear();
 
-            // Label ±â¹İ ¿¡¼Â ÇØÁ¦
+            // Label ê¸°ë°˜ ì—ì…‹ í•´ì œ
             var labelEnumerator = _labelHandleDic.GetEnumerator();
             while (labelEnumerator.MoveNext()) {
                 if (labelEnumerator.Current.Value.IsValid()) {

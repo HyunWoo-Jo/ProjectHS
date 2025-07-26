@@ -1,10 +1,10 @@
-using Unity.Mathematics;
+ï»¿using Unity.Mathematics;
 using UnityEngine;
 
 namespace GamePlay
 {
     /// <summary>
-    /// Ä«¸Ş¶ó Á¦¾î¸¦ ÇÏ´Â ½ºÅ©¸³Æ®
+    /// ì¹´ë©”ë¼ ì œì–´ë¥¼ í•˜ëŠ” ìŠ¤í¬ë¦½íŠ¸
     /// </summary>
     [DefaultExecutionOrder(80)]
     public class CameraSystem : MonoBehaviour
@@ -16,12 +16,12 @@ namespace GamePlay
 
         private Camera _camera;
 
-        private CameraBoundery _boundery; // Ä«¸Ş¶ó°¡ ÀÌµ¿ °¡´ÉÇÑ °æ°è ¼³Á¤
+        private CameraBoundery _boundery; // ì¹´ë©”ë¼ê°€ ì´ë™ ê°€ëŠ¥í•œ ê²½ê³„ ì„¤ì •
         
 
-        public float cameraSpeed = 400f; // Ä«¸Ş¶ó ÀÌµ¿ ¼Óµµ
+        public float cameraSpeed = 400f; // ì¹´ë©”ë¼ ì´ë™ ì†ë„
 
-        public float cameraLerpSpeed = 2f; // Ä«¸Ş¶ó º¸°£ ¼Óµµ
+        public float cameraLerpSpeed = 2f; // ì¹´ë©”ë¼ ë³´ê°„ ì†ë„
 
         public float maxOrthographicSize = 7f;
         public float minOrthographicSize = 3f;
@@ -33,7 +33,7 @@ namespace GamePlay
             _camera.transform.position = pos;
         }
 
-        /// Á¦ÇÑ ¿µ¿ª ¼³Á¤
+        /// ì œí•œ ì˜ì—­ ì„¤ì •
         public void SetBoundery(float minX, float minY, float maxX, float maxY) {
             _boundery = new CameraBoundery {
                 maxX = maxX,
@@ -44,24 +44,24 @@ namespace GamePlay
         }
 
         private void Awake() {
-            _camera = Camera.main; // main Camera·Î ¼³Á¤
+            _camera = Camera.main; // main Cameraë¡œ ì„¤ì •
         }
 
         public void HandleCameraMovement(Vector2 moveDirection) {
-            Vector2 direction = moveDirection.normalized; // ³ë¸»¶óÀÌÁî ÇØ¼­ »ç¿ë
+            Vector2 direction = moveDirection.normalized; // ë…¸ë§ë¼ì´ì¦ˆ í•´ì„œ ì‚¬ìš©
             Vector3 currentPos = _camera.transform.position;
             Vector2 moveOffset = direction * cameraSpeed * Time.deltaTime;
 
-            // ¸®¹ÌÆ®°ª Á¦ÇÑ
+            // ë¦¬ë¯¸íŠ¸ê°’ ì œí•œ
             Vector3 targetPos = new Vector3(
                 Mathf.Clamp(currentPos.x + moveOffset.x, _boundery.minX, _boundery.maxX),
                 Mathf.Clamp(currentPos.y + moveOffset.y, _boundery.minY, _boundery.maxY),
                 currentPos.z
             );
-            // º¸°£
+            // ë³´ê°„
             _camera.transform.position = Vector3.Lerp(_camera.transform.position, targetPos, cameraLerpSpeed * Time.deltaTime);
         }
-        // Ä«¸Ş¶ó È®´ëÃà¼Ò
+        // ì¹´ë©”ë¼ í™•ëŒ€ì¶•ì†Œ
         public void HandleCameraCloseUpDown(float value) {
             float newSize = _camera.orthographicSize - (value * closeUpSpeed * Time.deltaTime);
             _camera.orthographicSize = Mathf.Clamp(newSize, minOrthographicSize, maxOrthographicSize);

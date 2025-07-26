@@ -1,8 +1,8 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace CustomUtility {
-   // ÀÌÁ¦ »ç¿ë ¾ÈÇÏ´Â ÄÚµå
-   // Entenject¸¦ »ç¿ëÇØ »ı¸íÁÖ±â ´ë½Å °ü¸®
+   // ì´ì œ ì‚¬ìš© ì•ˆí•˜ëŠ” ì½”ë“œ
+   // Entenjectë¥¼ ì‚¬ìš©í•´ ìƒëª…ì£¼ê¸° ëŒ€ì‹  ê´€ë¦¬
 /*
     [DefaultExecutionOrder(-100)]
     public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour {

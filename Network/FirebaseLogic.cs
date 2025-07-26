@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Firebase.Auth;
 using Firebase.Database;
 using System.Threading.Tasks;
@@ -18,11 +18,11 @@ namespace Network
         }
 
         /// <summary>
-        /// ·Î±×ÀÎ ½Ãµµ (Email Password ·Î±×ÀÎ ½Ãµµ -> µî·Ï ½Ãµµ
+        /// ë¡œê·¸ì¸ ì‹œë„ (Email Password ë¡œê·¸ì¸ ì‹œë„ -> ë“±ë¡ ì‹œë„
         /// </summary>
         public async UniTask GuestLoginAsync() {
             try {
-                // Email, Password ·Î±×ÀÎ ½Ãµµ
+                // Email, Password ë¡œê·¸ì¸ ì‹œë„
                 string systemUID;
                 if (PlayerPrefs.HasKey("uid")) {
                     systemUID = PlayerPrefs.GetString("uid");
@@ -32,48 +32,48 @@ namespace Network
                 }
                 string guestEmail = systemUID + "@Guest.com";
                 
-                // ·Î±×ÀÎ ½Ãµµ
+                // ë¡œê·¸ì¸ ì‹œë„
                 await _auth.SignInWithEmailAndPasswordAsync(guestEmail, systemUID).ContinueWith(task => {
-                    // ·Î±×ÀÎ ½ÇÆĞ
+                    // ë¡œê·¸ì¸ ì‹¤íŒ¨
                     if (task.IsCanceled || task.IsFaulted) {
-                        // ½ÇÆĞ½Ã ´ÙÀ½ ·ÎÁ÷ ¼öÇà
-                    } else { // ¼º°ø
+                        // ì‹¤íŒ¨ì‹œ ë‹¤ìŒ ë¡œì§ ìˆ˜í–‰
+                    } else { // ì„±ê³µ
                         _user = task.Result.User;
                     }
                 });
                 if (await IsConnectedAsync()) {
                     return;
                 }
-                /////////// ÀüºÎ ½ÇÆĞ½Ã È£ÃâµÇ´Â ¿µ¿ª µî·Ï ½Ãµµ
-                // »ı¼º ½Ãµµ
+                /////////// ì „ë¶€ ì‹¤íŒ¨ì‹œ í˜¸ì¶œë˜ëŠ” ì˜ì—­ ë“±ë¡ ì‹œë„
+                // ìƒì„± ì‹œë„
                 await _auth.CreateUserWithEmailAndPasswordAsync(guestEmail, systemUID).ContinueWith(task => {
-                    // µî·Ï ½ÇÆĞ // ³×Æ®¿öÅ© ¿À·ù
+                    // ë“±ë¡ ì‹¤íŒ¨ // ë„¤íŠ¸ì›Œí¬ ì˜¤ë¥˜
                     if (task.IsCanceled || task.IsFaulted) {
                         throw new Exception("Network Err");
                     } else {
-                        // µî·Ï ¼º°ø
+                        // ë“±ë¡ ì„±ê³µ
                         _user = task.Result.User;
                     }
                 });
             } catch {
-                // ³×Æ®¿öÅ© ¿¡·¯ ÃßÁ¤
+                // ë„¤íŠ¸ì›Œí¬ ì—ëŸ¬ ì¶”ì •
                 throw;
             }
         }
 
         /// <summary>
-        /// ¿¬°á È®ÀÎ
+        /// ì—°ê²° í™•ì¸
         /// </summary>
         /// <returns></returns>
 
         public async UniTask<bool> IsConnectedAsync() {
-            if(_auth.CurrentUser == null || _user == null) { // ·Î±×ÀÎ µÇ¾îÀÖÁö ¾ÊÀº °æ¿ì
+            if(_auth.CurrentUser == null || _user == null) { // ë¡œê·¸ì¸ ë˜ì–´ìˆì§€ ì•Šì€ ê²½ìš°
                 return false;
             }
 
-            UniTask<string> task = _user.TokenAsync(true).AsUniTask(); // ÅäÅ« °»½Å ¿äÃ»
+            UniTask<string> task = _user.TokenAsync(true).AsUniTask(); // í† í° ê°±ì‹  ìš”ì²­
             await task;
-            if (task.Status.IsFaulted() || task.Status.IsCanceled()) { // À¯È¿ ÇÏÁö ¾ÊÀº ¼½¼ÇÀÌ¸é
+            if (task.Status.IsFaulted() || task.Status.IsCanceled()) { // ìœ íš¨ í•˜ì§€ ì•Šì€ ì„¹ì…˜ì´ë©´
                 return false;
             }
 

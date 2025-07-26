@@ -1,16 +1,16 @@
-using CustomUtility;
+ï»¿using CustomUtility;
 using R3;
 using UnityEngine;
 
 namespace Data
 {
-    // ¼±ÅÃµÈ ¾÷±×·¹ÀÌµå¸¦ °¡Áö´Â ¸ğµ¨
+    // ì„ íƒëœ ì—…ê·¸ë ˆì´ë“œë¥¼ ê°€ì§€ëŠ” ëª¨ë¸
     public class SelectedUpgradeModel {
         public ReactiveProperty<UpgradeDataSO>[] upgradeDatasObservable ={
             new (),
             new (),
             new ()
-        }; // 3Ä­ »ı¼º
+        }; // 3ì¹¸ ìƒì„±
 
         public ReactiveProperty<int> rerollCountObservable = new (0);
     }

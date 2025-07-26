@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Network;
 using Data;
 using Zenject;
@@ -11,12 +11,12 @@ namespace GamePlay
     public class InitSceneManager : MonoBehaviour
     {
         [Inject] private NetworkManager _networkManager; // Network 
-        [Inject] private ICrystalRepository _crystalRepository; // Å©¸®½ºÅ» repo
-        [Inject] private IGlobalUpgradeRepository _globalUpgradeRepository; // ¾÷±×·¹ÀÌµå repo
+        [Inject] private ICrystalRepository _crystalRepository; // í¬ë¦¬ìŠ¤íƒˆ repo
+        [Inject] private IGlobalUpgradeRepository _globalUpgradeRepository; // ì—…ê·¸ë ˆì´ë“œ repo
         [SerializeField] private InitSceneUI _initSceneUI;
         private bool isClosed = false;
         private void Awake() {
-#if UNITY_EDITOR // °ËÁõ
+#if UNITY_EDITOR // ê²€ì¦
             Assert.IsNotNull(_initSceneUI);
 #endif
 
@@ -28,23 +28,23 @@ namespace GamePlay
             isClosed = true;
         }
 
-        // ³×Æ®¿öÅ© ÃÊ±âÈ­ ±îÁö ´ë±â
+        // ë„¤íŠ¸ì›Œí¬ ì´ˆê¸°í™” ê¹Œì§€ ëŒ€ê¸°
         private async void InitLogicAsync() {
             
-            // ¿¬°á È®ÀÎ
+            // ì—°ê²° í™•ì¸
             await CheckCnnectedLoop();
-            // Áö¿¬
+            // ì§€ì—°
             await UniTask.Delay(500);
-            // UpgradeTable ÀĞ±â
+            // UpgradeTable ì½ê¸°
             await GetGlobalUgradeLoop();
-            // UserData ÀĞ±â
+            // UserData ì½ê¸°
             await GetUserDataLoop();
-            // ¸ŞÀÎ ·Îºñ·Î ÀÌµ¿
+            // ë©”ì¸ ë¡œë¹„ë¡œ ì´ë™
             await SceneManager.LoadSceneAsync("MainLobbyScene");
             
         }
         private async UniTask CheckCnnectedLoop() {
-            // Login ½Ãµµ
+            // Login ì‹œë„
             _initSceneUI.UpdateTextFromThread("Check Cnnected Network");
             while (true) {
                 var result = await _networkManager.IsConnectedAsync();
@@ -58,7 +58,7 @@ namespace GamePlay
         }
         private async UniTask GetGlobalUgradeLoop() {
             _initSceneUI.UpdateTextFromThread("Update Table");
-            // upgradeTable, LevelÀ» ·Îµå
+            // upgradeTable, Levelì„ ë¡œë“œ
             await _globalUpgradeRepository.LoadValue();
         }
         private async UniTask GetUserDataLoop() {

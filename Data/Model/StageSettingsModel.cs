@@ -1,8 +1,8 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace Data
 {
     public class StageSettingsModel {
-        public float stageDelayTime = 20; // ´ÙÀ½ ½ºÅ×ÀÌÁö±îÁö ´ë±â ½Ã°£
+        public float stageDelayTime = 20; // ë‹¤ìŒ ìŠ¤í…Œì´ì§€ê¹Œì§€ ëŒ€ê¸° ì‹œê°„
     }
 }

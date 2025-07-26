@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Contracts;
 using Zenject;
 using Data;
@@ -14,16 +14,16 @@ namespace GamePlay
             if (list.Count > 0) {
                 _selectedUpgradeModel.upgradeDatasObservable[index].Value = list[0];
             }
-            // model ¾÷µ¥ÀÌÆ®
+            // model ì—…ë°ì´íŠ¸
             _selectedUpgradeModel.rerollCountObservable.Value -= 1;
         }
 
         public void ApplyUpgrade(int index) {
             _selectedUpgradeModel.upgradeDatasObservable[index].Value.ApplyUpgrade();
 
-            // ¾÷±×·¹ÀÌµå ¼Ò¸ğ
+            // ì—…ê·¸ë ˆì´ë“œ ì†Œëª¨
             _upgradeSystem.ConsumeRemainingCount();
-            // ³²Àº ¾÷±×·¹ÀÌµå°¡ ÀÖÀ¸¸é ÀçÃâ·Â ½Ãµµ
+            // ë‚¨ì€ ì—…ê·¸ë ˆì´ë“œê°€ ìˆìœ¼ë©´ ì¬ì¶œë ¥ ì‹œë„
             _upgradeSystem.TryShowRemainUpgradeSelection();
         }
     }

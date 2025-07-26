@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using CustomUtility;
 using UnityEngine.Assertions;
 using Unity.Mathematics;
@@ -13,26 +13,26 @@ namespace GamePlay
         private ObjectPool<ObjectPoolItem> _goldPool;
         [SerializeField] private GameObject _goldPrefab;
         [SerializeField] private Transform _targetTr;
-        public Action<EnemyData> OnArrived; // µµÂø ÇßÀ»¶§ ¹ßµ¿
+        public Action<EnemyData> OnArrived; // ë„ì°© í–ˆì„ë•Œ ë°œë™
         private void Awake() {
 #if UNITY_EDITOR
             Assert.IsNotNull(_goldPrefab);
             Assert.IsNotNull(_targetTr);
 #endif
-            // ½ÃÀÛ½Ã Pool»ı¼º Gold Prefab
-            _goldPool = ObjectPoolBuilder<ObjectPoolItem>.Instance(_goldPrefab, 10).AutoActivate(true).Parent(this.gameObject.transform).Build(); // pool »ı¼º
+            // ì‹œì‘ì‹œ Poolìƒì„± Gold Prefab
+            _goldPool = ObjectPoolBuilder<ObjectPoolItem>.Instance(_goldPrefab, 10).AutoActivate(true).Parent(this.gameObject.transform).Build(); // pool ìƒì„±
         }
 
-        // »ı¼º ÈÄ ÀÌµ¿
+        // ìƒì„± í›„ ì´ë™
         public void SpawnAndMoveToTarget(EnemyData enemyData) {
             var poolItem = _goldPool.BorrowItem();
-            // UI World -> Screen Postion º¯È¯ 
+            // UI World -> Screen Postion ë³€í™˜ 
             poolItem.transform.position = Camera.main.WorldToScreenPoint(enemyData.position);
-            // ÀÌµ¿
+            // ì´ë™
             poolItem.transform.DOMove(_targetTr.position, 1f).OnComplete(() => {
-                // µµÂø½Ã
-                _goldPool.RepayItem(poolItem); // ¹İÈ¯
-                OnArrived?.Invoke(enemyData); // Event ¹ß»ı
+                // ë„ì°©ì‹œ
+                _goldPool.RepayItem(poolItem); // ë°˜í™˜
+                OnArrived?.Invoke(enemyData); // Event ë°œìƒ
             });
         }
 

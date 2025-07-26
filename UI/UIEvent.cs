@@ -1,13 +1,13 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System;
 namespace UI
 {
     /// <summary>
-    /// DI¿¡¼­ °ü¸® UI °ü·Ã ÀÌº¥Æ®°¡ ¹ß»ıÇÒ¶§ Å¬·¹½º
+    /// DIì—ì„œ ê´€ë¦¬ UI ê´€ë ¨ ì´ë²¤íŠ¸ê°€ ë°œìƒí• ë•Œ í´ë ˆìŠ¤
     /// </summary>
     public class UIEvent
     {
-        public event Action<GameObject> OnCloseUI; // UI°¡ Á¦°Å µÉ¶§ ¹ß»ı
+        public event Action<GameObject> OnCloseUI; // UIê°€ ì œê±° ë ë•Œ ë°œìƒ
 
         public void CloseUI(GameObject obj) {
             OnCloseUI?.Invoke(obj);

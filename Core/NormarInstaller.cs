@@ -1,11 +1,11 @@
-using GamePlay;
+ï»¿using GamePlay;
 using UnityEngine;
 using Zenject;
 namespace Core
 {
 
     /// <summary>
-    /// Normal ³­ÀÌµµ¿¡ ¸Â´Â Á¤Ã¥À» Bind
+    /// Normal ë‚œì´ë„ì— ë§ëŠ” ì •ì±…ì„ Bind
     /// </summary>
     public class NormarInstaller : MonoInstaller{
 

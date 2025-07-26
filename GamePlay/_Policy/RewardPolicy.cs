@@ -1,4 +1,4 @@
-using Data;
+ï»¿using Data;
 using UnityEngine;
 using Zenject;
 
@@ -8,7 +8,7 @@ namespace GamePlay
         [Inject] private WaveStatusModel _waveModel;
 
         public int CalculateCrystalReward() {
-            return _waveModel.waveLevelObservable.Value / 10; // 10½ºÅ×ÀÌÁö ¸¶´Ù 1 Crystal º¸»ó
+            return _waveModel.waveLevelObservable.Value / 10; // 10ìŠ¤í…Œì´ì§€ ë§ˆë‹¤ 1 Crystal ë³´ìƒ
         }
     }
 }

@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 namespace Data
@@ -17,7 +17,7 @@ namespace Data
     }
 
     /// <summary>
-    /// ¾À ·Îµå¸¦ °ü¸®ÇÏ´Â Å¬·¹½º
+    /// ì”¬ ë¡œë“œë¥¼ ê´€ë¦¬í•˜ëŠ” í´ë ˆìŠ¤
     /// </summary>
     public class LoadManager : MonoBehaviour, ILoadManager {
         private AsyncOperation _operation;
@@ -29,20 +29,20 @@ namespace Data
             return _operation != null ? _operation.progress : 0;
         }
         /// <summary>
-        /// ¾À ·Îµå 
+        /// ì”¬ ë¡œë“œ 
         /// </summary>
         /// <param name="nextScene"></param>
         /// <param name="delay"></param>
         public void LoadScene(SceneName nextScene, float delay) {
-            PreScene = NextScene; // ÀÌÀü ¾À ÀúÀå
-            NextScene = nextScene; // ´ÙÀ½ ¾À ÀÌ¸§ ÀúÀå
-            _operation = SceneManager.LoadSceneAsync(SceneName.LoadScene.ToString()); // LoadSceneÀ¸·Î ÀÌµ¿        
-            _operation.completed += (op) => { // ·ÎµùÀÌ ¿Ï·áµÇ¸é NextSceneÀ» ·ÎµùÇÏ´Â ÄÚ·çÆ¾ ½ÇÇà
+            PreScene = NextScene; // ì´ì „ ì”¬ ì €ì¥
+            NextScene = nextScene; // ë‹¤ìŒ ì”¬ ì´ë¦„ ì €ì¥
+            _operation = SceneManager.LoadSceneAsync(SceneName.LoadScene.ToString()); // LoadSceneìœ¼ë¡œ ì´ë™        
+            _operation.completed += (op) => { // ë¡œë”©ì´ ì™„ë£Œë˜ë©´ NextSceneì„ ë¡œë”©í•˜ëŠ” ì½”ë£¨í‹´ ì‹¤í–‰
                 StartCoroutine(LoadNextSceneCoroutine());
             };
-            if (delay > 0) { // µô·¹ÀÌ°¡ ÀÖÀ¸¸é 
-                _operation.allowSceneActivation = false; // ÀÚµ¿ ·Îµå x
-                StartCoroutine(DelayAllowLoadCoroutine(_operation, delay)); // µô·¹ÀÌÈÄ ·Îµå°¡ ½ÇÇàµÇ´Â ÄÚ·çÆ¾ ½ÇÇà
+            if (delay > 0) { // ë”œë ˆì´ê°€ ìˆìœ¼ë©´ 
+                _operation.allowSceneActivation = false; // ìë™ ë¡œë“œ x
+                StartCoroutine(DelayAllowLoadCoroutine(_operation, delay)); // ë”œë ˆì´í›„ ë¡œë“œê°€ ì‹¤í–‰ë˜ëŠ” ì½”ë£¨í‹´ ì‹¤í–‰
             } else {
                 _operation.allowSceneActivation = true;
             }
@@ -51,7 +51,7 @@ namespace Data
 
         }
         /// <summary>
-        /// ½Ã°£ÀÌ Áö³ª¸é ÀÚµ¿·Îµå¸¦ ÄÑÁÖ´Â ÇÔ¼ö
+        /// ì‹œê°„ì´ ì§€ë‚˜ë©´ ìë™ë¡œë“œë¥¼ ì¼œì£¼ëŠ” í•¨ìˆ˜
         /// </summary>
         /// <param name="operation"></param>
         /// <param name="delay"></param>
@@ -62,15 +62,15 @@ namespace Data
         }
 
         /// <summary>
-        /// ·Îµù ¾À¿¡¼­ È£ÃâµÇ´Â ÇÔ¼ö 
+        /// ë¡œë”© ì”¬ì—ì„œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜ 
         /// </summary>
         /// <returns></returns>
         private IEnumerator LoadNextSceneCoroutine() {
             while (true) {
                 if (_operation != null && _operation.allowSceneActivation) {
-                    float minLoadTime = 2f; // ÃÖ¼Ò ·Îµå ½Ã°£ ·Îµù¾À¿¡¼­ ´ë±â ½Ã°£ 
-                    _operation = SceneManager.LoadSceneAsync(NextScene.ToString()); // ´ÙÀ½¾À ·Îµå
-                    _operation.allowSceneActivation = false; // ÀÚµ¿·Îµå x
+                    float minLoadTime = 2f; // ìµœì†Œ ë¡œë“œ ì‹œê°„ ë¡œë”©ì”¬ì—ì„œ ëŒ€ê¸° ì‹œê°„ 
+                    _operation = SceneManager.LoadSceneAsync(NextScene.ToString()); // ë‹¤ìŒì”¬ ë¡œë“œ
+                    _operation.allowSceneActivation = false; // ìë™ë¡œë“œ x
                     StartCoroutine(DelayAllowLoadCoroutine(_operation, minLoadTime));
                     
                     break;

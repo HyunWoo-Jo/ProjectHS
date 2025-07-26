@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.Assertions;
 using Zenject;
 
@@ -18,7 +18,7 @@ namespace Data
             _canvas = GetComponent<Canvas>();
             _rectTr = GetComponent<RectTransform>();
 
-            _uiManager.SetMainCanvas(this, _container); // Main Cavnas·Î µî·Ï
+            _uiManager.SetMainCanvas(this, _container); // Main Cavnasë¡œ ë“±ë¡
         }
         public Canvas GetMainCanvas() {
             return _canvas;

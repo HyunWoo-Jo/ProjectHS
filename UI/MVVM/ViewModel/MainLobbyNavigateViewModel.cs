@@ -1,4 +1,4 @@
-
+ï»¿
 using Data;
 using System.Diagnostics;
 using System;
@@ -8,15 +8,15 @@ using R3;
 
 namespace UI
 {
-    // ¸ŞÀÎ·ÎºñÀÇ Navigate UI ¸¦ °ü¸®
+    // ë©”ì¸ë¡œë¹„ì˜ Navigate UI ë¥¼ ê´€ë¦¬
     public class MainLobbyNavigateViewModel
     {
         [Inject] private ISceneTransitionService _sts;
 
-        private ReactiveProperty<PanelType> _currentActivePanelObservable = new();//  ¾î¶² ÆĞ³ÎÀÌ ÇöÀç È°¼ºÈ­µÇ¾î¾ß ÇÏ´ÂÁö¸¦ ³ªÅ¸³»´Â »óÅÂ ¼Ó¼º
+        private ReactiveProperty<PanelType> _currentActivePanelObservable = new();//  ì–´ë–¤ íŒ¨ë„ì´ í˜„ì¬ í™œì„±í™”ë˜ì–´ì•¼ í•˜ëŠ”ì§€ë¥¼ ë‚˜íƒ€ë‚´ëŠ” ìƒíƒœ ì†ì„±
         public ReadOnlyReactiveProperty<PanelType> RO_CurrentActivePanelObservable => _currentActivePanelObservable;
         public PanelType CurrentActivePanel => _currentActivePanelObservable.CurrentValue;
-        public PanelType PreActivePanel { get; private set; } = PanelType.World; // ÀÌÀü ÆĞ³ÎÀÌ °°Àº Å¸ÀÔÀÎÁö È®ÀÎ¿ë ¼Ó¼º
+        public PanelType PreActivePanel { get; private set; } = PanelType.World; // ì´ì „ íŒ¨ë„ì´ ê°™ì€ íƒ€ì…ì¸ì§€ í™•ì¸ìš© ì†ì„±
         public enum PanelType {
             World,
             Upgrade,
@@ -24,12 +24,12 @@ namespace UI
 
 
         /// <summary>
-        /// Panel ¹öÆ° Å¬¸¯ ex) ¿ùµå, ¾÷±×·¹ÀÌµå ¹öÆ° Å¬¸¯½Ã ÀÌµ¿
+        /// Panel ë²„íŠ¼ í´ë¦­ ex) ì›”ë“œ, ì—…ê·¸ë ˆì´ë“œ ë²„íŠ¼ í´ë¦­ì‹œ ì´ë™
         /// </summary>
         /// <param name="panelType"></param>
         public void OnClickPanelMoveButton(PanelType panelType) {
             _currentActivePanelObservable.Value = panelType;
-            // Last pre ÆĞ³Î °»½Å
+            // Last pre íŒ¨ë„ ê°±ì‹ 
             PreActivePanel = panelType; // 
         }
 

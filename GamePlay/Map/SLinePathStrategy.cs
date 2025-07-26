@@ -1,21 +1,21 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
 namespace GamePlay
 {
     /// <summary>
-    /// S ÀÚ ¸ğ¾çÀ¸·Î Path¸¦ »ı¼º
+    /// S ì ëª¨ì–‘ìœ¼ë¡œ Pathë¥¼ ìƒì„±
     /// </summary>
     public class SLinePathStrategy : IPathStrategy {
         public List<Vector2Int> CreatePathPoints(int x, int y) {
             List<Vector2Int> pathWaypointList = new();
-            pathWaypointList.Add(new Vector2Int(0, y / 2));                 // ½ÃÀÛ: ¿ŞÂÊ Áß¾Ó
-            pathWaypointList.Add(new Vector2Int(x / 3, y / 2));         // ¿À¸¥ÂÊÀ¸·Î ÀÌµ¿
-            pathWaypointList.Add(new Vector2Int(x / 3, y / 4));         // ¾Æ·¡·Î ÀÌµ¿
-            pathWaypointList.Add(new Vector2Int(2 * x / 3, y / 4));     // ¿À¸¥ÂÊÀ¸·Î ÀÌµ¿
-            pathWaypointList.Add(new Vector2Int(2 * x / 3, 3 * y / 4)); // À§·Î ÀÌµ¿
-            pathWaypointList.Add(new Vector2Int(x - 1, 3 * y / 4));     // µµÂø: ¿À¸¥ÂÊ À§ÂÊ »çºĞ¸é
+            pathWaypointList.Add(new Vector2Int(0, y / 2));                 // ì‹œì‘: ì™¼ìª½ ì¤‘ì•™
+            pathWaypointList.Add(new Vector2Int(x / 3, y / 2));         // ì˜¤ë¥¸ìª½ìœ¼ë¡œ ì´ë™
+            pathWaypointList.Add(new Vector2Int(x / 3, y / 4));         // ì•„ë˜ë¡œ ì´ë™
+            pathWaypointList.Add(new Vector2Int(2 * x / 3, y / 4));     // ì˜¤ë¥¸ìª½ìœ¼ë¡œ ì´ë™
+            pathWaypointList.Add(new Vector2Int(2 * x / 3, 3 * y / 4)); // ìœ„ë¡œ ì´ë™
+            pathWaypointList.Add(new Vector2Int(x - 1, 3 * y / 4));     // ë„ì°©: ì˜¤ë¥¸ìª½ ìœ„ìª½ ì‚¬ë¶„ë©´
 
-            // È¤½Ã ¸ğ¸¦ ¿À·ù¸¦ ´ëºñÇØ ÁÂÇ¥¸¦ ¸Ê °æ°è ³»·Î Á¦ÇÑ
+            // í˜¹ì‹œ ëª¨ë¥¼ ì˜¤ë¥˜ë¥¼ ëŒ€ë¹„í•´ ì¢Œí‘œë¥¼ ë§µ ê²½ê³„ ë‚´ë¡œ ì œí•œ
             for (int i = 0; i < pathWaypointList.Count; i++) {
                 pathWaypointList[i] = new Vector2Int(
                     Mathf.Clamp(pathWaypointList[i].x, 0, x - 1),

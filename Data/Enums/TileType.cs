@@ -1,8 +1,8 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace Data
 {
-    public enum TileType { // ¸Ê »ı¼º¿ë Tile Á¾·ù
+    public enum TileType { // ë§µ ìƒì„±ìš© Tile ì¢…ë¥˜
         Ground = 0,
         Road_Vertical,
         Road_Horizontal,

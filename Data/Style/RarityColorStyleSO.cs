@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -24,10 +24,10 @@ namespace Data
 #endif
         }
         /// <summary>
-        /// Dictionary »ı¼º
+        /// Dictionary ìƒì„±
         /// </summary>
         private void BuildDictionary() {
-            _colorDictionary.Clear(); // Áßº¹ ¿¹¿Ü ¹æÁö
+            _colorDictionary.Clear(); // ì¤‘ë³µ ì˜ˆì™¸ ë°©ì§€
             _colorDictionary[Rarity.Common] = _common;
             _colorDictionary[Rarity.Rare] = _rare;
             _colorDictionary[Rarity.Epic] = _epic;
@@ -37,12 +37,12 @@ namespace Data
 
 #if UNITY_EDITOR
         /// <summary>
-        /// Enum ¸ğµç °ªÀÌ ¸ÅÇÎµÅ ÀÖ´ÂÁö °ËÁõ
+        /// Enum ëª¨ë“  ê°’ì´ ë§¤í•‘ë¼ ìˆëŠ”ì§€ ê²€ì¦
         /// </summary>
         private void DataAssert() {
-            var excludeList = ((Rarity[])Enum.GetValues(typeof(Rarity))).ToList().Where(key => !_colorDictionary.ContainsKey(key)); // °ËÃâ
+            var excludeList = ((Rarity[])Enum.GetValues(typeof(Rarity))).ToList().Where(key => !_colorDictionary.ContainsKey(key)); // ê²€ì¶œ
             Assert.IsTrue(excludeList.Count() == 0);
-            excludeList.ToList().ForEach(key => Debug.LogError(key.ToString() + " »ö»óÀÌ Á¤ÀÇµÇÁö ¾Ê¾Ò½À´Ï´Ù."));
+            excludeList.ToList().ForEach(key => Debug.LogError(key.ToString() + " ìƒ‰ìƒì´ ì •ì˜ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤."));
         }
 #endif
     }

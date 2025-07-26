@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 
@@ -14,7 +14,7 @@ namespace UI
 #endif
         }
 
-        private void OnDisable() { // �ʱ�ȭ
+        private void OnDisable() { // 초기화
             _fillImage.fillAmount = 1;
         }
 

@@ -1,14 +1,14 @@
-using Data;
+ï»¿using Data;
 using UnityEngine;
 
 namespace GamePlay
 {
     public interface IHpPolicy
     {
-        // ÀûÀÌ ÃÖÁ¾ ÁöÁ¡¿¡ µµ´ŞÇßÀ»¶§ ÆĞ³ÎÆ¼
+        // ì ì´ ìµœì¢… ì§€ì ì— ë„ë‹¬í–ˆì„ë•Œ íŒ¨ë„í‹°
         public int CalculateHpPenaltyOnLeak(EnemyData enemyData);
     
-        // ½ÃÀÛ HP
+        // ì‹œì‘ HP
         public int GetStartPlayerHp();
     }
 }

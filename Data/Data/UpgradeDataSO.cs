@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
 using System;
 namespace Data
@@ -14,23 +14,23 @@ namespace Data
         [SerializeField] private List<UpgradeModifier> _upgradeModifierList = new();
 
         /// <summary>
-        /// Unlock µÇ¾ú´ÂÁö È®ÀÎ
+        /// Unlock ë˜ì—ˆëŠ”ì§€ í™•ì¸
         /// </summary>
         /// <returns></returns>
         public bool CheckUnlock() {
             foreach(var unlock in _unlockModifierList) {
-                if (!unlock.IsSatisfied()) return false; // ¸ğµç Á¶°ÇÀÌ ÂüÀÏ¶§¸¸ true
+                if (!unlock.IsSatisfied()) return false; // ëª¨ë“  ì¡°ê±´ì´ ì°¸ì¼ë•Œë§Œ true
             }
             return true;
         }
 
         /// <summary>
-        /// ¾÷±×·¹ÀÌµå Àû¿ë
+        /// ì—…ê·¸ë ˆì´ë“œ ì ìš©
         /// </summary>
         public void ApplyUpgrade() {
 
             foreach(var upgrade in _upgradeModifierList) {
-                upgrade.Apply(); // ¾÷±×·¹ÀÌµå Àû¿ë
+                upgrade.Apply(); // ì—…ê·¸ë ˆì´ë“œ ì ìš©
             }
         }
 

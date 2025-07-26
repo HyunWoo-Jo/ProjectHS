@@ -1,4 +1,4 @@
-using CustomUtility;
+ï»¿using CustomUtility;
 using Data;
 using GamePlay;
 using NSubstitute;
@@ -18,7 +18,7 @@ namespace Tests.Service
         private ICrystalRepository _cr;
 
         /// <summary>
-        /// Substitute ÃÊ±âÈ­ ¹× ¼­ºñ½º¿¡ ¼öµ¿ DI.
+        /// Substitute ì´ˆê¸°í™” ë° ì„œë¹„ìŠ¤ì— ìˆ˜ë™ DI.
         /// </summary>
         [SetUp]
         public void Setup() {
@@ -36,8 +36,8 @@ namespace Tests.Service
         }
 
         /// <summary>
-        /// ÃæºĞÇÑ ÀçÈ­°¡ ÀÖÀ» ¶§ ±¸¸Å°¡ ¼º°øÇÏ°í
-        /// SetLevel(level+1)ÀÌ È£ÃâµÇ´ÂÁö °ËÁõÇÑ´Ù.
+        /// ì¶©ë¶„í•œ ì¬í™”ê°€ ìˆì„ ë•Œ êµ¬ë§¤ê°€ ì„±ê³µí•˜ê³ 
+        /// SetLevel(level+1)ì´ í˜¸ì¶œë˜ëŠ”ì§€ ê²€ì¦í•œë‹¤.
         /// </summary>
         [Test]
         public void TryPurchase_Succeed() {
@@ -52,8 +52,8 @@ namespace Tests.Service
         }
 
         /// <summary>
-        /// ÀçÈ­ ºÎÁ·(¶Ç´Â TrySpend ½ÇÆĞ) ½Ã false¸¦ ¹İÈ¯ÇÏ°í
-        /// SetLevelÀÌ È£ÃâµÇÁö ¾Ê¾Æ¾ß ÇÑ´Ù.
+        /// ì¬í™” ë¶€ì¡±(ë˜ëŠ” TrySpend ì‹¤íŒ¨) ì‹œ falseë¥¼ ë°˜í™˜í•˜ê³ 
+        /// SetLevelì´ í˜¸ì¶œë˜ì§€ ì•Šì•„ì•¼ í•œë‹¤.
         /// </summary>
         [Test]
         public void TryPurchase_Fail() {
@@ -73,7 +73,7 @@ namespace Tests.Service
         private ICrystalRepository _cr;
 
         /// <summary>
-        /// Substitute ÃÊ±âÈ­ ¹× ¼­ºñ½º ÁÖÀÔ.
+        /// Substitute ì´ˆê¸°í™” ë° ì„œë¹„ìŠ¤ ì£¼ì….
         /// </summary>
         [SetUp]
         public void Setup() {
@@ -90,8 +90,8 @@ namespace Tests.Service
         }
 
         /// <summary>
-        /// ProcessFinalRewards°¡ Ã³À½ ÇÑ ¹ø¸¸ TryEarnÀ» È£ÃâÇÏ°í
-        /// µÎ ¹øÂ° È£ÃâÀº ¹«½ÃµÇ´ÂÁö °ËÁõ
+        /// ProcessFinalRewardsê°€ ì²˜ìŒ í•œ ë²ˆë§Œ TryEarnì„ í˜¸ì¶œí•˜ê³ 
+        /// ë‘ ë²ˆì§¸ í˜¸ì¶œì€ ë¬´ì‹œë˜ëŠ”ì§€ ê²€ì¦
         /// </summary>
         [Test]
         public void ProcessFinalRewards_Only_Once() {
@@ -104,7 +104,7 @@ namespace Tests.Service
         }
 
         /// <summary>
-        /// º¸»ó °ªÀÌ 0 ÀÌÇÏÀÏ ¶§ TryEarnÀ» È£ÃâÇÏÁö ¾Ê¾Æ¾ß ÇÔ
+        /// ë³´ìƒ ê°’ì´ 0 ì´í•˜ì¼ ë•Œ TryEarnì„ í˜¸ì¶œí•˜ì§€ ì•Šì•„ì•¼ í•¨
         /// </summary>
         [Test]
         public void ProcessFinalRewards_Skip_When_NonReward() {
@@ -123,7 +123,7 @@ namespace Tests.Service
         private IWipeUI _wipeUI;
 
         /// <summary>
-        /// Substitute ÃÊ±âÈ­ ¹× ¼­ºñ½º ÁÖÀÔ
+        /// Substitute ì´ˆê¸°í™” ë° ì„œë¹„ìŠ¤ ì£¼ì…
         /// </summary>
         [SetUp]
         public void Setup() {
@@ -132,7 +132,7 @@ namespace Tests.Service
             _loader = Substitute.For<ILoadManager>();
             _wipeUI = Substitute.For<IWipeUI>();
 
-            // InstanceUI<WipeUI>() È£Ãâ ½Ã ´õ¹Ì ¹İÈ¯
+            // InstanceUI<WipeUI>() í˜¸ì¶œ ì‹œ ë”ë¯¸ ë°˜í™˜
             _factory.InstanceUI<IWipeUI>(Arg.Any<int>()).Returns(_wipeUI);
 
 
@@ -145,10 +145,10 @@ namespace Tests.Service
         }
 
         /// <summary>
-        /// LoadScene È£Ãâ ½Ã  
-        /// Wipe UI »ı¼º ¹× È¿°ú ½ÇÇà  
-        /// LoadManager.LoadScene(scene, delay) È£Ãâ  
-        /// µÎ µ¿ÀÛÀÌ ¼öÇàµÇ´ÂÁö °ËÁõ.
+        /// LoadScene í˜¸ì¶œ ì‹œ  
+        /// Wipe UI ìƒì„± ë° íš¨ê³¼ ì‹¤í–‰  
+        /// LoadManager.LoadScene(scene, delay) í˜¸ì¶œ  
+        /// ë‘ ë™ì‘ì´ ìˆ˜í–‰ë˜ëŠ”ì§€ ê²€ì¦.
         /// </summary>
         [Test]
         public void LoadScene_Call_Wipe_And_LoadManager() {
@@ -167,7 +167,7 @@ namespace Tests.Service
         private ITowerSystem _system;
 
         /// <summary>
-        /// Substitute ÃÊ±âÈ­ ¹× ¼­ºñ½º ÁÖÀÔ.
+        /// Substitute ì´ˆê¸°í™” ë° ì„œë¹„ìŠ¤ ì£¼ì….
         /// </summary>
         [SetUp]
         public void Setup() {
@@ -188,7 +188,7 @@ namespace Tests.Service
         }
 
         /// <summary>
-        /// °ñµå°¡ ÃæºĞÇÏ°í TowerSystemÀÌ ¼º°øÀ» ¹İÈ¯ÇÒ °æ¿ì  
+        /// ê³¨ë“œê°€ ì¶©ë¶„í•˜ê³  TowerSystemì´ ì„±ê³µì„ ë°˜í™˜í•  ê²½ìš°  
         /// </summary>
         [Test]
         public void TryPurchase_Succeed() {
@@ -202,7 +202,7 @@ namespace Tests.Service
         }
 
         /// <summary>
-        /// °ñµå ºÎÁ· ½Ã ±¸¸Å ½ÇÆĞ
+        /// ê³¨ë“œ ë¶€ì¡± ì‹œ êµ¬ë§¤ ì‹¤íŒ¨
         /// </summary>
         [Test]
         public void TryPurchase_EnoughGold() {
@@ -215,7 +215,7 @@ namespace Tests.Service
         }
 
         /// <summary>
-        /// TowerSystemÀÌ Å¸¿ö Ãß°¡ ½ÇÆĞ
+        /// TowerSystemì´ íƒ€ì›Œ ì¶”ê°€ ì‹¤íŒ¨
         /// </summary>
         [Test]
         public void TryPurchase_Fail() {
@@ -263,10 +263,10 @@ namespace Tests.Service
             _mockUpgradeSystem.GetRandomUpgradeDataList(1)
                 .Returns(new List<UpgradeDataSO> { _dummyUpgradeData });
 
-            // ¸®·Ñ Äİ
+            // ë¦¬ë¡¤ ì½œ
             _upgradeService.Reroll(1);
 
-            // Ã¼Å©
+            // ì²´í¬
             Assert.AreEqual(_dummyUpgradeData, _selectedModel.upgradeDatasObservable[1].Value);
             Assert.AreEqual(1, _selectedModel.rerollCountObservable.Value);
         }
@@ -276,10 +276,10 @@ namespace Tests.Service
             var mockData = Substitute.For<UpgradeDataSO>();
             _selectedModel.upgradeDatasObservable[0].Value = mockData;
 
-            // ¾÷±×·¹ÀÌµå Àû¿ë
+            // ì—…ê·¸ë ˆì´ë“œ ì ìš©
             _upgradeService.ApplyUpgrade(0);
 
-            // Ã¼Å©
+            // ì²´í¬
             mockData.Received(1).ApplyUpgrade();
             _mockUpgradeSystem.Received(1).ConsumeRemainingCount();
             _mockUpgradeSystem.Received(1).TryShowRemainUpgradeSelection();
@@ -293,17 +293,17 @@ namespace Tests.Service
 
         [SetUp]
         public void SetUp() {
-            // Mock ¹× ¸ğµ¨ ÃÊ±âÈ­
+            // Mock ë° ëª¨ë¸ ì´ˆê¸°í™”
             _mockTowerSystem = Substitute.For<ITowerSystem>();
             _goldModel = new GoldModel();
-            _goldModel.goldObservable = new ReactiveProperty<int>(100); // ÃÊ±â °ñµå 100
+            _goldModel.goldObservable = new ReactiveProperty<int>(100); // ì´ˆê¸° ê³¨ë“œ 100
 
-            // Å×½ºÆ® ´ë»ó Å¬·¡½º »ı¼º ¹× ÀÇÁ¸¼º ÁÖÀÔ
+            // í…ŒìŠ¤íŠ¸ ëŒ€ìƒ í´ë˜ìŠ¤ ìƒì„± ë° ì˜ì¡´ì„± ì£¼ì…
             _sellTowerService = new SellTowerService();
             Inject(_sellTowerService, _mockTowerSystem, _goldModel);
         }
 
-        // ¸®ÇÃ·º¼ÇÀ» ÅëÇØ private ÇÊµå¿¡ ¼öµ¿ ÁÖÀÔ
+        // ë¦¬í”Œë ‰ì…˜ì„ í†µí•´ private í•„ë“œì— ìˆ˜ë™ ì£¼ì…
         private void Inject(SellTowerService service, ITowerSystem towerSystem, GoldModel goldModel) {
             typeof(SellTowerService)
                 .GetField("_towerSystem", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
@@ -316,24 +316,24 @@ namespace Tests.Service
 
         [Test]
         public void SellSus() {
-            // TowerSystem¿¡¼­ Å¸¿ö »èÁ¦¿¡ ¼º°øÇÏ¸ç 50°ñµå ¹İÈ¯µÇµµ·Ï ¼³Á¤
+            // TowerSystemì—ì„œ íƒ€ì›Œ ì‚­ì œì— ì„±ê³µí•˜ë©° 50ê³¨ë“œ ë°˜í™˜ë˜ë„ë¡ ì„¤ì •
             int sellGold = 50;
             _mockTowerSystem.TryRemoveTower(out Arg.Any<int>())
                 .Returns(x => {
-                    x[0] = sellGold; // out ÆÄ¶ó¹ÌÅÍ ¼³Á¤
-                    return true;     // »èÁ¦ ¼º°ø
+                    x[0] = sellGold; // out íŒŒë¼ë¯¸í„° ì„¤ì •
+                    return true;     // ì‚­ì œ ì„±ê³µ
                 });
 
             bool result = _sellTowerService.TrySellTower();
 
-            // °ËÁõ
-            Assert.IsTrue(result); // ÆÇ¸Å ¼º°ø ¹İÈ¯
-            Assert.AreEqual(150, _goldModel.goldObservable.Value); // °ñµå°¡ 100 + 50 = 150
+            // ê²€ì¦
+            Assert.IsTrue(result); // íŒë§¤ ì„±ê³µ ë°˜í™˜
+            Assert.AreEqual(150, _goldModel.goldObservable.Value); // ê³¨ë“œê°€ 100 + 50 = 150
         }
 
         [Test]
         public void SellFail() {
-            // TowerSystem¿¡¼­ »èÁ¦ ½ÇÆĞÇÏµµ·Ï ¼³Á¤
+            // TowerSystemì—ì„œ ì‚­ì œ ì‹¤íŒ¨í•˜ë„ë¡ ì„¤ì •
             _mockTowerSystem.TryRemoveTower(out Arg.Any<int>())
                 .Returns(x => {
                     x[0] = 0;
@@ -342,9 +342,9 @@ namespace Tests.Service
 
             bool result = _sellTowerService.TrySellTower();
 
-            // °ËÁõ
-            Assert.IsFalse(result); // ÆÇ¸Å ½ÇÆĞ ¹İÈ¯
-            Assert.AreEqual(100, _goldModel.goldObservable.Value); // °ñµå º¯È­ ¾øÀ½
+            // ê²€ì¦
+            Assert.IsFalse(result); // íŒë§¤ ì‹¤íŒ¨ ë°˜í™˜
+            Assert.AreEqual(100, _goldModel.goldObservable.Value); // ê³¨ë“œ ë³€í™” ì—†ìŒ
         }
     }
 }

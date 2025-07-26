@@ -1,19 +1,19 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Zenject;
 using Data;
 using Contracts;
 namespace GamePlay
 {
-    // Å¸¿ö ±¸¸Å¸¦ Çàµ¿
+    // íƒ€ì›Œ êµ¬ë§¤ë¥¼ í–‰ë™
     public class TowerPurchaseService : ITowerPurchaseService {
         [Inject] private GoldModel _gold;
-        [Inject] private ITowerSystem _towerSystem; // Å¸¿ö ½Ã½ºÅÛ
-        [Inject] private ITowerPricePolicy _pricePolicy; // °¡°İ Á¤Ã¥
+        [Inject] private ITowerSystem _towerSystem; // íƒ€ì›Œ ì‹œìŠ¤í…œ
+        [Inject] private ITowerPricePolicy _pricePolicy; // ê°€ê²© ì •ì±…
 
-        public bool TryPurchase() { // Å¸¿ö ±¸¸Å ½Ãµµ
+        public bool TryPurchase() { // íƒ€ì›Œ êµ¬ë§¤ ì‹œë„
             int cost = _pricePolicy.GetCurrentPrice();
             if (_gold.goldObservable.Value < cost) return false;
-            if (_towerSystem.TryAddTower()) { // ±¸¸Å ¼º°ø½Ã 
+            if (_towerSystem.TryAddTower()) { // êµ¬ë§¤ ì„±ê³µì‹œ 
                 _gold.goldObservable.Value -= cost;
                 _pricePolicy.AdvancePrice();
                 return true;

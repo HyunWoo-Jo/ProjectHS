@@ -1,11 +1,11 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace Data
 {
     public class SlotData
     {
         public SlotState slotState;
-        private TowerData _towerData; // null ÀÌ¸é ºñ¾îÀÖÀ½
+        private TowerData _towerData; // null ì´ë©´ ë¹„ì–´ìˆìŒ
 
         public void SetTowerData(TowerData towerData) {
             this._towerData = towerData;

@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Zenject;
 using Data;
 namespace GamePlay
@@ -7,15 +7,15 @@ namespace GamePlay
         private int _startPrice = 5;
         [Inject] private TowerPurchaseModel _towerPurchaseModel;
 
-        public void AdvancePrice() { // Å¸¿ö ±¸¸ÅÈÄ ´ÙÀ½ Å¸¿ö ºñ¿ë ¼ÂÆÃ
+        public void AdvancePrice() { // íƒ€ì›Œ êµ¬ë§¤í›„ ë‹¤ìŒ íƒ€ì›Œ ë¹„ìš© ì…‹íŒ…
             _towerPurchaseModel.towerPriceObservable.Value += 1;
         }
 
-        public int GetCurrentPrice() { // Å¸¿ö ºñ¿ë Get
+        public int GetCurrentPrice() { // íƒ€ì›Œ ë¹„ìš© Get
             return _towerPurchaseModel.towerPriceObservable.Value;
         }
 
-        public int GetStartPrice() { // ½ÃÀÛ ºñ¿ë
+        public int GetStartPrice() { // ì‹œì‘ ë¹„ìš©
             return _startPrice;
         }
     }

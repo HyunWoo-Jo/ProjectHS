@@ -1,9 +1,9 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Data;
 namespace Contracts
 {
     public interface ITowerPurchaseService
     {
-        bool TryPurchase(); // Å¸¿ö ±¸¸Å ½Ãµµ
+        bool TryPurchase(); // íƒ€ì›Œ êµ¬ë§¤ ì‹œë„
     }
 }

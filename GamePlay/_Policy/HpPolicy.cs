@@ -1,9 +1,9 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Data;
 namespace GamePlay
 {
     /// <summary>
-    /// HP Policy¸¦ ÇÑ°÷¿¡¼­ °ü¸®
+    /// HP Policyë¥¼ í•œê³³ì—ì„œ ê´€ë¦¬
     /// </summary>
     public class HpPolicy : IHpPolicy
     {
@@ -15,7 +15,7 @@ namespace GamePlay
             _globalUpgradeRepo = globalUpgradeRepo;
         }
 
-        // ÀûÀÌ ÃÖÁ¾ ÁöÁ¡¿¡ µµ´ŞÇßÀ»¶§ ÆĞ³ÎÆ¼
+        // ì ì´ ìµœì¢… ì§€ì ì— ë„ë‹¬í–ˆì„ë•Œ íŒ¨ë„í‹°
         public int CalculateHpPenaltyOnLeak(EnemyData enemyData) {
             return 1;
         }

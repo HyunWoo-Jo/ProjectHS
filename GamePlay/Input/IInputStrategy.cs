@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.EventSystems;
 using Data;
 
@@ -8,14 +8,14 @@ namespace GamePlay
 
     public interface IInputStrategy {
 
-        void UpdateInput(); // ÀÎÇ² °»½Å
-        Vector2 GetFirstFramePosition(); // Ã³À½ ÇÁ·¹ÀÓ À§Ä¡
-        Vector2 GetPosition(); // ¸¶Áö¸· ÇÁ·¹ÀÓ À§Ä¡
-        InputType GetInputType(); // ÀÎÇ²ÀÇ Á¾·ù
-        InputTargetType GetInputTargetType(); // ÀÎÇ²ÀÌ µé¾î¿ÔÀ»¶§ ¾î´À ºÎºĞÀ» Å¬¸¯Çß³ª
-        float ClickTime(); // Å¬¸¯ Áö¼Ó ½Ã°£
-        float GetCloseUpDownSizeSize(); // È®´ë Ãà¼Ò Á¤º¸
-        GameObject GetHitObject(); // Raycast hit Á¤º¸
+        void UpdateInput(); // ì¸í’‹ ê°±ì‹ 
+        Vector2 GetFirstFramePosition(); // ì²˜ìŒ í”„ë ˆì„ ìœ„ì¹˜
+        Vector2 GetPosition(); // ë§ˆì§€ë§‰ í”„ë ˆì„ ìœ„ì¹˜
+        InputType GetInputType(); // ì¸í’‹ì˜ ì¢…ë¥˜
+        InputTargetType GetInputTargetType(); // ì¸í’‹ì´ ë“¤ì–´ì™”ì„ë•Œ ì–´ëŠ ë¶€ë¶„ì„ í´ë¦­í–ˆë‚˜
+        float ClickTime(); // í´ë¦­ ì§€ì† ì‹œê°„
+        float GetCloseUpDownSizeSize(); // í™•ëŒ€ ì¶•ì†Œ ì •ë³´
+        GameObject GetHitObject(); // Raycast hit ì •ë³´
 
 
     }

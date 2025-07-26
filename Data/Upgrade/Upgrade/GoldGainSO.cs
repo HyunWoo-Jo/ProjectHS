@@ -1,10 +1,10 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Zenject;
 
 namespace Data
 {
     /// <summary>
-    /// °ñµå È¹µæ
+    /// ê³¨ë“œ íšë“
     /// </summary>
     [CreateAssetMenu(fileName = "GoldGainSO", menuName = "Scriptable Objects/Upgrade/GoldGainSO")]
     public class GoldGainSO : UpgradeStrategyBaseSO {
