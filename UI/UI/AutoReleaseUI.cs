@@ -1,10 +1,10 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Zenject;
 namespace UI
 {
 
     /// <summary>
-    /// Á¦°Å µÉ¶§ UI Event¸¦ ¹ß»ıÇÏ´Â Å¬·¹½º
+    /// ì œê±° ë ë•Œ UI Eventë¥¼ ë°œìƒí•˜ëŠ” í´ë ˆìŠ¤
     /// </summary>
     public class AutoReleaseUI : MonoBehaviour
     {
@@ -15,7 +15,7 @@ namespace UI
         }
 
         public void Close() {
-            _uiEvent.CloseUI(this.gameObject); // Á¦°Å ÀÌº¥Æ® ¹ß»ı
+            _uiEvent.CloseUI(this.gameObject); // ì œê±° ì´ë²¤íŠ¸ ë°œìƒ
         }
 
 

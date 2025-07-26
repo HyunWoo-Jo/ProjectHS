@@ -1,11 +1,11 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace Data
 {
     public enum InputType {
-        None, // ÅÍÄ¡°¡ ¾ø´Â»óÅÂ
-        First, // Down First ÇÁ·¹ÀÓ
-        Push, // ´©¸£°í ÀÕ´ÂÁß
-        End, // Up End ÇÁ·¹ÀÓ
+        None, // í„°ì¹˜ê°€ ì—†ëŠ”ìƒíƒœ
+        First, // Down First í”„ë ˆì„
+        Push, // ëˆ„ë¥´ê³  ì‡ëŠ”ì¤‘
+        End, // Up End í”„ë ˆì„
     }
 }

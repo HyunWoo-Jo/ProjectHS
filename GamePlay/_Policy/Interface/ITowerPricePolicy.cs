@@ -1,11 +1,11 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace GamePlay
 {
     public interface ITowerPricePolicy
     {
-        int GetCurrentPrice();       // Get Å¸¿ö °¡°İ
-        void AdvancePrice();         // ÇÑ ¹ø ±¸¸Å ÈÄ »ó½Â
+        int GetCurrentPrice();       // Get íƒ€ì›Œ ê°€ê²©
+        void AdvancePrice();         // í•œ ë²ˆ êµ¬ë§¤ í›„ ìƒìŠ¹
 
         int GetStartPrice();
     }

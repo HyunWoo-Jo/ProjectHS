@@ -1,11 +1,11 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Contracts;
 using Zenject;
 using Data;
 namespace GamePlay
 {
     /// <summary>
-    /// Scene¿¡¼­ Catched·Î °ü¸®ÇÏ¿© Play Scene¿¡¼­ ÇÑ¹ø¸¸ ÀÛµ¿µÇµµ·Ï °ü¸®
+    /// Sceneì—ì„œ Catchedë¡œ ê´€ë¦¬í•˜ì—¬ Play Sceneì—ì„œ í•œë²ˆë§Œ ì‘ë™ë˜ë„ë¡ ê´€ë¦¬
     /// </summary>
     public class RewardService : IRewardService {
         [Inject] private IRewardPolicy _rewardPolicy;
@@ -17,7 +17,7 @@ namespace GamePlay
         }
 
         public void ProcessFinalRewards() {
-            if (_isProcess) return; // ÇÑ¹ø¸¸ Ã³¸®ÇÏµµ·Ï ¼³Á¤
+            if (_isProcess) return; // í•œë²ˆë§Œ ì²˜ë¦¬í•˜ë„ë¡ ì„¤ì •
             int reward = _rewardPolicy.CalculateCrystalReward();
             if (reward <= 0) return;
             _crystalRepo.TryEarn(reward);

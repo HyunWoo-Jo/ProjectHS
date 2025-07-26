@@ -1,9 +1,9 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace GamePlay
 {
     /// <summary>
-    /// º¸½º ½ºÅ×ÀÌÁö 
+    /// ë³´ìŠ¤ ìŠ¤í…Œì´ì§€ 
     /// </summary>
     public class BossStageEndStrategy : IStageEndStrategy {
 

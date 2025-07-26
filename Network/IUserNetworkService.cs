@@ -1,11 +1,11 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Threading.Tasks;
 using System;
 using Cysharp.Threading.Tasks;
 namespace Network
 {
     /// <summary>
-    /// UserÀÇ Á¤º¸¸¦ °¡Áö°í¿À´Â interface
+    /// Userì˜ ì •ë³´ë¥¼ ê°€ì§€ê³ ì˜¤ëŠ” interface
     /// </summary>
     public interface IUserNetworkService
     {

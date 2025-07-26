@@ -1,4 +1,4 @@
-using Data;
+ï»¿using Data;
 using System;
 using Unity.Burst;
 using Unity.Mathematics;
@@ -24,8 +24,8 @@ namespace GamePlay
             float3 dir = math.normalize(targetPos - startPos);
 
             if (!math.any(math.isnan(dir))) {
-                // YÃàÀÌ ¹æÇâÀ» ¹Ù¶óº¸µµ·Ï ÇÏ´Â È¸Àü »ı¼º
-                // forward = °íÁ¤Ãà, up = ¹Ù¶óº¼ ¹æÇâ
+                // Yì¶•ì´ ë°©í–¥ì„ ë°”ë¼ë³´ë„ë¡ í•˜ëŠ” íšŒì „ ìƒì„±
+                // forward = ê³ ì •ì¶•, up = ë°”ë¼ë³¼ ë°©í–¥
                 quaternion rot = quaternion.LookRotationSafe(math.forward(), dir);
 
                 transform.rotation = rot;
@@ -35,7 +35,7 @@ namespace GamePlay
         private void Update() {
             if (GameSettings.IsPause) return;
 
-            // È­»ì ÀÌµ¿
+            // í™”ì‚´ ì´ë™
             float3 prevPos = (float3)transform.position;
             float3 direction = math.normalize(_targetPos - prevPos);
             float3 nextPos = prevPos + direction * speed * Time.deltaTime;
@@ -43,7 +43,7 @@ namespace GamePlay
             transform.position = (Vector3)nextPos;
             
 
-            // µµÂø ÆÇÁ¤
+            // ë„ì°© íŒì •
             float distToTarget = math.distance(prevPos, _targetPos);
             float movedDist = math.distance(prevPos, nextPos);
             if (distToTarget <= movedDist + arrivedRange) {

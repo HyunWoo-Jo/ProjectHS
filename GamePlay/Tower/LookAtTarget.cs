@@ -1,9 +1,9 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Data;
 using Unity.Mathematics;
 namespace GamePlay
 {
-    // pivotÀ» Å¸°ÙÀ» ¹Ù¶óº¸µµ·Ï ÇÏ´Â Å¬·¹½º
+    // pivotì„ íƒ€ê²Ÿì„ ë°”ë¼ë³´ë„ë¡ í•˜ëŠ” í´ë ˆìŠ¤
     public class LookAtTarget
     {
         private const float _RotationSpeed = 30f;
@@ -15,14 +15,14 @@ namespace GamePlay
 
         public void AimLookAtEnemy(float3 targetPosition) {
             float3 dir = math.normalize(targetPosition - (float3)_pivotTr.position);
-            dir.z = 0; // zÃà Á¦°Å
+            dir.z = 0; // zì¶• ì œê±°
             if (math.lengthsq(dir) > 0.0001f) {
                 dir = math.normalize(dir);
 
-                quaternion targetRot = quaternion.LookRotationSafe(dir, math.up()); // ±âº» È¸Àü
+                quaternion targetRot = quaternion.LookRotationSafe(dir, math.up()); // ê¸°ë³¸ íšŒì „
                 quaternion newRot = math.slerp(_pivotTr.rotation, targetRot, Time.deltaTime * _RotationSpeed);
                 float3 euler = math.degrees(math.EulerXYZ(targetRot));
-                euler.y = euler.y > 0 ? 90 : -90; // °¢µµ Á¦ÇÑ
+                euler.y = euler.y > 0 ? 90 : -90; // ê°ë„ ì œí•œ
 
                 _pivotTr.eulerAngles = euler;
             }

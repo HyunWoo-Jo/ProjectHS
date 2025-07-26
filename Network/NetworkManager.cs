@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Zenject;
 using System;
 using System.Threading.Tasks;
@@ -11,15 +11,15 @@ using Firebase.Database;
 namespace Network
 {
     /// <summary>
-    /// Network¸¦ °ü¸®ÇÏ´Â Å¬·¹½º
+    /// Networkë¥¼ ê´€ë¦¬í•˜ëŠ” í´ë ˆìŠ¤
     /// </summary>
     public class NetworkManager : MonoBehaviour, IUserNetworkService, IGlobalUpgradeNetworkService, INetworkService
     {
         [Inject] private INetworkLogic _networkLogic;
         private bool isClosed = false;
-        private void Awake() { // ½ÃÀÛ½Ã ³×Æ®¿öÅ© Á¢¼Ó ½Ãµµ
-            _networkLogic.Initialize(); // ÃÊ±âÈ­
-            LoginAsync(); // ·Î±×ÀÎ ½Ãµµ
+        private void Awake() { // ì‹œì‘ì‹œ ë„¤íŠ¸ì›Œí¬ ì ‘ì† ì‹œë„
+            _networkLogic.Initialize(); // ì´ˆê¸°í™”
+            LoginAsync(); // ë¡œê·¸ì¸ ì‹œë„
 
         }
 
@@ -32,8 +32,8 @@ namespace Network
             try {
                 await _networkLogic.GuestLoginAsync();
             } catch  {
-                // ·Î±×ÀÎ ½ÇÆĞ ³×Æ®¿öÅ© ¹®Á¦ÀÏ È®·üÀÌ ³ôÀ½
-                await Task.Delay(1000); // 1ÃÊ ¸¶´Ù ÀçÁ¢¼Ó ½Ãµµ
+                // ë¡œê·¸ì¸ ì‹¤íŒ¨ ë„¤íŠ¸ì›Œí¬ ë¬¸ì œì¼ í™•ë¥ ì´ ë†’ìŒ
+                await Task.Delay(1000); // 1ì´ˆ ë§ˆë‹¤ ì¬ì ‘ì† ì‹œë„
                 if (isClosed) return;
                 LoginAsync();
                 return;
@@ -65,13 +65,13 @@ namespace Network
         ///////// Upgrade Service
         
         /// <summary>
-        /// ScritableObject Upgrade TableÀ» °»½ÅÇÔ
+        /// ScritableObject Upgrade Tableì„ ê°±ì‹ í•¨
         /// </summary>
         public UniTask GetAllUpgradeTableAsync(GlobalUpgradeDataSO tableSO) {
-            // ¹öÀü Ã¼Å©
+            // ë²„ì „ ì²´í¬
             return _networkLogic.GetVersion().ContinueWith(task => {
                 if (task.Exists) {        
-                    // ¹öÀüÀÌ ´Ù¸¦ °æ¿ì¸¸ tableÀ» ÀĞ¾î¿È (ÃßÈÄ °ËÁõ ·ÎÁ÷µµ Ãß°¡)
+                    // ë²„ì „ì´ ë‹¤ë¥¼ ê²½ìš°ë§Œ tableì„ ì½ì–´ì˜´ (ì¶”í›„ ê²€ì¦ ë¡œì§ë„ ì¶”ê°€)
                     if ((string)task.Value != tableSO.Version) {
                         _networkLogic.GetUpgradeTable().ContinueWith(task => {
                             if (task.Exists) {
@@ -88,15 +88,15 @@ namespace Network
                 if (task.Exists) {
                     var objDict = task.Value as IDictionary<string, object>;
                     if (objDict == null) {
-                        Debug.LogError("º¯È¯ ½ÇÆĞ");
+                        Debug.LogError("ë³€í™˜ ì‹¤íŒ¨");
                         return;
                     }
                     var intDict = new Dictionary<string, int>();
                     foreach (var kvp in objDict) {
                         try {
-                            intDict[kvp.Key] = Convert.ToInt32(kvp.Value); // long to int32·Î º¯È¯ (Firebase´Â ±âº» longÇü)
+                            intDict[kvp.Key] = Convert.ToInt32(kvp.Value); // long to int32ë¡œ ë³€í™˜ (FirebaseëŠ” ê¸°ë³¸ longí˜•)
                         } catch (Exception e) {
-                            Debug.LogWarning($"Å° {kvp.Key} º¯È¯ ½ÇÆĞ: {e.Message}");
+                            Debug.LogWarning($"í‚¤ {kvp.Key} ë³€í™˜ ì‹¤íŒ¨: {e.Message}");
                         }
                     }
                     complate?.Invoke(intDict);

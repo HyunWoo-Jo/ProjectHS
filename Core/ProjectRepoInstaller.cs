@@ -1,16 +1,16 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Data;
 using Zenject;
 using System.ComponentModel;
 using Network;
 namespace Core
 {
-    // ÁÖ¿ä Repo, Data¸¦ ¹ÙÀÎµù ÇÏ´Â Å¬·¹½º
+    // ì£¼ìš” Repo, Dataë¥¼ ë°”ì¸ë”© í•˜ëŠ” í´ë ˆìŠ¤
     public class ProjectRepoInstaller : MonoInstaller
     {
         public override void InstallBindings() {
 
-            // repo »ı¼º
+            // repo ìƒì„±
             Container.Bind<ICrystalRepository>().To<CrystalFirebaseRepository>().AsSingle().NonLazy();
 
             Container.Bind<IUserAuthRepository>().To<UserAuthRepositoryFirebase>().AsSingle().NonLazy();

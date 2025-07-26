@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Configuration;
 using System.Reflection;
@@ -27,39 +27,39 @@ namespace Tests.UI
             _vm = new MainLobbyNavigateViewModel();
             _sts = Substitute.For<ISceneTransitionService>();
 
-            // ¼öµ¿ DI
+            // ìˆ˜ë™ DI
             typeof(MainLobbyNavigateViewModel)
                 .GetField("_sts", BindingFlags.NonPublic | BindingFlags.Instance)!
                 .SetValue(_vm, _sts);
         }
 
         /// <summary>
-        /// ¹öÆ° Å¬¸¯ ½Ã ReactiveProperty °ª & PreActivePanel ÀÌ ¿Ã¹Ù¸£°Ô °»½ÅµÇ´ÂÁö °ËÁõ
+        /// ë²„íŠ¼ í´ë¦­ ì‹œ ReactiveProperty ê°’ & PreActivePanel ì´ ì˜¬ë°”ë¥´ê²Œ ê°±ì‹ ë˜ëŠ”ì§€ ê²€ì¦
         /// </summary>
         [Test]
         public void OnClick_UpdatesState() {
-            // º¯È­ °¨Áö¸¦ À§ÇÑ ±¸µ¶
+            // ë³€í™” ê°ì§€ë¥¼ ìœ„í•œ êµ¬ë…
             MainLobbyNavigateViewModel.PanelType observed = _vm.CurrentActivePanel;
             var d = _vm.RO_CurrentActivePanelObservable
-                       .Skip(1)                    // ÃÊ±â °ª ½ºÅµ
+                       .Skip(1)                    // ì´ˆê¸° ê°’ ìŠ¤í‚µ
                        .Subscribe(x => observed = x);
 
             const MainLobbyNavigateViewModel.PanelType target =
                 MainLobbyNavigateViewModel.PanelType.Upgrade;
 
-            // ¸Ş¼­µå È£Ãâ
+            // ë©”ì„œë“œ í˜¸ì¶œ
             _vm.OnClickPanelMoveButton(target);
 
-            // °ËÁõ
-            Assert.AreEqual(target, observed, "ReactiveProperty °ªÀÌ °»½ÅµÅ¾ß ÇÕ´Ï´Ù.");
+            // ê²€ì¦
+            Assert.AreEqual(target, observed, "ReactiveProperty ê°’ì´ ê°±ì‹ ë¼ì•¼ í•©ë‹ˆë‹¤.");
             Assert.AreEqual(target, _vm.CurrentActivePanel);
             Assert.AreEqual(target, _vm.PreActivePanel);
 
-            d.Dispose(); // ±¸µ¶ ÇØÁ¦
+            d.Dispose(); // êµ¬ë… í•´ì œ
         }
 
         /// <summary>
-        /// Service¸¦ 1È¸ È£ÃâÇÏ´ÂÁö °ËÁõ
+        /// Serviceë¥¼ 1íšŒ í˜¸ì¶œí•˜ëŠ”ì§€ ê²€ì¦
         /// </summary>
         [Test]
         public void ChangeScene_CallsLoadScene() {
@@ -81,7 +81,7 @@ namespace Tests.UI
             _sts = Substitute.For<ISceneTransitionService>();
             
 
-            // ¼öµ¿ ÁÖÀÔ
+            // ìˆ˜ë™ ì£¼ì…
             typeof(RewardViewModel)!
             .GetField("_rewardService", BindingFlags.NonPublic | BindingFlags.Instance)!
             .SetValue(_vm, _rewardService);
@@ -91,7 +91,7 @@ namespace Tests.UI
                 .SetValue(_vm, _sts);
         }
         /// <summary>
-        /// ÃÖÁ¾ º¸»ó Ã³¸® Å×½ºÆ® ÀÌº¥Æ® ¹ß»ı ¹× ¼­ºñ½º È£Ãâ ¿©ºÎ È®ÀÎ
+        /// ìµœì¢… ë³´ìƒ ì²˜ë¦¬ í…ŒìŠ¤íŠ¸ ì´ë²¤íŠ¸ ë°œìƒ ë° ì„œë¹„ìŠ¤ í˜¸ì¶œ ì—¬ë¶€ í™•ì¸
         /// </summary>
         [Test]
         public void ProcessFinalReward_Service() {
@@ -101,13 +101,13 @@ namespace Tests.UI
 
             _vm.ProcessFinalReward();
 
-            Assert.AreEqual(77, raised, "ÀÌº¥Æ® °ªÀ» Àß¸ø Àü´ŞÇß½À´Ï´Ù.");
+            Assert.AreEqual(77, raised, "ì´ë²¤íŠ¸ ê°’ì„ ì˜ëª» ì „ë‹¬í–ˆìŠµë‹ˆë‹¤.");
 
             _rewardService.Received(1).ProcessFinalRewards();
         }
 
         /// <summary>
-        /// ChangeSceneÀÌ Service.LoadScene(MainLobbyScene)À» È£ÃâÇÏ´ÂÁö °ËÁõ
+        /// ChangeSceneì´ Service.LoadScene(MainLobbyScene)ì„ í˜¸ì¶œí•˜ëŠ”ì§€ ê²€ì¦
         /// </summary>
         [Test]
         public void ChangeScene_LoadScene() {
@@ -126,7 +126,7 @@ namespace Tests.UI
             _sts = Substitute.For<ISceneTransitionService>();
             _wsModel = new WaveStatusModel();
 
-            // ¼öµ¿ ÁÖÀÔ
+            // ìˆ˜ë™ ì£¼ì…
             typeof(PausePanelViewModel)!
             .GetField("_sts", BindingFlags.NonPublic | BindingFlags.Instance)!
             .SetValue(_vm, _sts);
@@ -138,7 +138,7 @@ namespace Tests.UI
 
 
         /// <summary>
-        /// ChangeSceneÀÌ Service.LoadScene(MainLobbyScene)À» È£ÃâÇÏ´ÂÁö °ËÁõ
+        /// ChangeSceneì´ Service.LoadScene(MainLobbyScene)ì„ í˜¸ì¶œí•˜ëŠ”ì§€ ê²€ì¦
         /// </summary>
         [Test]
         public void ChangeScene_LoadScene() {
@@ -160,7 +160,7 @@ namespace Tests.UI
             _ps = Substitute.For<IGlobalUpgradePurchaseService>();
             _repo = Substitute.For<IGlobalUpgradeRepository>();
 
-            // ¼öµ¿ ÁÖÀÔ
+            // ìˆ˜ë™ ì£¼ì…
             typeof(MainLobbyUpgradeViewModel)!
             .GetField("_purchaseService", BindingFlags.NonPublic | BindingFlags.Instance)!
             .SetValue(_vm, _ps);
@@ -175,7 +175,7 @@ namespace Tests.UI
 
 
         /// <summary>
-        /// TryPurchase°¡ Service À§ÀÓ¡¤¸®ÅÏ °ËÁõ
+        /// TryPurchaseê°€ Service ìœ„ì„Â·ë¦¬í„´ ê²€ì¦
         /// </summary>
         [Test]
         public void TryPurchase_Service() {
@@ -192,7 +192,7 @@ namespace Tests.UI
 
 
         /// <summary>
-        /// Repo°¡ ÀÌº¥Æ®°¡ Àü´ŞµÇ´ÂÁö È®ÀÎ
+        /// Repoê°€ ì´ë²¤íŠ¸ê°€ ì „ë‹¬ë˜ëŠ”ì§€ í™•ì¸
         /// </summary>
         [Test]
         public void Notification_OnDataChanged() {
@@ -201,7 +201,7 @@ namespace Tests.UI
             var raised = false;
             _vm.OnDataChanged += () => raised = true;
 
-            // ¸®½º³Ê Á÷Á¢ È£Ãâ
+            // ë¦¬ìŠ¤ë„ˆ ì§ì ‘ í˜¸ì¶œ
             _capturedListener.Invoke();
 
             Assert.IsTrue(raised);
@@ -220,7 +220,7 @@ namespace Tests.UI
             _model = new SelectedUpgradeModel();
             _us = Substitute.For<IUpgradeService>();
 
-            // ¼öµ¿ ÁÖÀÔ
+            // ìˆ˜ë™ ì£¼ì…
             typeof(UpgradeViewModel)!
             .GetField("_model", BindingFlags.NonPublic | BindingFlags.Instance)!
             .SetValue(_vm, _model);
@@ -231,7 +231,7 @@ namespace Tests.UI
 
         }
         /// <summary>
-        /// SelectUpgrade°¡ ApplyUpgrade·Î À§ÀÓµÇ´ÂÁö °ËÁõ
+        /// SelectUpgradeê°€ ApplyUpgradeë¡œ ìœ„ì„ë˜ëŠ”ì§€ ê²€ì¦
         /// </summary>
         [Test]
         public void SelectUpgrade_Service() {
@@ -254,7 +254,7 @@ namespace Tests.UI
             _model = new TowerPurchaseModel();           
             _svc = Substitute.For<ITowerPurchaseService>();
 
-            // ¼öµ¿ ÁÖÀÔ
+            // ìˆ˜ë™ ì£¼ì…
             typeof(TowerPurchaseViewModel)
                 .GetField("_model", BindingFlags.NonPublic | BindingFlags.Instance)!
                 .SetValue(_vm, _model);
@@ -266,7 +266,7 @@ namespace Tests.UI
         }
 
         /// <summary>
-        /// ITowerPurchaseService.TryPurchase È£Ãâ °ËÁõ
+        /// ITowerPurchaseService.TryPurchase í˜¸ì¶œ ê²€ì¦
         /// </summary>
         [Test]
         public void PurchaseButtonClick_Service() {

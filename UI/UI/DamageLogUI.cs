@@ -1,4 +1,4 @@
-using CustomUtility;
+ï»¿using CustomUtility;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -43,8 +43,8 @@ namespace UI
         private IEnumerator DelayRepay(float duration) {
             if (_poolItem == null) {
                 if(TryGetComponent<ObjectPoolItem>(out var poolItem)) {
-                    _poolItem = poolItem; // ÇÒ´ç
-                } else { // ÇÒ´ç ½ÇÆÐ
+                    _poolItem = poolItem; // í• ë‹¹
+                } else { // í• ë‹¹ ì‹¤íŒ¨
                     Destroy(_poolItem.gameObject);
                 }  
             } else {

@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using static PlasticPipe.PlasticProtocol.Messages.Serialization.ItemHandlerMessagesSerialization;
@@ -10,8 +10,8 @@ namespace UI
         private string stopCheckPointStr = ".";
         private string _tempText;
         private const int _MaxPointCount = 3;
-        private float _pointUpdateTime = 1f; // Á¡ÀÌ °»½ÌµÇ´Â ½Ã°£
-        private float _curTime = 0f; // ÇöÀç½Ã°£
+        private float _pointUpdateTime = 1f; // ì ì´ ê°±ì‹±ë˜ëŠ” ì‹œê°„
+        private float _curTime = 0f; // í˜„ì¬ì‹œê°„
 
         private void SetText(){
             _text.text = _tempText + stopCheckPointStr; 
@@ -29,12 +29,12 @@ namespace UI
         }
         
         private void Update() {
-            // °ÔÀÓÀÌ ¸ØÃè³ª È®ÀÎÇÏ±âÀ§ÇÑ TextÀÇ ÀÌµ¿À» ±¸Çö
+            // ê²Œì„ì´ ë©ˆì·„ë‚˜ í™•ì¸í•˜ê¸°ìœ„í•œ Textì˜ ì´ë™ì„ êµ¬í˜„
             _curTime += Time.deltaTime;
-            if(_curTime >= _pointUpdateTime) { // ½Ã°£ È®ÀÎ
+            if(_curTime >= _pointUpdateTime) { // ì‹œê°„ í™•ì¸
                 _curTime -= _pointUpdateTime;
-                if (stopCheckPointStr.Length < _MaxPointCount) stopCheckPointStr += "."; // . Ãß°¡
-                else stopCheckPointStr = "."; // ÃÊ±âÈ­
+                if (stopCheckPointStr.Length < _MaxPointCount) stopCheckPointStr += "."; // . ì¶”ê°€
+                else stopCheckPointStr = "."; // ì´ˆê¸°í™”
                 SetText();
             }
         }

@@ -1,9 +1,9 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Data;
 namespace GamePlay
 {
     /// <summary>
-    /// 10 ½ºÅ×ÀÌÁö °£°İ º¸½º / 5½ºÅ×ÀÌÁö °£°İ Å¸ÀÌ¸Ó / ³ª¸ÓÁö ÀÏ¹İ
+    /// 10 ìŠ¤í…Œì´ì§€ ê°„ê²© ë³´ìŠ¤ / 5ìŠ¤í…Œì´ì§€ ê°„ê²© íƒ€ì´ë¨¸ / ë‚˜ë¨¸ì§€ ì¼ë°˜
     /// </summary>
     public class StandardStageTypeStrategy : IStageTypeStrategy {
 

@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using Data;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Network
 {
     /// <summary>
-    /// ¾÷±×·¹ÀÌµå Á¤º¸¸¦ ¼öÁ¤ÇÏ´Â ¼­ºñ½º
+    /// ì—…ê·¸ë ˆì´ë“œ ì •ë³´ë¥¼ ìˆ˜ì •í•˜ëŠ” ì„œë¹„ìŠ¤
     /// </summary>
     public interface IGlobalUpgradeNetworkService
     {

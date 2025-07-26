@@ -1,4 +1,4 @@
-using Codice.CM.Client.Differences.Graphic;
+ï»¿using Codice.CM.Client.Differences.Graphic;
 using Data;
 using UnityEditor.EditorTools;
 using UnityEngine;
@@ -15,14 +15,14 @@ namespace GamePlay
 
         public void Execute(TowerData towerData, int targetIndex, PoolType poolType, float3 startPos) {
             EnemyData enemyData = enemyDataStore.GetEnemyData(targetIndex);
-            if (!enemyData.isDead) { // »ì¾ÆÀÖÀ» °æ¿ì
-                ProjectileObject projectile = _poolManager.BorrowItem<ProjectileObject>(poolType); // Åõ»çÃ¼ »ı¼º
-                // ÀÓ½Ã µ¥¹ÌÁö Ã³¸®
+            if (!enemyData.isDead) { // ì‚´ì•„ìˆì„ ê²½ìš°
+                ProjectileObject projectile = _poolManager.BorrowItem<ProjectileObject>(poolType); // íˆ¬ì‚¬ì²´ ìƒì„±
+                // ì„ì‹œ ë°ë¯¸ì§€ ì²˜ë¦¬
                 int damage = towerData.attackPower;
                 enemyData.nextTempHp -= damage;
                 enemyDataStore.SetEnemyData(targetIndex, enemyData);
-                projectile.SetTarget(startPos, enemyData.position, () => { // arrow ¸ñÇ¥ ÁöÁ¡¿¡ µµÂø½Ã ÄÁÆ®·Ñ ÇÏ´Â ·ÎÁ÷
-                    // µµÂø½Ã µ¥¹ÌÁö Ã³¸®
+                projectile.SetTarget(startPos, enemyData.position, () => { // arrow ëª©í‘œ ì§€ì ì— ë„ì°©ì‹œ ì»¨íŠ¸ë¡¤ í•˜ëŠ” ë¡œì§
+                    // ë„ì°©ì‹œ ë°ë¯¸ì§€ ì²˜ë¦¬
                     EnemyData temp = enemyDataStore.GetEnemyData(targetIndex);
                     DamageLogUI log = _poolManager.BorrowItem<DamageLogUI>(PoolType.DamageLogUI);
                     log.SetWorldToScreenPosition(temp.position);

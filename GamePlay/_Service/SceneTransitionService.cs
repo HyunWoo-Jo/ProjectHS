@@ -1,20 +1,20 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Contracts;
 using Data;
 using Zenject;
 using UI;
 namespace GamePlay
 {
-    // ¾À ÀÌµ¿À» °ü¸®ÇÏ´Â Service
+    // ì”¬ ì´ë™ì„ ê´€ë¦¬í•˜ëŠ” Service
     public class SceneTransitionService : ISceneTransitionService {
         [Inject] private IUIFactory _uiFactory;
         [Inject] private ILoadManager _loadManager;
         private const float _Delay = 0.5f;
         public void LoadScene(SceneName sceneName) {
-            IWipeUI wipeUI = _uiFactory.InstanceUI<IWipeUI>(100); // UI »ı¼º ¿äÃ»
-            wipeUI.Wipe(WipeDirection.Left, _Delay, false); // ÀÌÆåÆ® È£Ãâ
+            IWipeUI wipeUI = _uiFactory.InstanceUI<IWipeUI>(100); // UI ìƒì„± ìš”ì²­
+            wipeUI.Wipe(WipeDirection.Left, _Delay, false); // ì´í™íŠ¸ í˜¸ì¶œ
 
-            _loadManager.LoadScene(sceneName, _Delay); // ¾ÀÀÌµ¿
+            _loadManager.LoadScene(sceneName, _Delay); // ì”¬ì´ë™
         }
     }
 }

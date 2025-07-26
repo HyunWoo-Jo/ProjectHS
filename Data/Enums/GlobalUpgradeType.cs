@@ -1,14 +1,14 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace Data
 {
     /// <summary>
-    /// ¾÷±×·¹ÀÌµå Á¾·ù¸¦ Á¤ÀÇ
+    /// ì—…ê·¸ë ˆì´ë“œ ì¢…ë¥˜ë¥¼ ì •ì˜
     /// </summary>
     public enum GlobalUpgradeType {
-        Power, // °ø°İ·Â
-        InitGold, // ÃÊ±â °ñµå
-        Hp, // »ı¸í·Â
-        Exp // °æÇèÄ¡ È¹µæ·®
+        Power, // ê³µê²©ë ¥
+        InitGold, // ì´ˆê¸° ê³¨ë“œ
+        Hp, // ìƒëª…ë ¥
+        Exp // ê²½í—˜ì¹˜ íšë“ëŸ‰
     }
 }

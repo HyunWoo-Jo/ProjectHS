@@ -1,10 +1,10 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Data;
 using Unity.Mathematics;
 namespace GamePlay
 {
     /// <summary>
-    /// Stage¿¡ µû¶ó ¾î¶² Wave¸¦ ¹ß»ıÇÒ°ÇÁö Á¤ÇÏ´Â Àü·«
+    /// Stageì— ë”°ë¼ ì–´ë–¤ Waveë¥¼ ë°œìƒí• ê±´ì§€ ì •í•˜ëŠ” ì „ëµ
     /// </summary>
     public interface IWaveStrategy
     {

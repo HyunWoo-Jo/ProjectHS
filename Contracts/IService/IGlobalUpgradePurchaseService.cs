@@ -1,9 +1,9 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Data;
 namespace Contracts
 {
     public interface IGlobalUpgradePurchaseService
     {
-        bool TryPurchase(GlobalUpgradeType type); // ¾÷±×·¹ÀÌµå ±¸¸Å ½Ãµµ
+        bool TryPurchase(GlobalUpgradeType type); // ì—…ê·¸ë ˆì´ë“œ êµ¬ë§¤ ì‹œë„
     }
 }

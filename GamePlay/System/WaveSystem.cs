@@ -1,4 +1,4 @@
-using Data;
+ï»¿using Data;
 using System.Collections.Generic;
 using System;
 using Unity.Collections;
@@ -13,7 +13,7 @@ using UnityEngine.Assertions;
 namespace GamePlay
 {
     /// <summary>
-    /// Enemy¸¦ »ı¼º, Á¦°Å¸¦ °ü¸®ÇÏ´Â Å¬·¹½º
+    /// Enemyë¥¼ ìƒì„±, ì œê±°ë¥¼ ê´€ë¦¬í•˜ëŠ” í´ë ˆìŠ¤
     /// </summary>
     [DefaultExecutionOrder(80)]
     public class WaveSystem : MonoBehaviour
@@ -22,34 +22,34 @@ namespace GamePlay
         [Inject] private GameDataHub _gameDataHub;
         [Inject] private StageSettingsModel _stageSettingsModel;
         public StageType CurStageType {  get; private set; }
-        private IWaveStrategy _waveStrategy; // ¾î¶² Wave¸¦ ¹ß»ı ½ÃÅ³Áö Á¤ÇÏ´Â Àü·« 
-        private float3 _spawnPosition; // »ı¼º À§Ä¡
-        private SpawnData _spawnData; // »ı¼ºµ¥ÀÌÅÍ
+        private IWaveStrategy _waveStrategy; // ì–´ë–¤ Waveë¥¼ ë°œìƒ ì‹œí‚¬ì§€ ì •í•˜ëŠ” ì „ëµ 
+        private float3 _spawnPosition; // ìƒì„± ìœ„ì¹˜
+        private SpawnData _spawnData; // ìƒì„±ë°ì´í„°
 
         [Inject] private GameObjectPoolManager _gameObjectPoolManager;
 
         public void SetSpawnPosition(float3 spawnPosition) {  _spawnPosition = spawnPosition; }
         /// <summary>
-        /// Stage°¡ ½ÃÀÛ µÉ¶§ È£ÃâµÇ´Â ÇÔ¼ö
+        /// Stageê°€ ì‹œì‘ ë ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
         /// </summary>
         public void SpawnEnemiesWave(StageType type, int stageLevel) {
-            SetWaveStrategy(type); // ¿şÀÌºê Àü·«À» type¿¡ ¸ÂÃç Á¤ÇÔ
+            SetWaveStrategy(type); // ì›¨ì´ë¸Œ ì „ëµì„ typeì— ë§ì¶° ì •í•¨
 
-            // Spawn Data »ı¼º
+            // Spawn Data ìƒì„±
             _spawnData = _waveStrategy.GetSpawnData(stageLevel, _spawnPosition, _stageSettingsModel.stageDelayTime - 10);
             
-            // Spawn Data¿¡ ¸ÂÃç Enemy Data »ı¼º
+            // Spawn Dataì— ë§ì¶° Enemy Data ìƒì„±
             EnemyData[] enemyDatas = new EnemyData[_spawnData.spawnCount];
             for(int i = 0; i < _spawnData.spawnCount; i++) {
                 enemyDatas[i] =_spawnData.enemyData;
             }
 
-            // NativeArray »ı¼º
+            // NativeArray ìƒì„±
             var spawnEnemyDatas = new NativeArray<EnemyData>(enemyDatas, Allocator.Persistent);
-            _spawnData.startIndex = _gameDataHub.MergeAliveEnemiesAndAppend(spawnEnemyDatas); // Çãºê¿¡ µî·Ï , ±âÁ¸ µ¥ÀÌÅÍ°¡ ÀÖÀ¸¸é merge
+            _spawnData.startIndex = _gameDataHub.MergeAliveEnemiesAndAppend(spawnEnemyDatas); // í—ˆë¸Œì— ë“±ë¡ , ê¸°ì¡´ ë°ì´í„°ê°€ ìˆìœ¼ë©´ merge
 
-            // Enemy Pool µî·Ï
-            _gameObjectPoolManager.RegisterPool<ObjectPoolItem>(_spawnData.spawnEnemyPoolType); // µî·Ï (ÀÌ¹Ì Á¸ÀçÇÏ¸é ÀÚµ¿ ½ºÅµ)
+            // Enemy Pool ë“±ë¡
+            _gameObjectPoolManager.RegisterPool<ObjectPoolItem>(_spawnData.spawnEnemyPoolType); // ë“±ë¡ (ì´ë¯¸ ì¡´ì¬í•˜ë©´ ìë™ ìŠ¤í‚µ)
         }
         private void SetWaveStrategy(StageType type) {
             switch (type) {
@@ -68,7 +68,7 @@ namespace GamePlay
             List<ObjectPoolItem> enemyPoolItemList = _gameDataHub.GetEnemyPoolList();
             if (_spawnData == null || enemiesData.Length == 0) return;
             _spawnData.curRemainingTime -= Time.deltaTime;
-            // ½Ã°£ Áö³²¿¡ µû¸¥ spawn
+            // ì‹œê°„ ì§€ë‚¨ì— ë”°ë¥¸ spawn
             if (_spawnData.curRemainingTime <= 0 && _spawnData.curSpawnIndex < _spawnData.spawnCount) {
                 _spawnData.curRemainingTime += _spawnData.spawnInterval;
                 int index = _spawnData.curSpawnIndex + _spawnData.startIndex;
@@ -77,25 +77,25 @@ namespace GamePlay
                 
                 _spawnData.curSpawnIndex++;
 
-                // enemy object »ı¼º
+                // enemy object ìƒì„±
                 var item = _gameObjectPoolManager.BorrowItem<ObjectPoolItem>(_spawnData.spawnEnemyPoolType);
                 enemyData.isObj = true;
 
-                // ÇÒ´ç
+                // í• ë‹¹
                 enemyPoolItemList.Add(item);
                 enemiesData[index] = enemyData;
 
             }
 
 
-            // ¸¶Áö¸· ½ÇÇà
-            // ObjectPool È¸¼ö
+            // ë§ˆì§€ë§‰ ì‹¤í–‰
+            // ObjectPool íšŒìˆ˜
             for (int i = 0; i < enemiesData.Length; i++) {
                 EnemyData enemyData = enemiesData[i];
                 if (!enemyData.isSpawn) return; 
                 if (enemyData.isDead && enemyData.isObj) {
                     enemyData.isObj = false;
-                    // Object È¸¼ö
+                    // Object íšŒìˆ˜
                     _gameObjectPoolManager.Repay(_spawnData.spawnEnemyPoolType, enemyPoolItemList[i]);
                     enemiesData[i] = enemyData;
                 }

@@ -1,10 +1,10 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Zenject;
 
 namespace Data
 {
     /// <summary>
-    /// ÃÖ´ë Ã¼·ÂÀ» ³ô¿©ÁÜ
+    /// ìµœëŒ€ ì²´ë ¥ì„ ë†’ì—¬ì¤Œ
     /// </summary>
     [CreateAssetMenu(fileName = "MaxHpUpSO", menuName = "Scriptable Objects/Upgrade/MaxHpUpSO")]
     public class MaxHpUpSO : UpgradeStrategyBaseSO {

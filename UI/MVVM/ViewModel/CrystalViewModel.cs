@@ -1,4 +1,4 @@
-using Data;
+Ôªøusing Data;
 using Zenject;
 using System;
 using System.Diagnostics;
@@ -13,7 +13,7 @@ namespace UI
         public ReadOnlyReactiveProperty<int> RO_CrystalObservable => _repo.GetRO_ReactiveObservable();
 
         /// <summary>
-        /// µ•¿Ã≈Õ ∫Ø∞Ê æÀ∏≤
+        /// Îç∞Ïù¥ÌÑ∞ Î≥ÄÍ≤Ω ÏïåÎ¶º
         /// </summary>
         public void Notify() {
             _repo.Notify();

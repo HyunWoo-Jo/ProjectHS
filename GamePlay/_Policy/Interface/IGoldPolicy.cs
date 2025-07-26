@@ -1,14 +1,14 @@
-using Data;
+ï»¿using Data;
 using UnityEngine;
 
 namespace GamePlay
 {
     public interface IGoldPolicy
     {
-        // enemy KillÇßÀ»¶§ °ñµå º¸»ó
+        // enemy Killí–ˆì„ë•Œ ê³¨ë“œ ë³´ìƒ
         public int CalculateKillReward(EnemyData enemyData);
 
-        // ½ÃÀÛ °ñµå
+        // ì‹œì‘ ê³¨ë“œ
         public int GetPlayerStartGold();
     }
 }

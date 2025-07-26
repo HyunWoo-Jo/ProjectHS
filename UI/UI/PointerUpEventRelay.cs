@@ -1,11 +1,11 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Contracts;
 using System;
 namespace UI
 {
     /// <summary>
-    /// Event Trigger °´Ã¼¿¡¼­ Ray °ü·Ã È£ÃâÀ» ÇÒ¼ö ÀÖµµ·Ï ¼³Á¤ÇÏ´Â Å¬·¹½º
-    /// Input °ü·Ã ·ÎÁ÷¿¡¼­ IPointerUPÀ» °ËÃâÇÏ¿© OnPointerUPÀ» È£Ãâ
+    /// Event Trigger ê°ì²´ì—ì„œ Ray ê´€ë ¨ í˜¸ì¶œì„ í• ìˆ˜ ìˆë„ë¡ ì„¤ì •í•˜ëŠ” í´ë ˆìŠ¤
+    /// Input ê´€ë ¨ ë¡œì§ì—ì„œ IPointerUPì„ ê²€ì¶œí•˜ì—¬ OnPointerUPì„ í˜¸ì¶œ
     /// </summary>
     public class PointerUpEventRelay : MonoBehaviour, IPointerUP
     {

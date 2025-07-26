@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.EventSystems;
 using Data;
 using UI;
@@ -6,27 +6,27 @@ namespace GamePlay
 {
     public class MobileInputStrategy : InputBase {
         private Touch? _touch = null;
-        private float _prevPinchDistance;   // Á÷Àü ÇÁ·¹ÀÓ µÎ ¼Õ°¡¶ô °Å¸®
-        private bool _isPinching;          // ÇÉÄ¡ ÁøÇà ÁßÀÎÁö
+        private float _prevPinchDistance;   // ì§ì „ í”„ë ˆì„ ë‘ ì†ê°€ë½ ê±°ë¦¬
+        private bool _isPinching;          // í•€ì¹˜ ì§„í–‰ ì¤‘ì¸ì§€
         public override void UpdateInput() {
-            //// Å¬¸¯ Ã³¸®
+            //// í´ë¦­ ì²˜ë¦¬
             _touch = null;
-            // ÅÍÄ¡ ÇÑ°³
+            // í„°ì¹˜ í•œê°œ
             if (Input.touchCount == 1) {
-                // Å¬¸¯ Ã³¸®
-                foreach (var touch in Input.touches) { // ÅÍÄ¡ ¸ñ·Ï °Ë»ö
-                    if (!EventSystem.current.IsPointerOverGameObject(touch.fingerId)) { // UI Å¬¸¯ÀÌ ¾Æ´Ñ Ã¹¹øÂ° ÅÍÄ¡ ¸ñ·ÏÀ» ¹Ş¾Æ¿È
+                // í´ë¦­ ì²˜ë¦¬
+                foreach (var touch in Input.touches) { // í„°ì¹˜ ëª©ë¡ ê²€ìƒ‰
+                    if (!EventSystem.current.IsPointerOverGameObject(touch.fingerId)) { // UI í´ë¦­ì´ ì•„ë‹Œ ì²«ë²ˆì§¸ í„°ì¹˜ ëª©ë¡ì„ ë°›ì•„ì˜´
                         _touch = touch;
                         break;
                     }
                 }
                 if (_touch.HasValue) {
                     Touch touch = _touch.Value;
-                    if (touch.phase == TouchPhase.Began && !EventSystem.current.IsPointerOverGameObject(touch.fingerId)) { // ½ÃÀÛÇÒ¶§ µî·Ï UI Å¬¸¯ÀÌ¸é µî·ÏÇÏÁö ¾ÊÀ½
+                    if (touch.phase == TouchPhase.Began && !EventSystem.current.IsPointerOverGameObject(touch.fingerId)) { // ì‹œì‘í• ë•Œ ë“±ë¡ UI í´ë¦­ì´ë©´ ë“±ë¡í•˜ì§€ ì•ŠìŒ
                         inputType = InputType.First;
                         firstFramePosition = touch.position;
                         clickStartTime = Time.time;
-                        if (TryRaycastAtScreenPos(towerMask,Input.mousePosition, out RaycastHit hit)) { // TowerÀÎ°¡ Ã¼Å©
+                        if (TryRaycastAtScreenPos(towerMask,Input.mousePosition, out RaycastHit hit)) { // Towerì¸ê°€ ì²´í¬
                             inputTargetType = InputTargetType.Tower;
                             hitObject = hit.collider.gameObject;
                         } else {
@@ -36,11 +36,11 @@ namespace GamePlay
                     if (touch.phase == TouchPhase.Stationary || touch.phase == TouchPhase.Moved) {
                         inputType = InputType.Push;
                     }
-                    // ÇØ´ç ÅÍÄ¡°¡ ÀÌ¹ø ÇÁ·¹ÀÓ¿¡ ³¡³µ´ÂÁö È®ÀÎ (¼Õ°¡¶ôÀ» ¶Ã°Å³ª Ãë¼ÒµÊ)
+                    // í•´ë‹¹ í„°ì¹˜ê°€ ì´ë²ˆ í”„ë ˆì„ì— ëë‚¬ëŠ”ì§€ í™•ì¸ (ì†ê°€ë½ì„ ë—ê±°ë‚˜ ì·¨ì†Œë¨)
                     if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) {
                         inputType = InputType.End;
 
-                        // UI¸é OnPointerUp È£Ãâ ½Ãµµ
+                        // UIë©´ OnPointerUp í˜¸ì¶œ ì‹œë„
                         if (TryUIRaycast(Input.mousePosition, out RaycastResult hit)) {
                             hit.gameObject.GetComponent<IPointerUP>()?.OnPointerUP();
                         }
@@ -50,25 +50,25 @@ namespace GamePlay
                     inputType = InputType.None;
                 }
             }
-            //// È®´ë, Ãà¼Ò Ã³¸®
-            // ÅÍÄ¡ 2°³ ÀÌ»óÀÌ¸é
+            //// í™•ëŒ€, ì¶•ì†Œ ì²˜ë¦¬
+            // í„°ì¹˜ 2ê°œ ì´ìƒì´ë©´
             if (Input.touchCount >= 2) {
-                // µÎ ¼Õ°¡¶ô Á¤º¸¸¦ °¡Á®¿È
+                // ë‘ ì†ê°€ë½ ì •ë³´ë¥¼ ê°€ì ¸ì˜´
                 Touch t0 = Input.GetTouch(0);
                 Touch t1 = Input.GetTouch(1);
 
                 float curDist = Vector2.Distance(t0.position, t1.position);
-                // ÃÊ±â ÅÍÄ¡½Ã ÀúÀå
+                // ì´ˆê¸° í„°ì¹˜ì‹œ ì €ì¥
                 if (!_isPinching || t0.phase == TouchPhase.Began || t1.phase == TouchPhase.Began) {
                     _prevPinchDistance = curDist;
                     _isPinching = true;
-                } else {        // ÀÌ¹Ì ÇÉÄ¡ Áß ¡æ °Å¸® Â÷ÀÌ °è»ê
+                } else {        // ì´ë¯¸ í•€ì¹˜ ì¤‘ â†’ ê±°ë¦¬ ì°¨ì´ ê³„ì‚°
                     float delta = (curDist - _prevPinchDistance);
-                    if (Mathf.Abs(delta) > 0.0001f)           // ³ëÀÌÁî Á¦°Å
+                    if (Mathf.Abs(delta) > 0.0001f)           // ë…¸ì´ì¦ˆ ì œê±°
                     {
-                        closeUpDownSize = delta;    // + È®´ë, - Ãà¼Ò
+                        closeUpDownSize = delta;    // + í™•ëŒ€, - ì¶•ì†Œ
                     }
-                    _prevPinchDistance = curDist;             // pre ÀúÀå
+                    _prevPinchDistance = curDist;             // pre ì €ì¥
                 }
             } else {
                 closeUpDownSize = 0;

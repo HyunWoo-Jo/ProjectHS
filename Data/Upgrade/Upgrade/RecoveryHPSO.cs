@@ -1,16 +1,16 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Zenject;
 
 namespace Data
 {
     /// <summary>
-    /// HP È¸º¹
+    /// HP íšŒë³µ
     /// </summary>
     [CreateAssetMenu(fileName = "RecoveryHPSO", menuName = "Scriptable Objects/Upgrade/RecoveryHPSO")]
     public class RecoveryHPSO : UpgradeStrategyBaseSO {
         [Inject] private HpModel _hpModel;
         public override void Apply(float value) {
-            // ÃÖ´ë Ã¼·ÂÀ» ¸ø³Ñ°Ô ¹üÀ§ Á¦ÇÑ
+            // ìµœëŒ€ ì²´ë ¥ì„ ëª»ë„˜ê²Œ ë²”ìœ„ ì œí•œ
             _hpModel.curHpObservable.Value = Mathf.Min(_hpModel.curHpObservable.Value + (int)value, _hpModel.maxHpObservable.Value);
         }
     }

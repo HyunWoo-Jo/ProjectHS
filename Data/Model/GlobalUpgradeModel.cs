@@ -1,11 +1,11 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 using CustomUtility;
 namespace Data
 {
     public class GlobalUpgradeModel 
     {
-        private Dictionary<string, int> _dataDictionary; // ¾÷±×·¹ÀÌµå ´Ü°è¸¦ ÀúÀå
+        private Dictionary<string, int> _dataDictionary; // ì—…ê·¸ë ˆì´ë“œ ë‹¨ê³„ë¥¼ ì €ì¥
 
         public void SetNewData(Dictionary<string, int> dataDic) {
             _dataDictionary = dataDic;

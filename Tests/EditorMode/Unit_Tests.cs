@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using GamePlay;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace Tests.Unit
 
 
         /// <summary>
-        /// SStrategy °ËÁõ 
+        /// SStrategy ê²€ì¦ 
         /// </summary>
         [Test]
         public void GenerateMap_Assert_SStrategy() {
@@ -26,7 +26,7 @@ namespace Tests.Unit
 
         }
         /// <summary>
-        /// SStrategy °ËÁõ 
+        /// SStrategy ê²€ì¦ 
         /// </summary>
         [Test]
         public void GenerateMap_Assert_UStrategy() {
@@ -34,24 +34,24 @@ namespace Tests.Unit
         }
 
         /// <summary>
-        /// ¸ÊÀÌ Á¦´ë·Î »ı¼º‰ç³ª °ËÁõ
-        /// path ÀÌ¿Ü¿¡ Road°¡ »ı¼ºµÇ¾ú³ª °ËÁõ
-        /// path °³¼ö ±×´ë·Î »ı¼ºÀÌ µÇ¾ú³ª °ËÁõ
+        /// ë§µì´ ì œëŒ€ë¡œ ìƒì„±ë¬ë‚˜ ê²€ì¦
+        /// path ì´ì™¸ì— Roadê°€ ìƒì„±ë˜ì—ˆë‚˜ ê²€ì¦
+        /// path ê°œìˆ˜ ê·¸ëŒ€ë¡œ ìƒì„±ì´ ë˜ì—ˆë‚˜ ê²€ì¦
         /// </summary>
         /// <param name="pathStrategy"></param>
         private void Assert_Path(IPathStrategy pathStrategy, string assertionMessage) {
             _gen.SetPathStrategy(pathStrategy);
             var map = _gen.GenerateMap(10, 10, out var pathWorld);
-            IEnumerable<Vector2Int> gridPath = pathWorld.Select(data => GridUtility.WorldToGridPosition(data)); // ±×¸®µå ÁÂÇ¥·Î º¯È¯
+            IEnumerable<Vector2Int> gridPath = pathWorld.Select(data => GridUtility.WorldToGridPosition(data)); // ê·¸ë¦¬ë“œ ì¢Œí‘œë¡œ ë³€í™˜
             IEnumerable<Vector2Int> mapRoadList = map.Where(data => data.type != TileType.Ground).Select(data => GridUtility.WorldToGridPosition(data.position));
-            // map¿¡ PathÀÌ¿Ü¿¡ Road°¡ ÀÖ´ÂÁö °ËÁõ
+            // mapì— Pathì´ì™¸ì— Roadê°€ ìˆëŠ”ì§€ ê²€ì¦
             var gridCellPath = gridPath.Take(1).Concat(gridPath.Zip(gridPath.Skip(1), GridUtility.StepCells).SelectMany(c => c)).Distinct();
             bool isValid = !mapRoadList.Except(gridCellPath).Any();
-            Assert.IsTrue(isValid, assertionMessage + "Æ÷ÇÔµÇÁö ¾ÊÀº °æ·Î°¡ Á¸ÀçÇÔ");
+            Assert.IsTrue(isValid, assertionMessage + "í¬í•¨ë˜ì§€ ì•Šì€ ê²½ë¡œê°€ ì¡´ì¬í•¨");
 
-            // path °¡ ¿¬°áµÇ¾îÀÖ³ª °ËÁõ
+            // path ê°€ ì—°ê²°ë˜ì–´ìˆë‚˜ ê²€ì¦
             bool isConnected = gridCellPath.Zip(gridCellPath.Skip(1), (a, b) => Mathf.Abs((a.x + a.y) - (b.x + b.y))).All(diff => diff == 1);
-            Assert.IsTrue(isConnected, assertionMessage + "Path°¡ ¿¬°áµÇ¾î ÀÖÁö ¾ÊÀ½"); 
+            Assert.IsTrue(isConnected, assertionMessage + "Pathê°€ ì—°ê²°ë˜ì–´ ìˆì§€ ì•ŠìŒ"); 
         }
     }
 }

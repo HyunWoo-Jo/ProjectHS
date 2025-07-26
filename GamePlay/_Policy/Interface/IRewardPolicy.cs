@@ -1,11 +1,11 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace GamePlay
 {
     public interface IRewardPolicy
     {
         /// <summary>
-        /// CrystalReward¸¦ °è»ê
+        /// CrystalRewardë¥¼ ê³„ì‚°
         /// </summary>
         /// <returns></returns>
         int CalculateCrystalReward();

@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
 namespace GamePlay
 {
@@ -7,12 +7,12 @@ namespace GamePlay
             List<Vector2Int> path = new();
             int midY = y / 2;
 
-            path.Add(new Vector2Int(0, 0));             // ½ÃÀÛ
-            path.Add(new Vector2Int(x - 1, 0));         // ¿À¸¥ÂÊ ³¡±îÁö
-            path.Add(new Vector2Int(x - 1, midY));      // ¾Æ·¡·Î
-            path.Add(new Vector2Int(0, midY));          // ¿ŞÂÊ ³¡±îÁö
-            path.Add(new Vector2Int(0, y - 1));         // ¾Æ·¡·Î
-            path.Add(new Vector2Int(x - 1, y - 1));     // ¿À¸¥ÂÊ ³¡±îÁö (µµÂø)
+            path.Add(new Vector2Int(0, 0));             // ì‹œì‘
+            path.Add(new Vector2Int(x - 1, 0));         // ì˜¤ë¥¸ìª½ ëê¹Œì§€
+            path.Add(new Vector2Int(x - 1, midY));      // ì•„ë˜ë¡œ
+            path.Add(new Vector2Int(0, midY));          // ì™¼ìª½ ëê¹Œì§€
+            path.Add(new Vector2Int(0, y - 1));         // ì•„ë˜ë¡œ
+            path.Add(new Vector2Int(x - 1, y - 1));     // ì˜¤ë¥¸ìª½ ëê¹Œì§€ (ë„ì°©)
 
             return path;
         }

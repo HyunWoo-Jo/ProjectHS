@@ -1,4 +1,4 @@
-using NUnit.Framework;
+ï»¿using NUnit.Framework;
 using UnityEngine;
 using Data;
 using System.Collections.Generic;
@@ -8,34 +8,34 @@ using Cysharp.Threading.Tasks;
 namespace GamePlay
 {
     /// <summary>
-    /// ¸ÊÀ» »ı¼ºÇØÁÖ´Â Å¬·¹½º
+    /// ë§µì„ ìƒì„±í•´ì£¼ëŠ” í´ë ˆìŠ¤
     /// </summary>
     public class MapGenerator {
-        private IPathStrategy _pathStrategy; // Path »ı¼º ±Ô¾à
+        private IPathStrategy _pathStrategy; // Path ìƒì„± ê·œì•½
 
         public void SetPathStrategy(IPathStrategy pathStrategy) {
             _pathStrategy = pathStrategy;
         }
 
         private enum TempTileType {
-            Ground,     // ¶¥
-            PathMarker  // °æ·Î
+            Ground,     // ë•…
+            PathMarker  // ê²½ë¡œ
         }
 
-        // --- ¸Ê »ı¼º ÇÔ¼ö ---
+        // --- ë§µ ìƒì„± í•¨ìˆ˜ ---
         /// <summary>
-        /// ÁÖ¾îÁø Å©±â·Î Å¸¿ö µğÆæ½º ¸Ê µ¥ÀÌÅÍ¸¦ »ı¼º
+        /// ì£¼ì–´ì§„ í¬ê¸°ë¡œ íƒ€ì›Œ ë””íœìŠ¤ ë§µ ë°ì´í„°ë¥¼ ìƒì„±
         /// </summary>
-        /// <param name="sizeX">¸ÊÀÇ °¡·Î Å©±â</param>
-        /// <param name="sizeY">¸ÊÀÇ ¼¼·Î Å©±â</param>
-        /// <returns>»ı¼ºµÈ ¸Ê Å¸ÀÏ µ¥ÀÌÅÍ ¸®½ºÆ®</returns>
+        /// <param name="sizeX">ë§µì˜ ê°€ë¡œ í¬ê¸°</param>
+        /// <param name="sizeY">ë§µì˜ ì„¸ë¡œ í¬ê¸°</param>
+        /// <returns>ìƒì„±ëœ ë§µ íƒ€ì¼ ë°ì´í„° ë¦¬ìŠ¤íŠ¸</returns>
         public List<MapData> GenerateMap(int sizeX, int sizeY, out List<Vector3> pathList) {
             pathList = new List<Vector3>();
             if (sizeX <= 0 || sizeY <= 0) {
-                return new List<MapData>(); // ºó ¸®½ºÆ® ¹İÈ¯
+                return new List<MapData>(); // ë¹ˆ ë¦¬ìŠ¤íŠ¸ ë°˜í™˜
             }
 
-            // ÀÓ½Ã ±×¸®µå¸¦ »ı¼ºÇÏ°í ÃÊ±âÈ­
+            // ì„ì‹œ ê·¸ë¦¬ë“œë¥¼ ìƒì„±í•˜ê³  ì´ˆê¸°í™”
             TempTileType[,] tempGrid = new TempTileType[sizeX, sizeY];
             for (int x = 0; x < sizeX; x++) {
                 for (int y = 0; y < sizeY; y++) {
@@ -43,19 +43,19 @@ namespace GamePlay
                 }
             }
 
-            // °æ·Î »ı¼ºÀ» À§ÇÑ °æÀ¯Áö Á¤ÀÇ
+            // ê²½ë¡œ ìƒì„±ì„ ìœ„í•œ ê²½ìœ ì§€ ì •ì˜
             List<Vector2Int> pathWaypointList = _pathStrategy.CreatePathPoints(sizeX, sizeY);
 
-            // °æ·Î »çÀÌ¸¦ Á÷¼±À¸·Î ¿¬°á
+            // ê²½ë¡œ ì‚¬ì´ë¥¼ ì§ì„ ìœ¼ë¡œ ì—°ê²°
             for (int i = 0; i < pathWaypointList.Count - 1; i++) {
                 Vector2Int start = pathWaypointList[i];
                 Vector2Int end = pathWaypointList[i + 1];
 
-                // ½ÃÀÛÁ¡°ú ³¡Á¡ »çÀÌÀÇ Å¸ÀÏÀ» °æ·Î·Î Ç¥½Ã
-                // °¡·Î °æ·Î ±×¸®±â
+                // ì‹œì‘ì ê³¼ ëì  ì‚¬ì´ì˜ íƒ€ì¼ì„ ê²½ë¡œë¡œ í‘œì‹œ
+                // ê°€ë¡œ ê²½ë¡œ ê·¸ë¦¬ê¸°
                 if (start.y == end.y) {
                     int y = start.y;
-                    int direction = (start.x < end.x) ? 1 : -1; // ÀÌµ¿ ¹æÇâ (¿À¸¥ÂÊ: 1, ¿ŞÂÊ: -1)
+                    int direction = (start.x < end.x) ? 1 : -1; // ì´ë™ ë°©í–¥ (ì˜¤ë¥¸ìª½: 1, ì™¼ìª½: -1)
 
                     for (int x = start.x; x != end.x; x += direction) {
                         if (IsInBounds(x, y, sizeX, sizeY)) {
@@ -63,135 +63,135 @@ namespace GamePlay
                         }
                     }
                 }
-                // ¼¼·Î °æ·Î ±×¸®±â
+                // ì„¸ë¡œ ê²½ë¡œ ê·¸ë¦¬ê¸°
                 else if (start.x == end.x) {
                     int x = start.x;
-                    int direction = (start.y < end.y) ? 1 : -1; // ÀÌµ¿ ¹æÇâ (À§: 1, ¾Æ·¡: -1)
-                                                                // ½ÃÀÛÁ¡¿¡¼­ ³¡Á¡ '¹Ù·Î Àü'±îÁö ¹İº¹
+                    int direction = (start.y < end.y) ? 1 : -1; // ì´ë™ ë°©í–¥ (ìœ„: 1, ì•„ë˜: -1)
+                                                                // ì‹œì‘ì ì—ì„œ ëì  'ë°”ë¡œ ì „'ê¹Œì§€ ë°˜ë³µ
                     for (int y = start.y; y != end.y; y += direction) {
                         if (IsInBounds(x, y, sizeX, sizeY)) {
                             tempGrid[x, y] = TempTileType.PathMarker;
                         }
                     }
                 } 
-                // end  ÃÖÁ¾ ±¸¿ª ¼³Á¤
+                // end  ìµœì¢… êµ¬ì—­ ì„¤ì •
                 if (IsInBounds(end.x, end.y, sizeX, sizeY)) {
                     tempGrid[end.x, end.y] = TempTileType.PathMarker;
                 }
             }
 
-            // ÀÓ½Ã ±×¸®µå¸¦ ±â¹İÀ¸·Î ÃÖÁ¾ Å¸ÀÏ Å¸ÀÔ °áÁ¤
+            // ì„ì‹œ ê·¸ë¦¬ë“œë¥¼ ê¸°ë°˜ìœ¼ë¡œ ìµœì¢… íƒ€ì¼ íƒ€ì… ê²°ì •
             TileType[,] finalGrid = new TileType[sizeX, sizeY];
             for (int x = 0; x < sizeX; x++) {
                 for (int y = 0; y < sizeY; y++) {
-                    // ÇöÀç Å¸ÀÏÀÌ °æ·Î Ç¥½Ã Å¸ÀÏÀÎ °æ¿ì
+                    // í˜„ì¬ íƒ€ì¼ì´ ê²½ë¡œ í‘œì‹œ íƒ€ì¼ì¸ ê²½ìš°
                     if (tempGrid[x, y] == TempTileType.PathMarker) {
-                        // »óÇÏÁÂ¿ì ÀÎÁ¢ Å¸ÀÏÀÌ °æ·ÎÀÎÁö È®ÀÎ (°æ°è °Ë»ç Æ÷ÇÔ)
+                        // ìƒí•˜ì¢Œìš° ì¸ì ‘ íƒ€ì¼ì´ ê²½ë¡œì¸ì§€ í™•ì¸ (ê²½ê³„ ê²€ì‚¬ í¬í•¨)
                         bool hasUp = IsPath(tempGrid, x, y + 1, sizeX, sizeY);
                         bool hasDown = IsPath(tempGrid, x, y - 1, sizeX, sizeY);
                         bool hasLeft = IsPath(tempGrid, x - 1, y, sizeX, sizeY);
                         bool hasRight = IsPath(tempGrid, x + 1, y, sizeX, sizeY);
 
-                        // ¿¬°á »óÅÂ¿¡ µû¶ó ÃÖÁ¾ µµ·Î Å¸ÀÏ Å¸ÀÔ °áÁ¤
+                        // ì—°ê²° ìƒíƒœì— ë”°ë¼ ìµœì¢… ë„ë¡œ íƒ€ì¼ íƒ€ì… ê²°ì •
                         finalGrid[x, y] = GetRoadTileType(hasUp, hasDown, hasLeft, hasRight);
-                    } else // °æ·Î°¡ ¾Æ´Ñ Å¸ÀÏÀº ±×´ë·Î '¶¥' Å¸ÀÔ À¯Áö
+                    } else // ê²½ë¡œê°€ ì•„ë‹Œ íƒ€ì¼ì€ ê·¸ëŒ€ë¡œ 'ë•…' íƒ€ì… ìœ ì§€
                       {
                         finalGrid[x, y] = TileType.Ground;
                     }
                 }
             }
 
-            // ÃÖÁ¾ ±×¸®µå Á¤º¸ º¯È¯
+            // ìµœì¢… ê·¸ë¦¬ë“œ ì •ë³´ ë³€í™˜
             List<MapData> mapDataList = new List<MapData>(sizeX * sizeY);
 
             const int BASE_ORDER = 10000;
             const int ORDER_PER_ROW = 100;
 
-            // ¼øÈ¸
+            // ìˆœíšŒ
             for (int y = 0; y < sizeY; y++) {
                 for (int x = 0; x < sizeX; x++) {
-                    int calculatedOrder = (BASE_ORDER - (y * ORDER_PER_ROW) + x) - (BASE_ORDER + ORDER_PER_ROW); // orderÀÌ - °ªÀÌ µÇµµ·Ï °è»ê
+                    int calculatedOrder = (BASE_ORDER - (y * ORDER_PER_ROW) + x) - (BASE_ORDER + ORDER_PER_ROW); // orderì´ - ê°’ì´ ë˜ë„ë¡ ê³„ì‚°
                     MapData data = new() {
                         position = GridUtility.GridToWorldPosition(x,y),
                         type = finalGrid[x, y],
                         orderBy = calculatedOrder
                     };
 
-                    mapDataList.Add(data); // ¸®½ºÆ®¿¡ Ãß°¡
+                    mapDataList.Add(data); // ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
                 }
             }
 
-            // Path¸¦ ÃÖÁ¾ À§Ä¡·Î º¯°æ
+            // Pathë¥¼ ìµœì¢… ìœ„ì¹˜ë¡œ ë³€ê²½
             foreach(Vector2Int pos in pathWaypointList) {
                 pathList.Add(GridUtility.GridToWorldPosition(pos.x, pos.y) + new Vector3(0, 0.7f,0));
 
             }
             
 
-            return mapDataList; // ¿Ï¼ºµÈ ¸Ê µ¥ÀÌÅÍ ¸®½ºÆ® ¹İÈ¯
+            return mapDataList; // ì™„ì„±ëœ ë§µ ë°ì´í„° ë¦¬ìŠ¤íŠ¸ ë°˜í™˜
         }
 
 
         /// <summary>
-        /// ÁÖ¾îÁø ÁÂÇ¥°¡ ¸Ê ¹üÀ§ ³»¿¡ ÀÖ´ÂÁö È®ÀÎ
+        /// ì£¼ì–´ì§„ ì¢Œí‘œê°€ ë§µ ë²”ìœ„ ë‚´ì— ìˆëŠ”ì§€ í™•ì¸
         /// </summary>
         private bool IsInBounds(int x, int y, int sizeX, int sizeY) {
             return x >= 0 && x < sizeX && y >= 0 && y < sizeY;
         }
 
         /// <summary>
-        /// ÁÖ¾îÁø ±×¸®µå¿Í ÁÂÇ¥¿¡ ÀÖ´Â Å¸ÀÏÀÌ °æ·Î Ç¥½ÃÀÎÁö È®ÀÎ 
+        /// ì£¼ì–´ì§„ ê·¸ë¦¬ë“œì™€ ì¢Œí‘œì— ìˆëŠ” íƒ€ì¼ì´ ê²½ë¡œ í‘œì‹œì¸ì§€ í™•ì¸ 
         /// </summary>
         private bool IsPath(TempTileType[,] grid, int x, int y, int sizeX, int sizeY) {
-            // ¸ÕÀú ¹üÀ§ ³»¿¡ ÀÖ´ÂÁö È®ÀÎÇÏ°í, ±× ´ÙÀ½ °æ·Î Ç¥½ÃÀÎÁö È®ÀÎ
+            // ë¨¼ì € ë²”ìœ„ ë‚´ì— ìˆëŠ”ì§€ í™•ì¸í•˜ê³ , ê·¸ ë‹¤ìŒ ê²½ë¡œ í‘œì‹œì¸ì§€ í™•ì¸
             return IsInBounds(x, y, sizeX, sizeY) && grid[x, y] == TempTileType.PathMarker;
         }
 
         /// <summary>
-        /// »óÇÏÁÂ¿ì ¿¬°á »óÅÂ¸¦ ¹ÙÅÁÀ¸·Î ÀûÀıÇÑ µµ·Î Å¸ÀÏ Å¸ÀÔÀ» ¹İÈ¯
+        /// ìƒí•˜ì¢Œìš° ì—°ê²° ìƒíƒœë¥¼ ë°”íƒ•ìœ¼ë¡œ ì ì ˆí•œ ë„ë¡œ íƒ€ì¼ íƒ€ì…ì„ ë°˜í™˜
         /// </summary>
         private TileType GetRoadTileType(bool up, bool down, bool left, bool right) {
-            // ¿¬°áµÈ ¹æÇâÀÇ ÃÑ °³¼ö °è»ê
+            // ì—°ê²°ëœ ë°©í–¥ì˜ ì´ ê°œìˆ˜ ê³„ì‚°
             int connections = (up ? 1 : 0) + (down ? 1 : 0) + (left ? 1 : 0) + (right ? 1 : 0);
 
-            // ¿¬°á °³¼ö¿¡ µû¶ó ºĞ±â
+            // ì—°ê²° ê°œìˆ˜ì— ë”°ë¼ ë¶„ê¸°
             switch (connections) {
-                case 4: // 4¹æÇâ ¿¬°á: ½ÊÀÚ(+)
+                case 4: // 4ë°©í–¥ ì—°ê²°: ì‹­ì(+)
                 return TileType.Road_Cross;
 
-                case 3: // 3¹æÇâ ¿¬°á: TÀÚ
-                if (!up) return TileType.Road_HorizontalDown; // À§ÂÊ¸¸ ¾øÀ½ '¤Ì' 
-                if (!down) return TileType.Road_HorizontalUp;   // ¾Æ·¡ÂÊ¸¸ ¾øÀ½ '¤Ç' 
-                if (!left) return TileType.Road_VerticalRight;  // ¿ŞÂÊ¸¸ ¾øÀ½ '¤¿' 
-                if (!right) return TileType.Road_VerticalLeft; // ¿À¸¥ÂÊ¸¸ ¾øÀ½ '¤Ã'
+                case 3: // 3ë°©í–¥ ì—°ê²°: Tì
+                if (!up) return TileType.Road_HorizontalDown; // ìœ„ìª½ë§Œ ì—†ìŒ 'ã…œ' 
+                if (!down) return TileType.Road_HorizontalUp;   // ì•„ë˜ìª½ë§Œ ì—†ìŒ 'ã…—' 
+                if (!left) return TileType.Road_VerticalRight;  // ì™¼ìª½ë§Œ ì—†ìŒ 'ã…' 
+                if (!right) return TileType.Road_VerticalLeft; // ì˜¤ë¥¸ìª½ë§Œ ì—†ìŒ 'ã…“'
                 break; 
 
-                case 2: // 2¹æÇâ ¿¬°á: Á÷¼± ¶Ç´Â ÄÚ³Ê
-                if (up && down) return TileType.Road_Vertical;      // »óÇÏ ¿¬°á  '|'
-                if (left && right) return TileType.Road_Horizontal;  // ÁÂ¿ì ¿¬°á '¦¡'
-                if (up && right) return TileType.Road_RightUp;       // »ó¿ì ¿¬°á '¤¤'
-                if (up && left) return TileType.Road_LeftUp;        // »óÁÂ ¿¬°á '¦¥'
-                if (down && right) return TileType.Road_RightDown;     // ÇÏ¿ì ¿¬°á '¦£'
-                if (down && left) return TileType.Road_LeftDown;      // ÇÏÁÂ ¿¬°á '¤¡' 
+                case 2: // 2ë°©í–¥ ì—°ê²°: ì§ì„  ë˜ëŠ” ì½”ë„ˆ
+                if (up && down) return TileType.Road_Vertical;      // ìƒí•˜ ì—°ê²°  '|'
+                if (left && right) return TileType.Road_Horizontal;  // ì¢Œìš° ì—°ê²° 'â”€'
+                if (up && right) return TileType.Road_RightUp;       // ìƒìš° ì—°ê²° 'ã„´'
+                if (up && left) return TileType.Road_LeftUp;        // ìƒì¢Œ ì—°ê²° 'â”˜'
+                if (down && right) return TileType.Road_RightDown;     // í•˜ìš° ì—°ê²° 'â”Œ'
+                if (down && left) return TileType.Road_LeftDown;      // í•˜ì¢Œ ì—°ê²° 'ã„±' 
                 break;
 
-                case 1: // 1¹æÇâ ¿¬°á: °æ·ÎÀÇ ³¡ ÁöÁ¡
-                        // ³¡ ÁöÁ¡ÀÇ Å¸ÀÏ ¸ğ¾çÀ» ¾î¶»°Ô ÇÒÁö´Â µğÀÚÀÎ °áÁ¤ »çÇ×ÀÔ´Ï´Ù.
-                        // ¿©±â¼­´Â ¿¬°áµÈ ¹æÇâ¿¡ ¸ÂÃç ´Ü¼øÇÑ Á÷¼± Å¸ÀÏ·Î Ç¥½ÃÇÕ´Ï´Ù.
-                if (up || down) return TileType.Road_Vertical; // À§ ¶Ç´Â ¾Æ·¡¸¸ ¿¬°áµÈ °æ¿ì ¼¼·Î ±æ
-                if (left || right) return TileType.Road_Horizontal; // ¿ŞÂÊ ¶Ç´Â ¿À¸¥ÂÊ¸¸ ¿¬°áµÈ °æ¿ì °¡·Î ±æ
+                case 1: // 1ë°©í–¥ ì—°ê²°: ê²½ë¡œì˜ ë ì§€ì 
+                        // ë ì§€ì ì˜ íƒ€ì¼ ëª¨ì–‘ì„ ì–´ë–»ê²Œ í• ì§€ëŠ” ë””ìì¸ ê²°ì • ì‚¬í•­ì…ë‹ˆë‹¤.
+                        // ì—¬ê¸°ì„œëŠ” ì—°ê²°ëœ ë°©í–¥ì— ë§ì¶° ë‹¨ìˆœí•œ ì§ì„  íƒ€ì¼ë¡œ í‘œì‹œí•©ë‹ˆë‹¤.
+                if (up || down) return TileType.Road_Vertical; // ìœ„ ë˜ëŠ” ì•„ë˜ë§Œ ì—°ê²°ëœ ê²½ìš° ì„¸ë¡œ ê¸¸
+                if (left || right) return TileType.Road_Horizontal; // ì™¼ìª½ ë˜ëŠ” ì˜¤ë¥¸ìª½ë§Œ ì—°ê²°ëœ ê²½ìš° ê°€ë¡œ ê¸¸
                 break;
 
-                case 0: // 0¹æÇâ ¿¬°á: °í¸³µÈ °æ·Î Å¸ÀÏ
-                        // ¸¸¾à ¹ß»ıÇÑ´Ù¸é ±âº» µµ·Î ¶Ç´Â ¶¥À¸·Î Ã³¸®
-                return TileType.Road_Horizontal; // ¿¹½Ã: ±âº» °¡·Î µµ·Î·Î Ã³¸®
+                case 0: // 0ë°©í–¥ ì—°ê²°: ê³ ë¦½ëœ ê²½ë¡œ íƒ€ì¼
+                        // ë§Œì•½ ë°œìƒí•œë‹¤ë©´ ê¸°ë³¸ ë„ë¡œ ë˜ëŠ” ë•…ìœ¼ë¡œ ì²˜ë¦¬
+                return TileType.Road_Horizontal; // ì˜ˆì‹œ: ê¸°ë³¸ ê°€ë¡œ ë„ë¡œë¡œ ì²˜ë¦¬
             }
-            return TileType.Ground; // ¿À·ù ¹ß»ı ½Ã ±âº» ¶¥ Å¸ÀÏ ¹İÈ¯
+            return TileType.Ground; // ì˜¤ë¥˜ ë°œìƒ ì‹œ ê¸°ë³¸ ë•… íƒ€ì¼ ë°˜í™˜
         }
 
 
         /// <summary>
-        /// ¸Êµ¥ÀÌÅÍ ±â¹İ ¸Ê Instance
+        /// ë§µë°ì´í„° ê¸°ë°˜ ë§µ Instance
         /// </summary>
         public List<GameObject> InstanceMap(GameObject fieldPrefab, Transform parent, List<MapData> mapDataList, TileSpriteMapper tileMapper) {
             List<GameObject> mapObjList = new();
@@ -203,7 +203,7 @@ namespace GamePlay
                     spriteRenderer.sprite = sprite;
                    
                 } else {
-                    Debug.Log(mapData.type + "Sprite°¡ Á¸ÀçÇÏÁö ¾ÊÀ½");
+                    Debug.Log(mapData.type + "Spriteê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŒ");
                 }
 
                 spriteRenderer.sortingOrder = mapData.orderBy;

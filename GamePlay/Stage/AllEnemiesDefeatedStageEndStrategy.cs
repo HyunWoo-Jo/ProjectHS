@@ -1,9 +1,9 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace GamePlay
 {
     /// <summary>
-    /// ÀÏ¹İ ½ºÅ×ÀÌÁö (¸ğµç ÀûÀ» Ã³Ä¡ ÇßÀ»°æ¿ì)
+    /// ì¼ë°˜ ìŠ¤í…Œì´ì§€ (ëª¨ë“  ì ì„ ì²˜ì¹˜ í–ˆì„ê²½ìš°)
     /// </summary>
     public class AllEnemiesDefeatedStageEndStrategy : IStageEndStrategy {
 

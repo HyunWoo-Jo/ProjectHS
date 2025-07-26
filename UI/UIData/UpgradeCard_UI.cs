@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -9,17 +9,17 @@ namespace UI
 {
     public class UpgradeCard_UI : MonoBehaviour
     {
-        [SerializeField] private EventTrigger _button; // πˆ∆∞
-        [SerializeField] private EventTrigger _rerollButton; // ∏Æ∑— πˆ∆∞
-        [SerializeField] private Image _image; // ƒ´µÂ ¿ÃπÃ¡ˆ
-        [SerializeField] private TextMeshProUGUI _nameText; // ¿Ã∏ß
-        [SerializeField] private TextMeshProUGUI _descriptionText; // º≥∏Ì
+        [SerializeField] private EventTrigger _button; // Î≤ÑÌäº
+        [SerializeField] private EventTrigger _rerollButton; // Î¶¨Î°§ Î≤ÑÌäº
+        [SerializeField] private Image _image; // Ïπ¥Îìú Ïù¥ÎØ∏ÏßÄ
+        [SerializeField] private TextMeshProUGUI _nameText; // Ïù¥Î¶Ñ
+        [SerializeField] private TextMeshProUGUI _descriptionText; // ÏÑ§Î™Ö
 
         // Slot Data
 
         private void Awake() {
 #if UNITY_EDITOR
-            // ∞À¡ı
+            // Í≤ÄÏ¶ù
             Assert.IsNotNull(_button);
             Assert.IsNotNull(_rerollButton);
             Assert.IsNotNull(_image);

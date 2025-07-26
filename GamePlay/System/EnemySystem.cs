@@ -1,4 +1,4 @@
-using Data;
+ï»¿using Data;
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
@@ -16,11 +16,11 @@ using UI;
 namespace GamePlay
 {
     /// <summary>
-    /// Enemy¸¦ ÄÁÆ®·Ñ ÇÏ´Â Å¬·¹½º
+    /// Enemyë¥¼ ì»¨íŠ¸ë¡¤ í•˜ëŠ” í´ë ˆìŠ¤
     /// </summary>
     [DefaultExecutionOrder(80)]
     public class EnemySystem : MonoBehaviour {
-        // DOD(data oriented design) ±¸Á¶
+        // DOD(data oriented design) êµ¬ì¡°
         [Inject] private GameDataHub _gameDataHub;
         [Inject] private GameObjectPoolManager _poolManager;
 
@@ -41,36 +41,36 @@ namespace GamePlay
             var enemiesData = _gameDataHub.GetEnemiesData();
             var paths = _gameDataHub.GetPath();
             if (enemiesData.Length <= 0 || paths.Length <= 0) return;
-            /// ÀÌµ¿ Ã³¸®
+            /// ì´ë™ ì²˜ë¦¬
             var moveJob = new MoveJob {
                 enemiesData = enemiesData,
                 paths = paths,
                 deltaTime = Time.deltaTime
             };
             JobHandle moveJobHandle = moveJob.Schedule(enemiesData.Length, 32);
-            moveJobHandle.Complete(); // ¿Ï·á ´ë±â
+            moveJobHandle.Complete(); // ì™„ë£Œ ëŒ€ê¸°
 
 
             List<ObjectPoolItem> enemyObjectPoolItemList = _gameDataHub.GetEnemyPoolList();
             for (int i = 0; i < enemyObjectPoolItemList.Count; i++) {
-                // 1. Á×Àº Àû Ã³¸®
+                // 1. ì£½ì€ ì  ì²˜ë¦¬
                 var enemyData = enemiesData[i];
                 if (!enemyData.isSpawn) break;
                 if (enemyData.isDead || !enemyData.isObj) continue;
                 if (enemyData.curHp <= 0) {
                     enemyData.isDead = true;
                     enemiesData[i] = enemyData;
-                    OnEnemyDied?.Invoke(enemyData); // event ¹ß»ı
+                    OnEnemyDied?.Invoke(enemyData); // event ë°œìƒ
                     continue;
                 }
-                if (enemyData.currentPathIndex >= paths.Length) { // ÃÖÁ¾ °æ·Î¿¡ µµÂø
+                if (enemyData.currentPathIndex >= paths.Length) { // ìµœì¢… ê²½ë¡œì— ë„ì°©
                     enemyData.isDead = true;
                     enemiesData[i] = enemyData;
-                    OnEnemyFinishedPath?.Invoke(enemyData); // event ¹ß»ı
+                    OnEnemyFinishedPath?.Invoke(enemyData); // event ë°œìƒ
                     continue;
                 }
 
-                // 2. ¹Ì¸® °è»êµÈ Position ¼³Á¤
+                // 2. ë¯¸ë¦¬ ê³„ì‚°ëœ Position ì„¤ì •
                 enemyObjectPoolItemList[i].transform.position = enemyData.position;
 
             }
@@ -79,7 +79,7 @@ namespace GamePlay
 
 
         /// <summary>
-        /// ÀÌµ¿À» °ü¸®ÇÏ´Â Job
+        /// ì´ë™ì„ ê´€ë¦¬í•˜ëŠ” Job
         /// </summary>
         [BurstCompile]
         struct MoveJob : IJobParallelFor {
@@ -88,40 +88,40 @@ namespace GamePlay
             public float deltaTime;
             public void Execute(int index) {
                 EnemyData curEnemyData = enemiesData[index];
-                if (!curEnemyData.isSpawn || curEnemyData.isDead) return; // »ı¼º µÇÁö ¾Ê¾Ò°Å³ª Á×¾úÀ¸¸é ¿¬»êÇÏÁö ¾ÊÀ½
-                // °æ·Î µ¥ÀÌÅÍ°¡ ¾ø°Å³ª, ÇöÀç °æ·Î ÀÎµ¦½º°¡ À¯È¿ÇÏÁö ¾ÊÀ¸¸é ÀÌµ¿ÇÏÁö ¾ÊÀ½
+                if (!curEnemyData.isSpawn || curEnemyData.isDead) return; // ìƒì„± ë˜ì§€ ì•Šì•˜ê±°ë‚˜ ì£½ì—ˆìœ¼ë©´ ì—°ì‚°í•˜ì§€ ì•ŠìŒ
+                // ê²½ë¡œ ë°ì´í„°ê°€ ì—†ê±°ë‚˜, í˜„ì¬ ê²½ë¡œ ì¸ë±ìŠ¤ê°€ ìœ íš¨í•˜ì§€ ì•Šìœ¼ë©´ ì´ë™í•˜ì§€ ì•ŠìŒ
                 if (paths.Length == 0 || curEnemyData.currentPathIndex < 0 || curEnemyData.currentPathIndex >= paths.Length) return;
 
-                float3 targetPosition = paths[curEnemyData.currentPathIndex]; // ¸ñÇ¥ ÁöÁ¡
+                float3 targetPosition = paths[curEnemyData.currentPathIndex]; // ëª©í‘œ ì§€ì 
 
-                // ¸ñÇ¥ ÁöÁ¡±îÁöÀÇ ¹æÇâ º¤ÅÍ °è»ê
+                // ëª©í‘œ ì§€ì ê¹Œì§€ì˜ ë°©í–¥ ë²¡í„° ê³„ì‚°
                 float3 directionToTarget = targetPosition - curEnemyData.position;
                 float distanceToTarget = math.length(directionToTarget);
 
-                // ¸ñÇ¥ ÁöÁ¡¿¡ °ÅÀÇ µµ´ŞÇß´ÂÁö È®ÀÎ
+                // ëª©í‘œ ì§€ì ì— ê±°ì˜ ë„ë‹¬í–ˆëŠ”ì§€ í™•ì¸
                 float arrivalThreshold = 0.1f;
 
-                // ¸ñÇ¥ ÁöÁ¡¿¡ µµ´ŞÇÔ
+                // ëª©í‘œ ì§€ì ì— ë„ë‹¬í•¨
                 if (distanceToTarget <= arrivalThreshold) {
                     curEnemyData.currentPathIndex++;
 
-                    // ¸ğµç °æ·Î¸¦ Áö³ª¿È
+                    // ëª¨ë“  ê²½ë¡œë¥¼ ì§€ë‚˜ì˜´
                     if (curEnemyData.currentPathIndex >= paths.Length) {
                         enemiesData[index] = curEnemyData;
                         return;
                     }
-                    // ¹æÇâ ´Ù½Ã °è»ê
+                    // ë°©í–¥ ë‹¤ì‹œ ê³„ì‚°
                     targetPosition = paths[curEnemyData.currentPathIndex];
                     directionToTarget = targetPosition - curEnemyData.position;
                     distanceToTarget = math.length(directionToTarget);
                 }
 
                 if (distanceToTarget > 0.0001f) {
-                    float3 moveDirection = math.normalize(directionToTarget); // Á¤±ÔÈ­
+                    float3 moveDirection = math.normalize(directionToTarget); // ì •ê·œí™”
 
-                    // ÀÌ¹ø ÇÁ·¹ÀÓ¿¡ ÀÌµ¿ÇÒ °Å¸® °è»ê
+                    // ì´ë²ˆ í”„ë ˆì„ì— ì´ë™í•  ê±°ë¦¬ ê³„ì‚°
                     float3 movement = moveDirection * curEnemyData.speed * deltaTime;
-                    // ¸¸¾à ÀÌµ¿ °Å¸®°¡ ¸ñÇ¥±îÁöÀÇ °Å¸®º¸´Ù Å©¸é, ¸ñÇ¥ ÁöÁ¡À¸·Î ¹Ù·Î ÀÌµ¿
+                    // ë§Œì•½ ì´ë™ ê±°ë¦¬ê°€ ëª©í‘œê¹Œì§€ì˜ ê±°ë¦¬ë³´ë‹¤ í¬ë©´, ëª©í‘œ ì§€ì ìœ¼ë¡œ ë°”ë¡œ ì´ë™
                     if (math.lengthsq(movement) >= math.lengthsq(directionToTarget)) {
                         curEnemyData.position = targetPosition;
                     } else {

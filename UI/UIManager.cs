@@ -1,4 +1,4 @@
-using Data;
+ï»¿using Data;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using UnityEditor.SceneManagement;
@@ -10,14 +10,14 @@ using static Codice.CM.WorkspaceServer.WorkspaceTreeDataStore;
 
 namespace UI {
     /// <summary>
-    /// UI¸¦ »ı¼º °ü¸®ÇÏ´Â Å¬·¹½º
+    /// UIë¥¼ ìƒì„± ê´€ë¦¬í•˜ëŠ” í´ë ˆìŠ¤
     /// </summary>
     public class UIManager : MonoBehaviour, IUIFactory, ISetMainCanvas  {
 
         private readonly Dictionary<string, string> _keyDictionary = new(); // (class name, addressable Key)
-        private readonly Dictionary<int, KeyValuePair<GameObject, string>> _objDictionary = new(); // »ı¼ºµÈ ¿ÀºêÁ§Æ®¸¦ °ü¸® (instance Id , <Obj, Addressable key>)
+        private readonly Dictionary<int, KeyValuePair<GameObject, string>> _objDictionary = new(); // ìƒì„±ëœ ì˜¤ë¸Œì íŠ¸ë¥¼ ê´€ë¦¬ (instance Id , <Obj, Addressable key>)
 
-        [Inject] private readonly DataManager _dataManager; // addressable Data °ü¸®
+        [Inject] private readonly DataManager _dataManager; // addressable Data ê´€ë¦¬
         [Inject] private UIEvent _uiEvent;
         private DiContainer _container; // DI
 
@@ -31,13 +31,13 @@ namespace UI {
         private void Awake() {
             SetAddressableKey();
 
-            _uiEvent.OnCloseUI += CloseUI; // ¿ÀºêÁ§Æ®°¡ »èÁ¦µÉ¶§ °ü¸® dictionary¿¡¼­ Á¦°Å µÇµµ·Ï ÀÌº¥Æ® Ãß°¡
+            _uiEvent.OnCloseUI += CloseUI; // ì˜¤ë¸Œì íŠ¸ê°€ ì‚­ì œë ë•Œ ê´€ë¦¬ dictionaryì—ì„œ ì œê±° ë˜ë„ë¡ ì´ë²¤íŠ¸ ì¶”ê°€
 
         }
 
 
         /// <summary>
-        /// Addressable Key¸¦ dictionary¿¡ µî·Ï
+        /// Addressable Keyë¥¼ dictionaryì— ë“±ë¡
         /// </summary>
         private void SetAddressableKey() {
             _keyDictionary.Add(nameof(WipeUI), "Wipe_UI.prefab");
@@ -50,7 +50,7 @@ namespace UI {
 
 
         private void CloseUI(GameObject obj) {
-            if (_objDictionary.TryGetValue(obj.GetInstanceID(), out var keyValue)) { // µî·ÏµÇ ÀÖÀ¸¸é Á¦°Å¿Í ¿ÀºêÁ§Æ® ÆÄ±«
+            if (_objDictionary.TryGetValue(obj.GetInstanceID(), out var keyValue)) { // ë“±ë¡ë˜ ìˆìœ¼ë©´ ì œê±°ì™€ ì˜¤ë¸Œì íŠ¸ íŒŒê´´
                 _objDictionary.Remove(obj.GetInstanceID());
                 _dataManager.ReleaseAsset(keyValue.Value);
             }
@@ -58,7 +58,7 @@ namespace UI {
 
 
         /// <summary>
-        /// UI »ı¼º
+        /// UI ìƒì„±
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="parent"></param>
@@ -69,13 +69,13 @@ namespace UI {
             if (_keyDictionary.TryGetValue(name, out var key)) {
                 GameObject prefab = _dataManager.LoadAssetSync<GameObject>(key);
                
-                GameObject instanceObj = _container.InstantiatePrefab(prefab); // inject µ¿½Ã¿¡ »ı¼º
-                // Parent ¼³Á¤
+                GameObject instanceObj = _container.InstantiatePrefab(prefab); // inject ë™ì‹œì— ìƒì„±
+                // Parent ì„¤ì •
                 instanceObj.transform.SetParent(_canvasTag.GetRectTransform());
                 Canvas canvas = instanceObj.GetComponent<Canvas>();
                 if(canvas != null) {
                     canvas.sortingOrder = orederBy;
-                    // canvas ÀÌ¸é À§Ä¡ Áß¾ÓÀ¸·Î °íÁ¤
+                    // canvas ì´ë©´ ìœ„ì¹˜ ì¤‘ì•™ìœ¼ë¡œ ê³ ì •
                     var rt = canvas.GetComponent<RectTransform>();
                     rt.offsetMin = Vector2.zero; // Left, Bottom = 0
                     rt.offsetMax = Vector2.zero; // Right, Top = 0
@@ -83,11 +83,11 @@ namespace UI {
                     rt.anchorMax = Vector2.one;
                 }
 
-                // µî·Ï
+                // ë“±ë¡
                 _objDictionary.Add(instanceObj.GetInstanceID(), new KeyValuePair<GameObject, string>(instanceObj, name));
                 return instanceObj.GetComponent<T>();
             }
-            // ¿¹¿Ü Àü´Ş
+            // ì˜ˆì™¸ ì „ë‹¬
             throw new KeyNotFoundException($"UI prefab not found: {name}");
         }
        

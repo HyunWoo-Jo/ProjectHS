@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
@@ -9,7 +9,7 @@ namespace UI
     public enum WipeDirection {
         Right,
         Left,
-        FillLeft, // Ã¤¿öÁ®ÀÖÀ»¶§ 0 ¹æÇâÀ¸·Î <-
+        FillLeft, // ì±„ì›Œì ¸ìˆì„ë•Œ 0 ë°©í–¥ìœ¼ë¡œ <-
         FillRight, // ->
     }
     public interface IWipeUI {
@@ -28,11 +28,11 @@ namespace UI
 #endif
         }
         /// <summary>
-        /// µ¿ÀÛ 
+        /// ë™ì‘ 
         /// </summary>
-        /// <param name="direction"> ¹æÇâ</param>
-        /// <param name="targetTime"> ½Ã°£ </param>
-        /// <param name="isAutoDestroy"> ÀÚµ¿ ¿ÀºêÁ§Æ® »èÁ¦ </param>
+        /// <param name="direction"> ë°©í–¥</param>
+        /// <param name="targetTime"> ì‹œê°„ </param>
+        /// <param name="isAutoDestroy"> ìë™ ì˜¤ë¸Œì íŠ¸ ì‚­ì œ </param>
         public void Wipe(WipeDirection direction, float targetTime, bool isAutoDestroy) {
             _direction = direction;
             _targetTime = targetTime;
@@ -56,7 +56,7 @@ namespace UI
             SetMatPro(start);
             while (true) {
                 _time += Time.deltaTime;
-                // wipe °ª 
+                // wipe ê°’ 
                 float wipe = Mathf.Lerp(start, end, Mathf.Clamp(_time / _targetTime, 0, 1));
                 SetMatPro(wipe);
                 if (_time >= _targetTime) { break; }

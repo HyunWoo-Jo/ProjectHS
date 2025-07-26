@@ -1,13 +1,13 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Data;
 using Zenject;
 namespace GamePlay
 {
-    // ÀÎ°ÔÀÓ¿¡ »ç¿ëµÇ´Â °ñµå Á¤º¸¸¦ ÀúÀåÇÏ´Â Å¬·¹½º
+    // ì¸ê²Œì„ì— ì‚¬ìš©ë˜ëŠ” ê³¨ë“œ ì •ë³´ë¥¼ ì €ì¥í•˜ëŠ” í´ë ˆìŠ¤
     public class GoldPolicy : IGoldPolicy
     {
         private IGlobalUpgradeRepository _globalUpgradeRepo;
-        private const int _DefaultStartGold = 10; // ½ÃÀÛ °ñµå
+        private const int _DefaultStartGold = 10; // ì‹œì‘ ê³¨ë“œ
 
         [Inject]
         public GoldPolicy(IGlobalUpgradeRepository globalUpgradeRepo) {

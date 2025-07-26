@@ -1,11 +1,11 @@
-using Data;
+Ôªøusing Data;
 using UI;
 using UnityEngine;
 using Zenject;
 namespace Core
 {
     /// <summary>
-    /// UI∏¶ πŸ¿ŒµÂ
+    /// UIÎ•º Î∞îÏù∏Îìú
     /// </summary>
     public class ProjectUIInstaller : MonoInstaller
     {

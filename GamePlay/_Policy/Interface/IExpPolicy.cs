@@ -1,13 +1,13 @@
-using Data;
+ï»¿using Data;
 using UnityEngine;
 
 namespace GamePlay
 {
     public interface IExpPolicy 
     {
-        // ´ÙÀ½ ·¹º§ °æÇèÄ¡ È®ÀÎ
+        // ë‹¤ìŒ ë ˆë²¨ ê²½í—˜ì¹˜ í™•ì¸
         public int GetNextLevelExp(int level);
-        // KillÇßÀ»¶§ µé¾î¿À´Â °æÇèÄ¡ º¸»ó
+        // Killí–ˆì„ë•Œ ë“¤ì–´ì˜¤ëŠ” ê²½í—˜ì¹˜ ë³´ìƒ
         public float CalculateKillExperience(EnemyData enemyData);
     }
 }

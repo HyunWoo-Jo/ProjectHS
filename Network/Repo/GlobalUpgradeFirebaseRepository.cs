@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Data;
 using Zenject;
 using System;
@@ -8,7 +8,7 @@ namespace Network
 {
 
     /// <summary>
-    /// ÀÌÈÄ Firebase ·ÎÁ÷À¸·Î º¯°æ
+    /// ì´í›„ Firebase ë¡œì§ìœ¼ë¡œ ë³€ê²½
     /// </summary>
     public class GlobalUpgradeFirebaseRepository : IGlobalUpgradeRepository
     {
@@ -22,13 +22,13 @@ namespace Network
         }
 
         /// <summary>
-        /// µ¥ÀÌÅÍ ·Îµå
+        /// ë°ì´í„° ë¡œë“œ
         /// </summary>
         public async UniTask LoadValue() {
-            // ¾÷±×·¹ÀÌµå ´Ü°è¸¦ ºÒ·¯¿È user Á¤º¸
+            // ì—…ê·¸ë ˆì´ë“œ ë‹¨ê³„ë¥¼ ë¶ˆëŸ¬ì˜´ user ì •ë³´
             await _upgradeService.GetAllUpgradeTableAsync(_tableSO);
 
-            // Upgrade LevelÀ» ÀĞ¾î¿È
+            // Upgrade Levelì„ ì½ì–´ì˜´
             await _upgradeService.GetAllUpgradeLevelAsync((data) => {  
                 _model.SetNewData(data);
             });
@@ -48,14 +48,14 @@ namespace Network
 
         //// Level
         public void SetLevel(GlobalUpgradeType type, int value) {
-            _upgradeService.SetUpgradeAsync(type.ToString(), value); // ³×Æ®¿öÅ© ¾÷µ¥ÀÌÆ® ¿äÃ»
-            _model.SetValue(type, value); // ¸ğµ¨ ¾÷µ¥ÀÌÆ®
+            _upgradeService.SetUpgradeAsync(type.ToString(), value); // ë„¤íŠ¸ì›Œí¬ ì—…ë°ì´íŠ¸ ìš”ì²­
+            _model.SetValue(type, value); // ëª¨ë¸ ì—…ë°ì´íŠ¸
             _OnValueChanged?.Invoke();
         }
 
-        // ¾÷±×·¹ÀÌµå ´Ü°è¸¦ °¡Áö°í¿È
+        // ì—…ê·¸ë ˆì´ë“œ ë‹¨ê³„ë¥¼ ê°€ì§€ê³ ì˜´
         public int GetLevelLocal(GlobalUpgradeType type) {
-            return _model.GetValue(type); // ·ÎÄÃ¿¡¼­ °¡Áö°í¿È   
+            return _model.GetValue(type); // ë¡œì»¬ì—ì„œ ê°€ì§€ê³ ì˜´   
         }
 
         //// Listeners

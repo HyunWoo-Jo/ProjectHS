@@ -1,11 +1,11 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Network
 {
     /// <summary>
-    /// Network ÇÙ½É ·ÎÁ÷À» °¡Áö°í ¿À´Â interface
+    /// Network í•µì‹¬ ë¡œì§ì„ ê°€ì§€ê³  ì˜¤ëŠ” interface
     /// </summary>
     public interface INetworkService
     {

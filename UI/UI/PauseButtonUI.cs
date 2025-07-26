@@ -1,4 +1,4 @@
-using CustomUtility;
+﻿using CustomUtility;
 using R3;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -19,7 +19,7 @@ namespace UI
             Assert.IsNotNull(_pauseButton);
 #endif
 
-            // ��ư �ʱ�ȭ
+            // 버튼 초기화
             _pauseButton.ToObservableEventTrigger(GetType().Name, nameof(OnInstancePauseUI))
                 .OnPointerDownAsObservable()
                 .ThrottleFirst(TimeSpan.FromSeconds(1))

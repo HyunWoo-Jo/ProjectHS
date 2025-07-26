@@ -1,10 +1,10 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Zenject;
 namespace Data
 {
 
     /// <summary>
-    /// Æ¯Á¤ ½ºÅ×ÀÌÁö ¾Æ·¡ ÀÖ³ª Ã¼Å©
+    /// íŠ¹ì • ìŠ¤í…Œì´ì§€ ì•„ë˜ ìˆë‚˜ ì²´í¬
     /// </summary>
     [CreateAssetMenu(fileName = "UnlockStageUnderSO", menuName = "Scriptable Objects/Unlock/UnlockStageUnderSO")]
     public class UnlockStageUnderSO : UnlockStrategyBaseSO {

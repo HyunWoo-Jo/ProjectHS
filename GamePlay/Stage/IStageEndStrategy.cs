@@ -1,16 +1,16 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace GamePlay
 {
     /// <summary>
-    /// ½ºÅ×ÀÌÁö Á¾·á¸¦ Á¶°ÇÀ» Ã¼Å©ÇÏ´Â Àü·«
+    /// ìŠ¤í…Œì´ì§€ ì¢…ë£Œë¥¼ ì¡°ê±´ì„ ì²´í¬í•˜ëŠ” ì „ëµ
     /// </summary>
     public interface IStageEndStrategy
     {
         /// <summary>
-        /// ½ºÅ×ÀÌÁö Á¾·á Á¶°ÇÀÌ ÃæÁ·µÇ¾ú´ÂÁö È®ÀÎ
+        /// ìŠ¤í…Œì´ì§€ ì¢…ë£Œ ì¡°ê±´ì´ ì¶©ì¡±ë˜ì—ˆëŠ”ì§€ í™•ì¸
         /// </summary>
-        /// <returns>Á¶°ÇÀÌ ÃæÁ·µÇ¸é true, ¾Æ´Ï¸é false</returns>
+        /// <returns>ì¡°ê±´ì´ ì¶©ì¡±ë˜ë©´ true, ì•„ë‹ˆë©´ false</returns>
         bool IsComplete();
     }
 

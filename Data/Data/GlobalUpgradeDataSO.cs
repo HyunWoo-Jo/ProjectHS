@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using CustomUtility;
 using UnityEditor.Graphs;
 using System;
@@ -6,9 +6,9 @@ namespace Data
 {
     [Serializable]
     public class GlobalUpgradeData {
-        [ReadEditor] public int StartPrice; // ½ÃÀÛ ºñ¿ë
-        [ReadEditor] public int PriceIncrement; // ´Ü°è¿¡ µû¸¥ °¡°İ Áõ°¡·®
-        [ReadEditor] public int ValueIncrement; // ´Ü°è¿¡ µû¸¥ ¼öÄ¡Áõ°¡·®
+        [ReadEditor] public int StartPrice; // ì‹œì‘ ë¹„ìš©
+        [ReadEditor] public int PriceIncrement; // ë‹¨ê³„ì— ë”°ë¥¸ ê°€ê²© ì¦ê°€ëŸ‰
+        [ReadEditor] public int ValueIncrement; // ë‹¨ê³„ì— ë”°ë¥¸ ìˆ˜ì¹˜ì¦ê°€ëŸ‰
     }
 
     

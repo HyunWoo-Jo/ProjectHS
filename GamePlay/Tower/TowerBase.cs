@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Data;
 using Zenject;
 using Unity.Mathematics;
@@ -16,14 +16,14 @@ namespace GamePlay
         [SerializeField] protected TowerData towerData;
         [Inject] protected IEnemyDataStore enemyDataStore;
         [ReadEditor] [SerializeField] protected int targetIndex = -1;
-        [SerializeField] private int price; // ÆÇ¸Å °¡°İ
-        [SerializeField] private SpriteRenderer _towerBaseRenderer; // º»Ã¼ Renerder (±×¸²ÀÚ¿¡ »ç¿ë)
+        [SerializeField] private int price; // íŒë§¤ ê°€ê²©
+        [SerializeField] private SpriteRenderer _towerBaseRenderer; // ë³¸ì²´ Renerder (ê·¸ë¦¼ìì— ì‚¬ìš©)
         [SerializeField] protected Animator anim;
         protected static int ShootAnimHashKey = Animator.StringToHash("Shoot"); 
 
         // upgrade data
         public int index;
-        protected float curAttackTime = 0; // ÇöÀç ÀåÀü ½Ã°£
+        protected float curAttackTime = 0; // í˜„ì¬ ì¥ì „ ì‹œê°„
 
         public bool isStop = false;
 
@@ -53,16 +53,16 @@ namespace GamePlay
 
 
         public virtual void Attack() {
-            if (IsAttackAble()) { // °ø°İÀÌ °¡´ÉÇÑ »óÅÂÀÌ¸é
-                AttackLogic(); // °ø°İ »ó¼¼ ³»¿ë È£Ãâ ÇÏÀ§ Å¬·¹½º¿¡¼­ ±¸Çö
+            if (IsAttackAble()) { // ê³µê²©ì´ ê°€ëŠ¥í•œ ìƒíƒœì´ë©´
+                AttackLogic(); // ê³µê²© ìƒì„¸ ë‚´ìš© í˜¸ì¶œ í•˜ìœ„ í´ë ˆìŠ¤ì—ì„œ êµ¬í˜„
             }
         }
         public abstract void AttackLogic();
 
-        public void SetAttackSpeed(float speed) { // °ø°İ ¼Óµµ ¼³Á¤
+        public void SetAttackSpeed(float speed) { // ê³µê²© ì†ë„ ì„¤ì •
             anim.speed = speed;
         }
-        private bool IsAttackAble() { // °ø°İ °¡´É ¿©ºÎ
+        private bool IsAttackAble() { // ê³µê²© ê°€ëŠ¥ ì—¬ë¶€
             if (targetIndex != -1 && curAttackTime >= towerData.attackTime) return true;
             return false;
         }
@@ -71,19 +71,19 @@ namespace GamePlay
         protected virtual void Update() {
             if (IsPause()) return;
             if (enemyDataStore.IsEnemyData()) {
-                SerchIsRangeEnemiesIndex(); // Á¶°Ç¿¡ µû¶ó ¸ÅÇÁ·¹ÀÓ ¹üÀ§ ¾È¿¡ µé¾î¿Â Àû °Ë»ö
-                Attack(); // °ø°İ 
+                SerchIsRangeEnemiesIndex(); // ì¡°ê±´ì— ë”°ë¼ ë§¤í”„ë ˆì„ ë²”ìœ„ ì•ˆì— ë“¤ì–´ì˜¨ ì  ê²€ìƒ‰
+                Attack(); // ê³µê²© 
             }
-            UpdateAttackTimer(); // ½Ã°£ °»½Å
+            UpdateAttackTimer(); // ì‹œê°„ ê°±ì‹ 
         }
 
-        private void SerchIsRangeEnemiesIndex() { // ¹üÀ§¾È¿¡ µé¾î¿Â Àû Ã£±â
-            if (targetIndex != -1 && enemyDataStore.EnemiesLength() > targetIndex) { // Å¸°ÙÀÌ Á¸ÀçÇÏ¸é 
+        private void SerchIsRangeEnemiesIndex() { // ë²”ìœ„ì•ˆì— ë“¤ì–´ì˜¨ ì  ì°¾ê¸°
+            if (targetIndex != -1 && enemyDataStore.EnemiesLength() > targetIndex) { // íƒ€ê²Ÿì´ ì¡´ì¬í•˜ë©´ 
                 EnemyData enemyData = enemyDataStore.GetEnemyData(targetIndex);
-                if (enemyData.isDead || math.distance(enemyData.position, transform.position) > towerData.range) { // Á×¾ú°Å³ª °ø°İ ¹üÀ§¸¦ ÃÊ°úÇßÀ¸¸é ÃÊ±âÈ­
+                if (enemyData.isDead || math.distance(enemyData.position, transform.position) > towerData.range) { // ì£½ì—ˆê±°ë‚˜ ê³µê²© ë²”ìœ„ë¥¼ ì´ˆê³¼í–ˆìœ¼ë©´ ì´ˆê¸°í™”
                     targetIndex = -1;
                 }
-            }else { // Å¸°ÙÀÌ ¾øÀ¸¸é °Ë»ö ½ÃÀÛ
+            }else { // íƒ€ê²Ÿì´ ì—†ìœ¼ë©´ ê²€ìƒ‰ ì‹œì‘
                 int[] temp = new int[1] { -1 };
                 NativeArray<int> resultIndex = new NativeArray<int>(temp, Allocator.TempJob);
                 var handle = new EnemiesSerchJob {
@@ -92,21 +92,21 @@ namespace GamePlay
                     range = towerData.range,
                     resultIndex = resultIndex
                 }.Schedule();
-                handle.Complete(); // ¿Ï·á ´ë±â
-                // ¹üÀ§³» Á¸ÀçÇÏÁö ¾ÊÀ½
+                handle.Complete(); // ì™„ë£Œ ëŒ€ê¸°
+                // ë²”ìœ„ë‚´ ì¡´ì¬í•˜ì§€ ì•ŠìŒ
                 if (resultIndex[0] == -1) {
                     targetIndex = -1;
-                } else {// ¹üÀ§³» Á¸ÀçÇÔ
+                } else {// ë²”ìœ„ë‚´ ì¡´ì¬í•¨
                     targetIndex = resultIndex[0];
                 }
-                resultIndex.Dispose(); // ÇØÁ¦
+                resultIndex.Dispose(); // í•´ì œ
             }
         }
 
         [BurstCompile]
         private struct EnemiesSerchJob : IJob {
             [ReadOnly] public NativeArray<EnemyData> enemies;
-            public NativeArray<int> resultIndex; // temp °á°ú ¹İÈ¯
+            public NativeArray<int> resultIndex; // temp ê²°ê³¼ ë°˜í™˜
             [ReadOnly] public float range;
             [ReadOnly] public float3 position;
             public void Execute() {
@@ -121,7 +121,7 @@ namespace GamePlay
             }
         }
 
-        private void UpdateAttackTimer() { // °ø°İ ½Ã°£ °»½Å
+        private void UpdateAttackTimer() { // ê³µê²© ì‹œê°„ ê°±ì‹ 
             curAttackTime += Time.deltaTime * towerData.attackSpeed.Value;
             if (curAttackTime > towerData.attackTime) {
                 curAttackTime = towerData.attackTime;

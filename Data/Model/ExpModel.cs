@@ -1,4 +1,4 @@
-using CustomUtility;
+ï»¿using CustomUtility;
 using R3;
 using System;
 using UnityEngine;
@@ -13,7 +13,7 @@ namespace Data
         public ReactiveProperty<float> nextExpObservable = new(10);
 
         /// <summary>
-        /// °æÇèÄ¡¸¦ Áõ°¡ / ´©ÀûµÈ °æÇèÄ¡°¡ ´ÙÀ½ ·¹º§ °æÇèÄ¡¸¦ ÃÊ°úÇÏ¸é ·¹º§¾÷
+        /// ê²½í—˜ì¹˜ë¥¼ ì¦ê°€ / ëˆ„ì ëœ ê²½í—˜ì¹˜ê°€ ë‹¤ìŒ ë ˆë²¨ ê²½í—˜ì¹˜ë¥¼ ì´ˆê³¼í•˜ë©´ ë ˆë²¨ì—…
         /// </summary>
         public void AddExp(float amount) {
             if (amount <= 0f) return;
@@ -28,11 +28,11 @@ namespace Data
             _expObservable.Value = newExp;
         }
         /// <summary>
-        /// ÇöÀç °æÇèÄ¡¸¦ °­Á¦·Î ¼³Á¤ 
+        /// í˜„ì¬ ê²½í—˜ì¹˜ë¥¼ ê°•ì œë¡œ ì„¤ì • 
         /// </summary>
         /// <param name="value"></param>
         public void SetExp(float value) {
-            _expObservable.Value = Mathf.Max(0f, value); // À½¼ö ¹æÁö
+            _expObservable.Value = Mathf.Max(0f, value); // ìŒìˆ˜ ë°©ì§€
         }
 
         public ReadOnlyReactiveProperty<float> RO_CurExpObservable => _expObservable;

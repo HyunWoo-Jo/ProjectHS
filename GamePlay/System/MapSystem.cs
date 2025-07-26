@@ -1,4 +1,4 @@
-using Data;
+ï»¿using Data;
 using UnityEngine;
 using Zenject;
 using System.Collections.Generic;
@@ -13,26 +13,26 @@ using CustomUtility;
 namespace GamePlay
 {
     /// <summary>
-    /// ¸Ê »ı¼ºÀ» ´ã´çÇÏ´Â Å¬·¹½º
+    /// ë§µ ìƒì„±ì„ ë‹´ë‹¹í•˜ëŠ” í´ë ˆìŠ¤
     /// </summary>
     [DefaultExecutionOrder(80)]
     public class MapSystem : MonoBehaviour
     {
-        [Inject] private DataManager _dataManager; // Addressable µ¥ÀÌÅÍ °ü¸®
-        [Inject] private GameDataHub _gameDataHub; // map µ¥ÀÌÅÍ ÀúÀå
+        [Inject] private DataManager _dataManager; // Addressable ë°ì´í„° ê´€ë¦¬
+        [Inject] private GameDataHub _gameDataHub; // map ë°ì´í„° ì €ì¥
 
-        private TileSpriteMapper _tileSpriteMapper; // Å×¸¶¿¡ ¸ÂÃç Sprite¸¦ ·Îµå
+        private TileSpriteMapper _tileSpriteMapper; // í…Œë§ˆì— ë§ì¶° Spriteë¥¼ ë¡œë“œ
         private MapGenerator _mapGenerator = new MapGenerator();
-        private bool _isLoadedTema = false; // Tema ·ÎµùÀÌ ¿Ï·á µÇ¾ú³ª Ã¼Å© ÇÏ´Â º¯¼ö
-        private MapTema _loadedTema; // ·ÎµåÇÑ Tema ÀÌ¸§
-        private GameObject _fieldPrefab; // ¸Ê Base Prefab;
+        private bool _isLoadedTema = false; // Tema ë¡œë”©ì´ ì™„ë£Œ ë˜ì—ˆë‚˜ ì²´í¬ í•˜ëŠ” ë³€ìˆ˜
+        private MapTema _loadedTema; // ë¡œë“œí•œ Tema ì´ë¦„
+        private GameObject _fieldPrefab; // ë§µ Base Prefab;
         private readonly string _prefabKey = "Field.prefab"; // Addressable Key
 
-        // »ı¼ºµÈ ¸Ê µ¥ÀÌÅÍ
+        // ìƒì„±ëœ ë§µ ë°ì´í„°
         private List<MapData> _mapDataList;
         private List<Vector3> _pathList;
 
-        // »ı¼ºµÈ ¸Ê ¿ÀºêÁ§Æ®
+        // ìƒì„±ëœ ë§µ ì˜¤ë¸Œì íŠ¸
         private List<GameObject> _mapObjList;
         private GameObject _parent;
 
@@ -47,7 +47,7 @@ namespace GamePlay
         }
 
         private void OnDestroy() {
-            // ÆÄ±«µÉ¶§ µ¥ÀÌÅÍ Á¤¸®
+            // íŒŒê´´ë ë•Œ ë°ì´í„° ì •ë¦¬
             ReleaseTema();
             RelesePrefab();
         }
@@ -61,9 +61,9 @@ namespace GamePlay
             _mapGenerator.SetPathStrategy(strategy);
         }
 
-        #region public (PlayScene.cs¿¡¼­ È£ÃâÇÏ´Â ÇÔ¼ö)
+        #region public (PlayScene.csì—ì„œ í˜¸ì¶œí•˜ëŠ” í•¨ìˆ˜)
         /// <summary>
-        /// map Å×¸¶¿¡ ¸ÂÃç Sprite¸¦ ·Îµå 
+        /// map í…Œë§ˆì— ë§ì¶° Spriteë¥¼ ë¡œë“œ 
         /// </summary>
         public void LoadMapTema(MapTema tema) {
             if (_isLoadedTema) {
@@ -75,32 +75,32 @@ namespace GamePlay
             return GridUtility.GridToWorldPosition(x, y) * 0.5f;
         }
 
-        // ¸Ê »ı¼º
+        // ë§µ ìƒì„±
         public void GenerateMap(int sizeX, int sizeY) {
-            // ¸Ê »ı¼º
+            // ë§µ ìƒì„±
             _mapDataList = _mapGenerator.GenerateMap(sizeX, sizeY, out _pathList);
 
             OnMapChanged?.Invoke();
 
-            // Map Data ±â¹İÀ¸·Î slot, position »ı¼º
+            // Map Data ê¸°ë°˜ìœ¼ë¡œ slot, position ìƒì„±
             _gameDataHub.ClearSlotDataList();
             
             NativeArray<float3> positions = new NativeArray<float3>(_mapDataList.Count, Allocator.Persistent);
             int index = 0;
             foreach (var mapData in _mapDataList) {
-                // position »ı¼º
+                // position ìƒì„±
                 positions[index++] = mapData.position;
 
-                 // Slot data »ı¼º
+                 // Slot data ìƒì„±
                  SlotData slotData = new SlotData {
-                    slotState = mapData.type == TileType.Ground ? SlotState.PlaceAble : SlotState.Blocked, // Gound¸é »ç¿ë °¡´É ¿µ¿ª, ¾Æ´Ï¸é »ç¿ë ºÒ°¡ ¿µ¿ª
+                    slotState = mapData.type == TileType.Ground ? SlotState.PlaceAble : SlotState.Blocked, // Goundë©´ ì‚¬ìš© ê°€ëŠ¥ ì˜ì—­, ì•„ë‹ˆë©´ ì‚¬ìš© ë¶ˆê°€ ì˜ì—­
             
                 };
-                _gameDataHub.AddSlot(slotData); // µ¥ÀÌÅÍ Ãß°¡
+                _gameDataHub.AddSlot(slotData); // ë°ì´í„° ì¶”ê°€
             }
             _gameDataHub.SetWorldPositionData(positions); // Set data
             _gameDataHub.SetMapSize(sizeX, sizeY);
-            // Instance ¸Ê µ¥ÀÌÅÍ ·Îµå±îÁö ´ë±âÈÄ »ı¼º 
+            // Instance ë§µ ë°ì´í„° ë¡œë“œê¹Œì§€ ëŒ€ê¸°í›„ ìƒì„± 
             StartCoroutine(InstanceMapCoroutine());
         }  
 
@@ -109,15 +109,15 @@ namespace GamePlay
 
 
         /// <summary>
-        /// PrefabÀ» ·Îµå
+        /// Prefabì„ ë¡œë“œ
         /// </summary>
         private void LoadFieldPrefab() {
             _dataManager.LoadAssetAsync<GameObject>(_prefabKey).ContinueWith(fieldPrefab => {
-                _fieldPrefab = fieldPrefab; // ·Îµå°¡ ¿Ï·áµÇ¸é ÇÒ´ç
+                _fieldPrefab = fieldPrefab; // ë¡œë“œê°€ ì™„ë£Œë˜ë©´ í• ë‹¹
             });
         }
         /// <summary>
-        /// Prefab ·Îµå¸¦ Á¦°ÅÇÏ´Â ÇÔ¼ö Destroy ¿¡¼­ È£Ãâ
+        /// Prefab ë¡œë“œë¥¼ ì œê±°í•˜ëŠ” í•¨ìˆ˜ Destroy ì—ì„œ í˜¸ì¶œ
         /// </summary>
         private void RelesePrefab() {
             _dataManager.ReleaseAsset(_prefabKey);
@@ -125,20 +125,20 @@ namespace GamePlay
        
 
         /// <summary>
-        /// µ¥ÀÌÅÍ Á¤¸®
+        /// ë°ì´í„° ì •ë¦¬
         /// </summary>
         private void ReleaseTema() {
-            if (_isLoadedTema) { // ·ÎµåÇÑ »óÅÂ¶ó¸é
-                _tileSpriteMapper.ReleaseTema(_loadedTema); // ¾ğ·Îµå
+            if (_isLoadedTema) { // ë¡œë“œí•œ ìƒíƒœë¼ë©´
+                _tileSpriteMapper.ReleaseTema(_loadedTema); // ì–¸ë¡œë“œ
                 _isLoadedTema = false;
             }
         }
 
 
-        // »ı¼ºµÈ Data¸¦ ±â¹İÀ¸·Î Map ¿ÀºêÁ§Æ® »ı¼ºÇÏ´Â ÄÚ·çÆ¾ (GenerateMap) ¿¡¼­ È£Ãâ
+        // ìƒì„±ëœ Dataë¥¼ ê¸°ë°˜ìœ¼ë¡œ Map ì˜¤ë¸Œì íŠ¸ ìƒì„±í•˜ëŠ” ì½”ë£¨í‹´ (GenerateMap) ì—ì„œ í˜¸ì¶œ
         private IEnumerator InstanceMapCoroutine() {
             while (true) {
-                if (_isLoadedTema && _mapDataList != null && _mapDataList.Count > 0 && _fieldPrefab != null) { // ·Îµå »óÅÂ È®ÀÎ
+                if (_isLoadedTema && _mapDataList != null && _mapDataList.Count > 0 && _fieldPrefab != null) { // ë¡œë“œ ìƒíƒœ í™•ì¸
                     _parent = new GameObject();
                     _parent.name = "Tile Parent";
                      _mapObjList = _mapGenerator.InstanceMap(_fieldPrefab, _parent.transform, _mapDataList, _tileSpriteMapper);
