@@ -12,12 +12,14 @@ namespace Core
     public class MainLobbySceneInstaller : MonoInstaller
     {
         public override void InstallBindings() {
-            // UI ViewModel을 Bind
-            Container.Bind<MainLobbyNavigateViewModel>().AsTransient();
-            Container.BindInterfacesAndSelfTo<MainLobbyUpgradeViewModel>().AsCached();
+
+            Container.Bind<MainLobbyNavigateViewModel>().AsCached();
+            Container.Bind<MainLobbyUpgradeViewModel>().AsCached();
 
             // Service;
             Container.Bind<IGlobalUpgradePurchaseService>().To<GlobalUpgradePurchaseService>().AsCached();
+            
+
            
         }
     }

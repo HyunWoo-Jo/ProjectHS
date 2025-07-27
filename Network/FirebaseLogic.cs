@@ -119,5 +119,9 @@ namespace Network
         public UniTask<DataSnapshot> GetUpgradeTable() {
             return _databaseReference.Child("UpgradeTable").GetValueAsync().AsUniTask();
         }
+
+        public UniTask<DataSnapshot> GetUpgradeLevel(string key) {
+            return _databaseReference.Child("UserData").Child(_user.UserId).Child("Upgrade").Child(key).GetValueAsync().AsUniTask();
+        }
     }
 }

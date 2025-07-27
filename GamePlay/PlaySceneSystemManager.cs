@@ -9,7 +9,7 @@ using CustomUtility;
 using Contracts;
 using Cysharp.Threading.Tasks;
 using R3;
-using Unity.VisualScripting.YamlDotNet.Core.Tokens;
+using Domain;
 namespace GamePlay
 {
     /// <summary>
@@ -45,7 +45,7 @@ namespace GamePlay
         [Inject] private GoldModel _goldModel; // 골드 모델
         [Inject] private ExpModel _expModel; // 경험치 모델
         [Inject] private HpModel _hpModel; // hp 모델
-        [Inject] private SelectedUpgradeModel _selectedUpgradeModel; // upgrade 모델
+        [Inject] private SelectedUpgradeModel _selectedUpgradeModel;
 
         /// UI
         [SerializeField] private GoldDropper _goldDropper;
@@ -55,7 +55,7 @@ namespace GamePlay
         [Inject] private IGoldPolicy _goldPolicy;
         [Inject] private IHpPolicy _hpPolicy;
         [Inject] private IExpPolicy _expPolicy;
-        [Inject] private ITowerPricePolicy _towerPolicy;
+
         
         // Service
         [Inject] private ITowerPurchaseService _towerPurchaseService;
@@ -117,33 +117,28 @@ namespace GamePlay
 
             // EnemySystem
             _goldDropper.OnArrived += (enemyData) => {
-                _goldModel.goldObservable.Value += _goldPolicy.CalculateKillReward(enemyData);
+                _goldModel.TryEarnGold(1);
             };
             _mapSystem.OnMapChanged += () => {
                 _gameDataHub.SetPath(_mapSystem.GetPath());
             };
             _enemySystem.OnEnemyDied += (enemyData) => { // 골드 (생성, 이동) 이펙트
                 _goldDropper.SpawnAndMoveToTarget(enemyData);
-                _expModel.AddExp(_expPolicy.CalculateKillExperience(enemyData)); // 경험치 추가
+                _expModel.AddExp(1); // 경험치 추가
             };
             _enemySystem.OnEnemyFinishedPath += (enemyData) => { // 라이프 소모
-                _hpModel.curHpObservable.Value -= _hpPolicy.CalculateHpPenaltyOnLeak(enemyData);
+                _hpModel.ConsumeHp(1);
             };
 
             // 게임 End 처리
-            _hpModel.curHpObservable
+            _hpModel.RO_CurHpObservable
                 .ThrottleLastFrame(1)
                 .Subscribe(GameEnd)
                 .AddTo(this);
 
-            // 다음 레벨 경험치 등록
-            _expModel.levelObservable 
-                .Select(_expPolicy.GetNextLevelExp)
-                .Subscribe(nextLevel => _expModel.nextExpObservable.Value = nextLevel)
-                .AddTo(this);
 
-            // UpgradeSystem
-            _expModel.levelObservable
+            //// UpgradeSystem
+            _expModel.RO_LevelObservable
                 .Subscribe(_upgradeSystem.QueueUpgradeRequest)
                 .AddTo(this);
 
@@ -167,20 +162,17 @@ namespace GamePlay
 
 
         private void Start() {
-            // 초기화
+
+            //// 초기 타워 가격 설정
+            _towerPurchaseModel.SetTowerPrice(10);
+
+            //// 초기 HP 설정
+            _hpModel.SetMaxHp(20);
+            _hpModel.SetCurHp(20);
+
+            //// 초기 reroll 횟수 추가
+            _selectedUpgradeModel.AddRerollCount(1);
             
-            // 초기 골드 설정
-            _goldModel.goldObservable.Value += _goldPolicy.GetPlayerStartGold();
-            // 초기 타워 가격 설정
-            _towerPurchaseModel.towerPriceObservable.Value = _towerPolicy.GetStartPrice();
-
-            // 초기 HP 설정
-            int startHp = _hpPolicy.GetStartPlayerHp();
-            _hpModel.maxHpObservable.Value = startHp;
-            _hpModel.curHpObservable.Value = startHp;
-
-            // 초기 reroll 횟수 추가
-            _selectedUpgradeModel.rerollCountObservable.Value = 1;
         }
  
         /// <summary>

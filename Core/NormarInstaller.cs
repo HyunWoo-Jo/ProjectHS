@@ -1,6 +1,7 @@
 ﻿using GamePlay;
 using UnityEngine;
 using Zenject;
+using Domain;
 namespace Core
 {
 
@@ -14,6 +15,7 @@ namespace Core
             Container.Bind<IGoldPolicy>().To<GoldPolicy>().AsCached();
             Container.Bind<IHpPolicy>().To<HpPolicy>().AsCached();
             Container.Bind<IExpPolicy>().To<ExpPolicy>().AsCached();
+
             Container.Bind<ITowerPricePolicy>().To<TowerPricePolicy>().AsCached();
             Container.Bind<IRewardPolicy>().To<RewardPolicy>().AsCached();
         }

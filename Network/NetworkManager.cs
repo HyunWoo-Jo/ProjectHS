@@ -8,6 +8,8 @@ using System.Collections;
 using Data;
 using Cysharp.Threading.Tasks;
 using Firebase.Database;
+using UnityEditor.VersionControl;
+using Contracts;
 namespace Network
 {
     /// <summary>
@@ -33,7 +35,7 @@ namespace Network
                 await _networkLogic.GuestLoginAsync();
             } catch  {
                 // 로그인 실패 네트워크 문제일 확률이 높음
-                await Task.Delay(1000); // 1초 마다 재접속 시도
+                await UniTask.Delay(1000); // 1초 마다 재접속 시도
                 if (isClosed) return;
                 LoginAsync();
                 return;
@@ -42,7 +44,7 @@ namespace Network
         public async UniTask<bool> IsConnectedAsync() {
             return await _networkLogic.IsConnectedAsync();
         }
-        
+
 
 
 
@@ -50,12 +52,15 @@ namespace Network
 
 
         ////////////// User Service   
-        public async UniTask GetUserCrystalAsync(Action<int> completeAction) {
-            await _networkLogic.GetUserCrystal().ContinueWith(task => {
-                if (task.Exists) {
-                    completeAction?.Invoke(Convert.ToInt32(task.Value));
-                }
-            });     
+        public async UniTask<int> GetUserCrystalAsync() {
+            var task = await _networkLogic.GetUserCrystal();
+
+            if (task.Exists) {
+                return Convert.ToInt32(task.Value);
+            }
+
+            // 값이 없을 경우 기본값 반환 (또는 예외 처리)
+            return 0;
         }
 
         public async UniTask SaveUseCrystalAsync(int userCrystal) {
@@ -67,7 +72,7 @@ namespace Network
         /// <summary>
         /// ScritableObject Upgrade Table을 갱신함
         /// </summary>
-        public UniTask GetAllUpgradeTableAsync(GlobalUpgradeDataSO tableSO) {
+        public UniTask GetAllUpgradeTableAsync(GlobalUpgradeTableSO tableSO) {
             // 버전 체크
             return _networkLogic.GetVersion().ContinueWith(task => {
                 if (task.Exists) {        
@@ -82,31 +87,43 @@ namespace Network
                 }
             });
         }
-        public UniTask GetAllUpgradeLevelAsync(Action<Dictionary<string, int>> complate) {
-
-            return _networkLogic.GetAllUpgrade().ContinueWith(task => {
-                if (task.Exists) {
-                    var objDict = task.Value as IDictionary<string, object>;
-                    if (objDict == null) {
-                        Debug.LogError("변환 실패");
-                        return;
-                    }
-                    var intDict = new Dictionary<string, int>();
-                    foreach (var kvp in objDict) {
-                        try {
-                            intDict[kvp.Key] = Convert.ToInt32(kvp.Value); // long to int32로 변환 (Firebase는 기본 long형)
-                        } catch (Exception e) {
-                            Debug.LogWarning($"키 {kvp.Key} 변환 실패: {e.Message}");
-                        }
-                    }
-                    complate?.Invoke(intDict);
+        public async UniTask<Dictionary<string, int>> GetAllUpgradeLevelAsync() {
+            DataSnapshot snapshot = await _networkLogic.GetAllUpgrade();
+            if (snapshot.Exists) {
+                var objDict = snapshot.Value as IDictionary<string, object>;
+                if (objDict == null) {
+                    Debug.LogError("변환 실패");
+                    return null;
                 }
-            });
+                var intDict = new Dictionary<string, int>();
+                foreach (var kvp in objDict) {
+                    try {
+                        intDict[kvp.Key] = Convert.ToInt32(kvp.Value); // long to int32로 변환 (Firebase는 기본 long형)
+                    } catch (Exception e) {
+                        Debug.LogWarning($"키 {kvp.Key} 변환 실패: {e.Message}");
+                    }
+                }
+                return intDict;
+            }
+            return null;
         }
 
         public void SetUpgradeAsync<T>(string key, T value) {
             _networkLogic.SetUpgrade(key, value);
         }
+
+        /// <summary>
+        /// 실패시 -1
+        /// </summary>
+        public async UniTask<int> GetUpgradeLevelAsync(string key) {
+            var snapshot = await _networkLogic.GetUpgradeLevel(key);
+            if (snapshot.Exists) {
+                return Convert.ToInt32(snapshot.Value);
+            }
+            return -1;
+        }
+
+
 
         //////////////
     }

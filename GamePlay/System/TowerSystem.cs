@@ -9,6 +9,7 @@ using CustomUtility;
 using ModestTree;
 using System;
 using UI;
+using Domain;
 namespace GamePlay
 {
     [DefaultExecutionOrder(80)]
@@ -24,11 +25,10 @@ namespace GamePlay
         [SerializeField] private float3 _towerOffset = new Vector3(0f, 0.75f, 0f);
 
         // UI
+        [Inject] private TowerSaleModel _towerSaleModel;
+        
         private GameObject _sellTowerViewObj;
 
-        // Model
-
-        [Inject] private TowerSaleModel _saleModel;
 
 
         private List<string> _towerKeyList = new List<string> { // Addressable Key
@@ -40,7 +40,8 @@ namespace GamePlay
         
         [SerializeField] private SpriteRenderer _towerShadowObjRenderer; // 타워의 그림자를 표현
         private bool _isOnShadow = false;
-        
+
+
         private void Awake() {
 #if UNITY_EDITOR
             Assert.IsNotNull(_towerShadowObjRenderer);
@@ -48,7 +49,7 @@ namespace GamePlay
             // Tower 로딩
             _dataManager.LoadAssetsByLabelAsync<GameObject>(_towerLabel).ContinueWith(towerList => {
                 foreach (var prefab in towerList) { // 타워 등록
-                    _towerPrefabDictionary[prefab.name] = prefab; 
+                    _towerPrefabDictionary[prefab.name] = prefab;
                 }
             });
             // Sell UI 생성
@@ -56,13 +57,8 @@ namespace GamePlay
             _sellTowerViewObj.SetActive(false);
         }
 
-        private void OnDestroy() {
-            _dataManager.ReleaseAssetsByLabel(_towerLabel);
-        }
-        // tower 생성
-        // 성공 true 실패 false
-        public bool TryAddTower() {
-            // 비어있는 슬로 확인
+
+        public int SerchEmptySlot() {
             var slotList = _gameDataHub.GetSlotList();
             int index = -1;
             // 비어있는 슬롯 검색
@@ -72,10 +68,14 @@ namespace GamePlay
                     break;
                 }
             }
-            if (index == -1) {
-                return false;
-            }
-            // Random한 Tower 생성
+            return index;
+        }
+
+        /// <summary>
+        /// Tower 추가 
+        /// </summary>
+        /// <param name="index"> 인덱스 영역에 추가 </param>
+        public void AddTower(int index) {
             string key = _towerKeyList[UnityEngine.Random.Range(0, _towerKeyList.Count)];
             GameObject towerPrefab = _towerPrefabDictionary[key];
            
@@ -85,7 +85,6 @@ namespace GamePlay
             // 등록
             RegisterTowerToSlot(towerObj, index);
             
-            return true;
         }
 
         /// <summary>
@@ -213,7 +212,7 @@ namespace GamePlay
 
         private void OnShowSelaUI() {
             _sellTowerViewObj?.SetActive(true);
-            _saleModel.costObservable.Value = _seletedTower.Price;
+            _towerSaleModel.SetTowerCost(_seletedTower.Price);
         }
 
 

@@ -18,6 +18,7 @@ namespace Network
         UniTask SetUserCrystal(int value);
 
         UniTask<DataSnapshot> GetAllUpgrade();
+        UniTask<DataSnapshot> GetUpgradeLevel(string key);
         UniTask SetUpgrade<T>(string key, T value);
 
         UniTask<DataSnapshot> GetVersion();

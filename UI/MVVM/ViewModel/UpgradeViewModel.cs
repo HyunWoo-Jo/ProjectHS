@@ -6,6 +6,7 @@ using Contracts;
 using System.Collections.Generic;
 using System.Diagnostics;
 using R3;
+using Domain;
 namespace UI
 {
     public class UpgradeViewModel
@@ -14,12 +15,10 @@ namespace UI
         [Inject] private IUpgradeService _upgradeService;
 
      
-        public ReadOnlyReactiveProperty<int> RO_RerollCountObservable => _model.rerollCountObservable;
+        public ReadOnlyReactiveProperty<int> RO_RerollCountObservable => _model.GetRO_RerollCount;
 
 
-        public ReadOnlyReactiveProperty<UpgradeDataSO> GetRO_UpgradeDataObservable(int index) {
-            return _model.upgradeDatasObservable[index];
-        }
+        public ReadOnlyReactiveProperty<IUpgradeData> GetRO_UpgradeDataObservable(int index) => _model.GetRO_UpgradeData(index);
 
         /// <summary>
         /// 업그레이드 선택
@@ -38,12 +37,7 @@ namespace UI
         /// <summary>
         /// UI 갱신
         /// </summary>
-        public void Notify() {
-            foreach (var dataObservable in _model.upgradeDatasObservable) {
-                dataObservable.ForceNotify();
-            }
-            _model.rerollCountObservable.ForceNotify();
-        }
+        public void Notify() => _model.Notify();
 
     }
 } 

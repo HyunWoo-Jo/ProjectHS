@@ -3,21 +3,19 @@ using Zenject;
 using System;
 using Data;
 using R3;
+using Domain;
 namespace UI
 {
     public class HpViewModel {
-        [Inject] private HpModel _hpModel;   
+        [Inject] private HpModel _model;   
         
-        public ReadOnlyReactiveProperty<int> RO_CurHpObservable => _hpModel.curHpObservable;
-        public ReadOnlyReactiveProperty<int> RO_MaxHPObservable => _hpModel.maxHpObservable;
+        public ReadOnlyReactiveProperty<int> RO_CurHpObservable => _model.RO_CurHpObservable;
+        public ReadOnlyReactiveProperty<int> RO_MaxHPObservable => _model.RO_MaxHpObservable;
 
         /// <summary>
         /// 갱신 알림
         /// </summary>
-        public void Notify() {
-            _hpModel.curHpObservable.ForceNotify();
-            _hpModel.maxHpObservable.ForceNotify();
-        }
+        public void Notify() => _model.Notify();
 
 
 

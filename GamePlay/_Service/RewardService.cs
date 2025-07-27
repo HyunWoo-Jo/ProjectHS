@@ -2,6 +2,7 @@
 using Contracts;
 using Zenject;
 using Data;
+using Domain;
 namespace GamePlay
 {
     /// <summary>
@@ -9,19 +10,17 @@ namespace GamePlay
     /// </summary>
     public class RewardService : IRewardService {
         [Inject] private IRewardPolicy _rewardPolicy;
-        [Inject] private ICrystalRepository _crystalRepo;
+        [Inject] private CrystalModel _crystalModel;
+        [Inject] private WaveStatusModel _waveModel;
 
-        private bool _isProcess = false;
         public int CalculateRewardCrystal() {
-            return _rewardPolicy.CalculateCrystalReward();
+            return _rewardPolicy.CalculateCrystalReward(_waveModel.WaveLevel);
         }
 
         public void ProcessFinalRewards() {
-            if (_isProcess) return; // 한번만 처리하도록 설정
-            int reward = _rewardPolicy.CalculateCrystalReward();
+            int reward = CalculateRewardCrystal();
             if (reward <= 0) return;
-            _crystalRepo.TryEarn(reward);
-            _isProcess = true;
+            _ = _crystalModel.TryEarn(reward);
         }
     }
 }

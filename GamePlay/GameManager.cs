@@ -8,7 +8,7 @@ using CustomUtility;
 using Zenject;
 using UI;
 using UnityEngine.SceneManagement;
-
+using Contracts;
 namespace GamePlay {
     /*
     게임 상태 관리	    로딩 중 / 게임 중 / 일시정지 / 클리어 등

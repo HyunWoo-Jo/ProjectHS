@@ -1,9 +1,9 @@
-﻿using UnityEngine;
-using Data;
+﻿using Cysharp.Threading.Tasks;
+using UnityEngine;
 namespace Contracts
 {
     public interface IGlobalUpgradePurchaseService
     {
-        bool TryPurchase(GlobalUpgradeType type); // 업그레이드 구매 시도
+        UniTask<bool> TryPurchaseAsync(GlobalUpgradeType type); // 업그레이드 구매 시도
     }
 }
