@@ -5,7 +5,7 @@ namespace Domain
     /// <summary>
     /// 인게임 골드 상태를 관리하는 도메인 모델
     /// </summary>
-    public sealed class GoldModel {
+    public class GoldModel {
         [Inject] private IGoldPolicy _policy;
 
         private readonly ReactiveProperty<int> _goldObservable = new(20);

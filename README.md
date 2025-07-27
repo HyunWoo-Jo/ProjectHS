@@ -138,7 +138,7 @@ ProjectHS는 UI의 복잡도와 유지보수 가능성을 고려하여 **MVVM �
 
 ### 의존성 주입 흐름
 
-- `Repository`는 외부 데이터 접근을 전담하며 `ViewModel`이 직접 접근하지 않도록 분리합니다.
+- `Repository`는 외부 데이터 접근을 전담합니다.
 - `ViewModel`은 데이터를 가공하고 필요한 로직을 `Service`에 위임합니다.
 - 모든 의존성은 **Zenject**를 통해 주입하며, **테스트 환경에서도 대체 가능**하도록 설계됩니다.
 
@@ -154,8 +154,9 @@ classDiagram
         <<MonoBehaviour>>
         - UnityUIReference
         - ViewModel  // Inject
-        + Awake()
-        + UpdateUI(data)
+        - Awake()
+        - Bind()
+        - UpdateUI(data)
     }
 
     class ViewModel {
@@ -169,18 +170,23 @@ classDiagram
         <<interface>>
         + GetValue() Data
         + SetValue(Data)
-        + RO_P() ReadOnlyReactiveProperty
+
     }
 
     class Repository {
-        - Model _model
         + GetValue() Data
         + SetValue(Data)
-        + RO_P() ReadOnlyReactiveProperty
     }
 
     class Model {
-        + ReactiveProperty // R3
+        - ReactiveProperty // R3
+        + DomainLogics()
+        + RO_P() ReadOnlyReactiveProperty
+
+    }
+
+    class IPolicy{
+        + CalculatePolicys()
     }
 
     class IService {
@@ -196,13 +202,14 @@ classDiagram
         + TestFunc()
     }
 
+    Model --> IPolicy : 정책 확인
     MonoBehaviour <|-- View       
     View o--> ViewModel               
-    ViewModel --> IRepository : Observe  
     ViewModel --> IService              
-    IRepository <|-- Repository     
-    Repository o--> Model : Observe  
-    ViewModel --> Model : Observe           
+    IRepository <|-- Repository    
+    ViewModel --> Model : Observe  
+
+    Model --> IRepository : 외부에 데이터를 저장할 경우 사용  
     UITest ..> ViewModel : tests  
     IService <|-- Service
 ```

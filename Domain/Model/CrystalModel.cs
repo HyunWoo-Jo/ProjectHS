@@ -6,7 +6,7 @@ using Contracts;
 using Cysharp.Threading.Tasks;
 namespace Domain
 {
-    public sealed class CrystalModel
+    public class CrystalModel
     {
         [Inject] private ICrystalRepository _repo;
 

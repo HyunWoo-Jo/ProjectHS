@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Domain
 {
-    public sealed class ExpModel 
+    public class ExpModel 
     {
         [Inject] private IExpPolicy _expPolicy;
 

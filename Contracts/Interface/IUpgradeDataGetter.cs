@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 namespace Contracts
 {
     public interface IUpgradeData : IApply, IUnlock
