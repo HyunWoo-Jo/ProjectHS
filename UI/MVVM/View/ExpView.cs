@@ -44,7 +44,7 @@ namespace UI
         ////////////////////////////////////////////////////////////////////////////////////
         // your logic here
         private void UpdateExpUI(float value) {
-            _fillImage.fillAmount = _viewModel.GetExpRation();
+            _fillImage.fillAmount = _viewModel.ExpRatio;
         }
         private void UpdateLevelUI(int value) {
             _levelText.text = "Level " + value.ToString();

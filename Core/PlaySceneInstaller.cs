@@ -5,6 +5,7 @@ using GamePlay;
 using UI;
 using Contracts;
 using System.Linq;
+using Domain;
 namespace Core
 {
     public class PlaySceneInstaller : MonoInstaller
@@ -17,16 +18,17 @@ namespace Core
 
 
             // Settings
-            Container.Bind<StageSettingsModel>().AsCached();
+            Container.Bind<StageSettings>().AsCached();
 
 
             // Play Scene에서만 사용되는  Model
-            Container.Bind<TowerPurchaseModel>().AsCached();
-            Container.Bind<WaveStatusModel>().AsCached(); // Wave 정보
+
             Container.Bind<GoldModel>().AsCached();
             Container.Bind<ExpModel>().AsCached();
             Container.Bind<HpModel>().AsCached();
-            Container.Bind<SelectedUpgradeModel>().AsCached();
+
+            Container.Bind<TowerPurchaseModel>().AsCached();
+            Container.Bind<WaveStatusModel>().AsCached();
             Container.Bind<TowerSaleModel>().AsCached();
 
             // System
@@ -47,17 +49,20 @@ namespace Core
             Container.Bind<ISellTowerService>().To<SellTowerService>().AsCached();
             Container.Bind<IUpgradeService>().To<UpgradeService>().AsCached();
 
+
             // Play Scene에서만 사용되는  View Model
-            Container.BindInterfacesAndSelfTo<TowerPurchaseViewModel>().AsCached();
-            Container.BindInterfacesAndSelfTo<WaveStatusViewModel>().AsCached();
             Container.BindInterfacesAndSelfTo<GoldViewModel>().AsCached();
             Container.BindInterfacesAndSelfTo<ExpViewModel>().AsCached();
             Container.BindInterfacesAndSelfTo<HpViewModel>().AsCached();
-            Container.BindInterfacesAndSelfTo<PausePanelViewModel>().AsCached();
-            Container.BindInterfacesAndSelfTo<UpgradeViewModel>().AsCached();
-            Container.BindInterfacesAndSelfTo<RewardViewModel>().AsCached();
-            Container.BindInterfacesAndSelfTo<SellTowerViewModel>().AsCached();
 
+            Container.Bind<TowerPurchaseViewModel>().AsCached();
+            Container.Bind<WaveStatusViewModel>().AsCached();  
+            Container.Bind<SellTowerViewModel>().AsCached();
+            Container.Bind<PausePanelViewModel>().AsCached();
+
+            Container.Bind<RewardViewModel>().AsCached();
+            Container.Bind<SelectedUpgradeModel>().AsCached();
+            Container.Bind<UpgradeViewModel>().AsCached();
 
             // So 의존 주입
             Resources.LoadAll<UpgradeStrategyBaseSO>("UpgradeData").ToList().ForEach(Container.QueueForInject);

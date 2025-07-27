@@ -7,6 +7,7 @@ using TMPro;
 using ModestTree;
 using R3;
 using System;
+using Contracts;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI {
@@ -24,19 +25,43 @@ namespace UI {
             RefAssert();
 #endif
             _cards = GetComponentsInChildren<UpgradeCard_UI>();
-            
-            // UI 초기화
-            for(int i = 0; i < _cards.Length; i++) {
+
+            Bind();
+            ButtonInit();
+
+            // UI 갱신
+            _viewModel.Notify();
+        }
+        
+
+#if UNITY_EDITOR
+        // 검증
+        private void RefAssert() {
+            Assert.IsNotNull(_rerollText);
+        }
+#endif
+
+
+        /// <summary>
+        /// Bind
+        /// </summary>
+        private void Bind() {
+            for (int i = 0; i < _cards.Length; i++) {
                 int capturedIndex = i;
                 _viewModel.GetRO_UpgradeDataObservable(i)
+                    .ThrottleLastFrame(1)
                     .Subscribe(data => UpdateUI(capturedIndex, data))
                     .AddTo(this);
             }
             _viewModel.RO_RerollCountObservable
-                .Subscribe(UpdateRerollUI)
-                .AddTo(this);
+              .Subscribe(UpdateRerollUI)
+              .AddTo(this);
+        }
 
-            // 버튼 초기화
+        /// <summary>
+        /// 버튼 초기화
+        /// </summary>
+        private void ButtonInit() {
             string className = GetType().Name;
             for (int i = 0; i < _cards.Length; i++) {
                 int capturedIndex = i;
@@ -55,27 +80,17 @@ namespace UI {
                     .AddTo(this);
 
             }
-            // UI 갱신
-            _viewModel.Notify();
         }
-        
 
-#if UNITY_EDITOR
-        // 검증
-        private void RefAssert() {
-            Assert.IsNotNull(_rerollText);
-        }
-#endif
         // UI 갱신
-        private void UpdateUI(int index, UpgradeDataSO updateData) {
-            UpgradeDataSO upgradeData = updateData;
+        private void UpdateUI(int index, IUpgradeData upgradeData) {
             UpgradeCard_UI card = _cards[index];
             if (upgradeData != null) {
-                card.SetSprite(upgradeData.sprite);
-                card.SetName(upgradeData.upgradeName);
-                card.SetNameColor(_style.GetColor(upgradeData.rarity));
+                card.SetSprite(upgradeData.Sprite());
+                card.SetName(upgradeData.UpgradeName());
+                card.SetNameColor(_style.GetColor((Rarity)upgradeData.Rarity()));
 
-                card.SetDescription(upgradeData.description);
+                card.SetDescription(upgradeData.Description());
                 card.gameObject.SetActive(true);
 
             } else {

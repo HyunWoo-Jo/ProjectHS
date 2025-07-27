@@ -9,7 +9,7 @@ namespace Network
     /// </summary>
     public interface IUserNetworkService
     {
-        UniTask GetUserCrystalAsync(Action<int> completeAction);
+        UniTask<int> GetUserCrystalAsync();
         UniTask SaveUseCrystalAsync(int userCrystal);
 
   

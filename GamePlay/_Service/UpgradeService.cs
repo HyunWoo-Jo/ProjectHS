@@ -2,6 +2,7 @@
 using Contracts;
 using Zenject;
 using Data;
+using Domain;
 namespace GamePlay
 {
     public class UpgradeService : IUpgradeService 
@@ -10,16 +11,19 @@ namespace GamePlay
         [Inject] private IUpgradeSystem _upgradeSystem;
 
         public void Reroll(int index) {
-            var list = _upgradeSystem.GetRandomUpgradeDataList(1);
-            if (list.Count > 0) {
-                _selectedUpgradeModel.upgradeDatasObservable[index].Value = list[0];
+            Debug.Log("Rerl");
+            if (_selectedUpgradeModel.RerollCount > 0) {
+                var list = _upgradeSystem.GetRandomUpgradeDataList(1);
+                if (list.Count > 0) {
+                    _selectedUpgradeModel.SetUpgradeData(index, list[0]);
+                }
+                // model 업데이트
+                _selectedUpgradeModel.UseRerollCount();
             }
-            // model 업데이트
-            _selectedUpgradeModel.rerollCountObservable.Value -= 1;
         }
 
         public void ApplyUpgrade(int index) {
-            _selectedUpgradeModel.upgradeDatasObservable[index].Value.ApplyUpgrade();
+            _selectedUpgradeModel.GetRO_UpgradeData(index).CurrentValue.ApplyUpgrade();
 
             // 업그레이드 소모
             _upgradeSystem.ConsumeRemainingCount();

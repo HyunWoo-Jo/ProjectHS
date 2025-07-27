@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
+using Contracts;
 
 namespace UI
 {

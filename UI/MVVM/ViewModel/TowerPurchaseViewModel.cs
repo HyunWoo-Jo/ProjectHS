@@ -4,6 +4,7 @@ using System;
 using Data;
 using Contracts;
 using R3;
+using Domain;
 namespace UI
 {
     public class TowerPurchaseViewModel 
@@ -13,7 +14,7 @@ namespace UI
 
 
 
-        public ReadOnlyReactiveProperty<int> RO_TowerPriceObservable => _model.towerPriceObservable;
+        public ReadOnlyReactiveProperty<int> RO_TowerPriceObservable => _model.RO_TowerPriceObservable;
 
         public bool TryPurchase() {
             return _towerPurchaseService.TryPurchase();
@@ -22,9 +23,7 @@ namespace UI
         /// <summary>
         /// 갱신
         /// </summary>
-        public void Notify() {
-            _model.towerPriceObservable.ForceNotify();
-        }
+        public void Notify() => _model.Notify();
 
     }
 } 

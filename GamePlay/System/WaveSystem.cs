@@ -20,7 +20,7 @@ namespace GamePlay
     {
         [Inject] private DataManager _dataManager;
         [Inject] private GameDataHub _gameDataHub;
-        [Inject] private StageSettingsModel _stageSettingsModel;
+        [Inject] private StageSettings _stageSettingsModel;
         public StageType CurStageType {  get; private set; }
         private IWaveStrategy _waveStrategy; // 어떤 Wave를 발생 시킬지 정하는 전략 
         private float3 _spawnPosition; // 생성 위치

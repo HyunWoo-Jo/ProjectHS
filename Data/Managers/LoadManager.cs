@@ -1,14 +1,9 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Contracts;
 namespace Data
 {
-    public enum SceneName {
-        PlayScene,
-        MainLobbyScene,
-        LoadScene,
-    }
-
     public interface ILoadManager {
         void LoadScene(SceneName nextScene, float delay);
         float GetLoadingRation();

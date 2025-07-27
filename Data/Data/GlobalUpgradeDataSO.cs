@@ -2,25 +2,28 @@
 using CustomUtility;
 using UnityEditor.Graphs;
 using System;
+using Contracts;
+
 namespace Data
 {
-    [Serializable]
-    public class GlobalUpgradeData {
-        [ReadEditor] public int StartPrice; // 시작 비용
-        [ReadEditor] public int PriceIncrement; // 단계에 따른 가격 증가량
-        [ReadEditor] public int ValueIncrement; // 단계에 따른 수치증가량
-    }
+    
 
     
     [CreateAssetMenu(fileName = "GlobalUpgradeDataSO", menuName = "Scriptable Objects/GlobalUpgradeDataSO")]
-    public class GlobalUpgradeDataSO : ScriptableObject
+    public class GlobalUpgradeTableSO : ScriptableObject
     {
+        [Serializable]
+        public class GlobalUpgradeTable {
+            [ReadEditor] public int StartPrice; // 시작 비용
+            [ReadEditor] public int PriceIncrement; // 단계에 따른 가격 증가량
+            [ReadEditor] public int ValueIncrement; // 단계에 따른 수치증가량
+        }
         [ReadEditor] public string Version;
         // Hp
-        public GlobalUpgradeData HP;
-        public GlobalUpgradeData Power;
-        public GlobalUpgradeData InitGold;
-        public GlobalUpgradeData Exp;
+        public GlobalUpgradeTable HP;
+        public GlobalUpgradeTable Power;
+        public GlobalUpgradeTable InitGold;
+        public GlobalUpgradeTable Exp;
         private int _hash;
 
         public int GetPriceIncrement(GlobalUpgradeType type) {

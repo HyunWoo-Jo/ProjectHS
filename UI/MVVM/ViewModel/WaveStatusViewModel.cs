@@ -1,7 +1,7 @@
 ﻿
 using Zenject;
 using System;
-using Data;
+using Domain;
 using System.Diagnostics;
 using R3;
 namespace UI
@@ -10,12 +10,11 @@ namespace UI
     {
         [Inject] private WaveStatusModel _model;
 
-        public ReadOnlyReactiveProperty<int> RO_WaveLevelObservable => _model.waveLevelObservable;
-        public ReadOnlyReactiveProperty<float> RO_WaveTimeObservable => _model.waveTimeObservable;
+        public ReadOnlyReactiveProperty<int> RO_WaveLevelObservable => _model.RO_WaveLevelObservable;
+        public ReadOnlyReactiveProperty<float> RO_WaveTimeObservable => _model.RO_WaveTimeObservable;
 
         public void Notify() {
-            _model.waveTimeObservable.ForceNotify();
-            _model.waveLevelObservable.ForceNotify();
+            _model.Notify();
         }
 
     }

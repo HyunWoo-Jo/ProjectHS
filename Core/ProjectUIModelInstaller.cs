@@ -1,4 +1,5 @@
 ﻿using Data;
+using Domain;
 using UI;
 using UnityEngine;
 using Zenject;
@@ -13,7 +14,10 @@ namespace Core
 
             Container.Bind<RarityColorStyleSO>().FromNewScriptableObjectResource("Style/RarityColorStyle").AsSingle();
 
-            Container.BindInterfacesAndSelfTo<CrystalViewModel>().AsSingle().NonLazy(); // Crystal Bind
+            Container.Bind<CrystalViewModel>().AsSingle();
+            Container.Bind<CrystalModel>().AsSingle();
+
+            Container.Bind<GlobalUpgradeModel>().AsSingle();
         }
 
     }
