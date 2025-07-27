@@ -3,7 +3,7 @@ using CustomUtility;
 using R3;
 namespace Domain
 {
-    public sealed class TowerSaleModel {
+    public class TowerSaleModel {
         private ReactiveProperty<int> _costObservable = new(0);
 
         public ReadOnlyReactiveProperty<int> RO_TowerCostObservable => _costObservable;

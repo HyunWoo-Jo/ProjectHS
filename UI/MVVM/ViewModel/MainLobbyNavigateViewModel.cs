@@ -36,7 +36,5 @@ namespace UI
         public void ChangeScene() {
             _sts.LoadScene(SceneName.PlayScene);
         }
-
-       
     }
 } 

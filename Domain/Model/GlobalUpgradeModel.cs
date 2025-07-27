@@ -7,7 +7,7 @@ using Cysharp.Threading.Tasks;
 using System.Diagnostics;
 namespace Domain
 {
-    public sealed class GlobalUpgradeModel 
+    public class GlobalUpgradeModel 
     {
         [Inject] private IGlobalUpgradeRepository _repo;
         private Dictionary<string, ReactiveProperty<int>> _dataDictionary = new(); // 업그레이드 단계를 저장
