@@ -38,7 +38,7 @@ flowchart TD
 ```
 ---
 ## Policy
-`Policy`는 게임의 비지니스 로직 영역을 정의하는 부분입니다. </br>
+`Policy`는 게임의 도메인 로직 영역을 정의하는 부분입니다. </br>
 주로 경험치, 게임 재화, 체력 등 인게임에서 사용되는 부분을 정의합니다.</br> 
 전체적 구조는 다음과 같습니다.</br>
 ```mermaid
@@ -51,7 +51,7 @@ class Policy{
     GetPolicy() : value
 }
 IPolicy <|-- Policy
-Service --> IPolicy
+Model --> IPolicy
 ```
 Policy는 구현 계층에 해당하며, 각 난이도(예: Easy, Normal, Hard)에 맞게 확장 가능하도록 설계되었습니다.</br>
 난이도별로 적절한 Policy를 바인딩(Bind)하여 사용할 수 있도록 설계된 구조입니다.</br>
@@ -63,11 +63,11 @@ Policy 목록은 다음과 같습니다.</br>
 
 | 클래스                                              | 설명                      |
 | ------------------------------------------------ | ----------------------- |
-| [`ExpPolicy`](../GamePlay/_Policy/ExpPolicy.cs) | 경험치 정책 |
-| [`GoldPolicy`](../GamePlay/_Policy/GoldPolicy.cs) | 골드 정책 |
-| [`HpPolicy`](../GamePlay/_Policy/HpPolicy.cs) | Hp 정책 |
-| [`RewardPolicy`](../GamePlay/_Policy/RewardPolicy.cs) | 보상 정책 |
-| [`TowerPricePolicy`](../GamePlay/_Policy/TowerPricePolicy.cs) | 타워 정책 |
+| [`ExpPolicy`](../Domain/_Policy/ExpPolicy.cs) | 경험치 정책 |
+| [`GoldPolicy`](../Domain/_Policy/GoldPolicy.cs) | 골드 정책 |
+| [`HpPolicy`](../Domain/_Policy/HpPolicy.cs) | Hp 정책 |
+| [`RewardPolicy`](../Domain/_Policy/RewardPolicy.cs) | 보상 정책 |
+| [`TowerPricePolicy`](../Domain/_Policy/TowerPricePolicy.cs) | 타워 정책 |
 
 
 ---
@@ -248,14 +248,14 @@ UI는 복잡도와 확장 가능성에 따라 두 가지 방식으로 구성합�
 
 3.**의존성 주입 흐름** </br>
 
-- **Repository**는 외부 데이터(Firebase 등)에 대한 모든 접근을 담당해 `ViewModel`에서 직접 접근하지 않습니다.  
+- **Repository**는 외부 데이터(Firebase 등)에 대한 접근을 담당합니다.
 - **ViewModel**은 `Repository/Model`에서 데이터를 받아와 가공하고, 필요한 경우 `Service`를 호출합니다.  
 - 모든 의존성은 **Zenject**로 주입하며, 테스트 환경에서도 대체 가능한 구조를 유지합니다.
 
 4. **UI Class Diagram**
 ```mermaid
 classDiagram
-class MonoBehaviour {
+    class MonoBehaviour {
         <<Unity Engine>>
     }
 
