@@ -4,7 +4,7 @@ using R3;
 using Zenject;
 namespace Domain
 {
-    public sealed class HpModel
+    public class HpModel
     {
         [Inject] private IHpPolicy _hpPolicy;
 

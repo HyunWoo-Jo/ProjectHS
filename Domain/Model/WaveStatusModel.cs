@@ -4,7 +4,7 @@ using R3;
 using log4net.Core;
 namespace Domain
 {
-    public sealed class WaveStatusModel
+    public class WaveStatusModel
     {
         private ReactiveProperty<int> _waveLevelObservable { get; } = new(0); // 스테이지 레벨
         private ReactiveProperty<float> _waveTimeObservable { get; } = new(0); // 웨이브 타임

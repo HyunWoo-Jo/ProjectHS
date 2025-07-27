@@ -5,7 +5,7 @@ using Zenject;
 using Unity.VisualScripting.YamlDotNet.Core.Tokens;
 namespace Domain
 {
-    public sealed class TowerPurchaseModel {
+    public class TowerPurchaseModel {
         [Inject] private ITowerPricePolicy _towerPricePolicy;
 
         private ReactiveProperty<int> _towerPriceObservable = new (1);
