@@ -73,26 +73,40 @@ graph LR
 ### Package Diagram
 ```mermaid
 graph LR
-    Core;
+
     GamePlay;
     Network;
     UI;
     Contracts;
-
+    Infrastructure;
+    Domain;
+    Data;
 UI --> Contracts
 
+
+GamePlay --> Domain
 GamePlay --> UI
 GamePlay --> Contracts
 GamePlay --> Network
+GamePlay --> Network
+GamePlay --> Data
 
-Core --> GamePlay
-Core --> UI
-Core --> Network
+Domain --> Contracts
+Data --> Contracts
+Infrastructure --> Contracts
+Infrastructure --> Network
+Infrastructure --> Data
+UI --> Domain
+UI --> Data
+UI --> Contracts
+
+Network --> Contracts
+Network --> Data
 
 ```
 ```mermaid
 graph LR
-Project --> Data 
+Core --> Project
 Project --> Utility
 EditorOnly --> Test;
 
@@ -126,7 +140,15 @@ EditorOnly --> Test;
 역할: `UI`와 `GamePlay`를 이어주는 `Contracts.Interface`.</br>
 주요내용: 주로 구현되는 내용은 `Ineterface.Service`로직으로 `GamePlay`에서 구현된 `Service`내용을 `UI`의 `ViewModel`에서 참조 할수 있도록 함. 
 
-#### 8. Test
+#### 8. Domain
+역할: 비지니스 로직들을 구현</br>
+주요내용: `Policy`, `Model`을 구현
+
+#### 9. Infrastructure
+역할: 외부에서 저장되는 데이터 `Repository`의 로직을 구현</br>
+주요내용: "Repository" 로직을 구현
+
+#### 10. Test
 역할: Unity 에디터 환경에서만 사용되는 스크립트. </br>
 주요 내용: 테스트 코드.
 
