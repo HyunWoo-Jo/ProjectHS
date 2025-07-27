@@ -11,6 +11,7 @@
 - [2025.07.02 / Upgrade 구조](#upgrade-구조)
 - [2025.07.07 / Test 구조](#Test-구조)
 - [2025.07.25 / R3 도입](#r3-도입)
+- [2025.07.27 / 네임스페이스 추가](#네임스페이스-추가)
 ---
 #### 2025.06.23
 ### 초기화 씬 구성
@@ -323,3 +324,43 @@ UpgradeView --> UpgradeViewModel : 구독, 버튼 event 요청
 - **UI** : CrystalView / HPBar 등 실시간 갱신 컴포넌트  
 - **Model** : 기존 `ObservableValue` → `ReactiveProperty<T>`
 - **View** : 버튼 처리를 능동적으로 하기 위해 사용
+
+---
+#### 2025.07.27
+### 네임스페이스 추가
+다음과 같은 네임스페이스를 추가했습니다.
+- **`Domain`** : 도메인 로직을 묶는 네임스페이스
+- **`Infrastructure`** : `Repository`의 구현부
+```mermaid
+graph LR
+    Data
+    Utility
+    GamePlay;
+    Network;
+    UI;
+    Contracts;
+    Infrastructure;
+    Domain;
+    Data;
+UI --> Contracts
+
+
+GamePlay --> Domain
+GamePlay --> UI
+GamePlay --> Contracts
+GamePlay --> Network
+GamePlay --> Network
+GamePlay --> Data
+
+Domain --> Contracts
+Data --> Contracts
+Infrastructure --> Contracts
+Infrastructure --> Network
+Infrastructure --> Data
+UI --> Domain
+UI --> Data
+UI --> Contracts
+
+Network --> Contracts
+Network --> Data
+```
