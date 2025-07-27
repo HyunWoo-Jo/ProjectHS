@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Threading.Tasks;
 using Firebase.Database;
 using Cysharp.Threading.Tasks;
@@ -18,6 +18,7 @@ namespace Network
         UniTask SetUserCrystal(int value);
 
         UniTask<DataSnapshot> GetAllUpgrade();
+        UniTask<DataSnapshot> GetUpgradeLevel(string key);
         UniTask SetUpgrade<T>(string key, T value);
 
         UniTask<DataSnapshot> GetVersion();

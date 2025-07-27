@@ -1,24 +1,26 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using Zenject;
-using Data;
 using Contracts;
+using Domain;
+using Data;
 namespace GamePlay
 {
-    // ≈∏øˆ ±∏∏≈∏¶ «‡µø
+    // ÌÉÄÏõå Íµ¨Îß§Î•º ÌñâÎèô
     public class TowerPurchaseService : ITowerPurchaseService {
-        [Inject] private GoldModel _gold;
-        [Inject] private ITowerSystem _towerSystem; // ≈∏øˆ Ω√Ω∫≈€
-        [Inject] private ITowerPricePolicy _pricePolicy; // ∞°∞› ¡§√•
-
-        public bool TryPurchase() { // ≈∏øˆ ±∏∏≈ Ω√µµ
-            int cost = _pricePolicy.GetCurrentPrice();
-            if (_gold.goldObservable.Value < cost) return false;
-            if (_towerSystem.TryAddTower()) { // ±∏∏≈ º∫∞¯Ω√ 
-                _gold.goldObservable.Value -= cost;
-                _pricePolicy.AdvancePrice();
+        [Inject] private GoldModel _goldModel;
+        [Inject] private TowerPurchaseModel _towerPurchaseModel;
+        [Inject] private ITowerSystem _towerSystem;
+        /// <summary>
+        /// Íµ¨Îß§ ÏãúÎèÑ
+        /// </summary>
+        /// <returns></returns>
+        public bool TryPurchase() {
+            int index = _towerSystem.SerchEmptySlot();
+            if(index != -1 && _goldModel.TrySpendGold(_towerPurchaseModel.TowerPrice)) {
+                _towerSystem.AddTower(index);
+                _towerPurchaseModel.AddvanceTowerPrice();
                 return true;
             }
-            
             return false;
         }
     }

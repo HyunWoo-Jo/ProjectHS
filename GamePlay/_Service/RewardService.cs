@@ -1,27 +1,26 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Contracts;
 using Zenject;
 using Data;
+using Domain;
 namespace GamePlay
 {
     /// <summary>
-    /// Scene¿¡¼­ Catched·Î °ü¸®ÇÏ¿© Play Scene¿¡¼­ ÇÑ¹ø¸¸ ÀÛµ¿µÇµµ·Ï °ü¸®
+    /// Sceneì—ì„œ Catchedë¡œ ê´€ë¦¬í•˜ì—¬ Play Sceneì—ì„œ í•œë²ˆë§Œ ì‘ë™ë˜ë„ë¡ ê´€ë¦¬
     /// </summary>
     public class RewardService : IRewardService {
         [Inject] private IRewardPolicy _rewardPolicy;
-        [Inject] private ICrystalRepository _crystalRepo;
+        [Inject] private CrystalModel _crystalModel;
+        [Inject] private WaveStatusModel _waveModel;
 
-        private bool _isProcess = false;
         public int CalculateRewardCrystal() {
-            return _rewardPolicy.CalculateCrystalReward();
+            return _rewardPolicy.CalculateCrystalReward(_waveModel.WaveLevel);
         }
 
         public void ProcessFinalRewards() {
-            if (_isProcess) return; // ÇÑ¹ø¸¸ Ã³¸®ÇÏµµ·Ï ¼³Á¤
-            int reward = _rewardPolicy.CalculateCrystalReward();
+            int reward = CalculateRewardCrystal();
             if (reward <= 0) return;
-            _crystalRepo.TryEarn(reward);
-            _isProcess = true;
+            _ = _crystalModel.TryEarn(reward);
         }
     }
 }

@@ -1,24 +1,22 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Data;
 using Zenject;
 using System.ComponentModel;
 using Network;
+using Contracts;
+using Infrastructure;
 namespace Core
 {
-    // ÁÖ¿ä Repo, Data¸¦ ¹ÙÀÎµù ÇÏ´Â Å¬·¹½º
+    // ì£¼ìš” Repo, Dataë¥¼ ë°”ì¸ë”© í•˜ëŠ” í´ë ˆìŠ¤
     public class ProjectRepoInstaller : MonoInstaller
     {
         public override void InstallBindings() {
 
-            // repo »ı¼º
-            Container.Bind<ICrystalRepository>().To<CrystalFirebaseRepository>().AsSingle().NonLazy();
-
-            Container.Bind<IUserAuthRepository>().To<UserAuthRepositoryFirebase>().AsSingle().NonLazy();
-            Container.Bind<IGlobalUpgradeRepository>().To<GlobalUpgradeFirebaseRepository>().AsSingle().NonLazy();
-
+            Container.Bind<ICrystalRepository>().To<CrystalFirebaseRepository>().AsSingle();
+            Container.Bind<IGlobalUpgradeRepository>().To<GlobalUpgradeFirebaseRepository>().AsSingle();
 
             // Data Bind
-            Container.Bind<GlobalUpgradeDataSO>().FromScriptableObjectResource("GlobalUpgradeDataSO").AsSingle().NonLazy();
+            Container.Bind<GlobalUpgradeTableSO>().FromScriptableObjectResource("GlobalUpgradeTableSO").AsSingle().NonLazy();
         }
 
 

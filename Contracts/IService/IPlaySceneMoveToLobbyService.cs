@@ -1,5 +1,4 @@
-using Data;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Contracts
 {

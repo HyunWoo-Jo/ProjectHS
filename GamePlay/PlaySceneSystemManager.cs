@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Data;
 using System.Linq;
 using Zenject;
@@ -7,12 +7,15 @@ using UI;
 using UnityEngine.Assertions;
 using CustomUtility;
 using Contracts;
+using Cysharp.Threading.Tasks;
+using R3;
+using Domain;
 namespace GamePlay
 {
     /// <summary>
-    /// SystemÀÇ Á¦¾î
+    /// Systemì˜ ì œì–´
     /// </summary>
-    [DefaultExecutionOrder(100)] // System ÀÌ ³¡³­ ÀÌÈÄ¿¡ »ı¼ºµÇµµ·Ï ¼³Á¤
+    [DefaultExecutionOrder(100)] // System ì´ ëë‚œ ì´í›„ì— ìƒì„±ë˜ë„ë¡ ì„¤ì •
     [RequireComponent (typeof(MapSystem))]
     [RequireComponent (typeof(ScreenClickInputSystem))]
     [RequireComponent (typeof(CameraSystem))]
@@ -33,16 +36,16 @@ namespace GamePlay
         private TowerSystem _towerSystem;
         private UpgradeSystem _upgradeSystem;
 
-        public Vector2Int _mapSize = new Vector2Int(10, 10); // ÀÓ½Ã ¸Ê »çÀÌÁî
+        public Vector2Int _mapSize = new Vector2Int(10, 10); // ì„ì‹œ ë§µ ì‚¬ì´ì¦ˆ
 
 
 
         /// Model
-        [Inject] private TowerPurchaseModel _towerPurchaseModel; // Å¸¿ö ±¸¸Å ºñ¿ë ¸ğµ¨
-        [Inject] private GoldModel _goldModel; // °ñµå ¸ğµ¨
-        [Inject] private ExpModel _expModel; // °æÇèÄ¡ ¸ğµ¨
-        [Inject] private HpModel _hpModel; // hp ¸ğµ¨
-        [Inject] private SelectedUpgradeModel _selectedUpgradeModel; // upgrade ¸ğµ¨
+        [Inject] private TowerPurchaseModel _towerPurchaseModel; // íƒ€ì›Œ êµ¬ë§¤ ë¹„ìš© ëª¨ë¸
+        [Inject] private GoldModel _goldModel; // ê³¨ë“œ ëª¨ë¸
+        [Inject] private ExpModel _expModel; // ê²½í—˜ì¹˜ ëª¨ë¸
+        [Inject] private HpModel _hpModel; // hp ëª¨ë¸
+        [Inject] private SelectedUpgradeModel _selectedUpgradeModel;
 
         /// UI
         [SerializeField] private GoldDropper _goldDropper;
@@ -52,7 +55,7 @@ namespace GamePlay
         [Inject] private IGoldPolicy _goldPolicy;
         [Inject] private IHpPolicy _hpPolicy;
         [Inject] private IExpPolicy _expPolicy;
-        [Inject] private ITowerPricePolicy _towerPolicy;
+
         
         // Service
         [Inject] private ITowerPurchaseService _towerPurchaseService;
@@ -64,7 +67,7 @@ namespace GamePlay
 #endif
 
 
-            // ÃÊ±âÈ­
+            // ì´ˆê¸°í™”
             _mapSystem = GetComponent<MapSystem>();
             _inputSystem = GetComponent<ScreenClickInputSystem>();
             _cameraSystem = GetComponent<CameraSystem>();
@@ -85,68 +88,69 @@ namespace GamePlay
 
            
             //////////// Camera System
-            /// Ä«¸Ş¶ó ¼³Á¤°ú ÃÊ±â À§Ä¡ Á¶Á¤    
+            /// ì¹´ë©”ë¼ ì„¤ì •ê³¼ ì´ˆê¸° ìœ„ì¹˜ ì¡°ì •    
             Vector3 cameraOffset = _mapSystem.GetCenter(_mapSize.x, _mapSize.y) + new Vector3(0, 0, -10f);
             _cameraSystem.SetCameraOffset(cameraOffset);
 
 
-            Vector2 maxX = GridUtility.GridToWorldPosition(_mapSize.x, _mapSize.y); // ¸ÊÀÌ ´ë°¢¼± ¸ğ¾çÀÌ¿©¼­¸¶Áö¸· À§Ä¡¸¦ ¹Ş¾Æ¿È
-            Vector2 maxY = GridUtility.GridToWorldPosition(0, _mapSize.y); // ¸ÊÀÌ ´ë°¢¼± ¸ğ¾çÀÌ¿©¼­ ÇÑÁÙÀÇ ¸¶Áö¸· À§Ä¡¸¦ ¹Ş¾Æ¿È
+            Vector2 maxX = GridUtility.GridToWorldPosition(_mapSize.x, _mapSize.y); // ë§µì´ ëŒ€ê°ì„  ëª¨ì–‘ì´ì—¬ì„œë§ˆì§€ë§‰ ìœ„ì¹˜ë¥¼ ë°›ì•„ì˜´
+            Vector2 maxY = GridUtility.GridToWorldPosition(0, _mapSize.y); // ë§µì´ ëŒ€ê°ì„  ëª¨ì–‘ì´ì—¬ì„œ í•œì¤„ì˜ ë§ˆì§€ë§‰ ìœ„ì¹˜ë¥¼ ë°›ì•„ì˜´
             
             
-            // Ä«¸Ş¶ó ÀÌµ¿ ¿µ¿ª ¼³Á¤
+            // ì¹´ë©”ë¼ ì´ë™ ì˜ì—­ ì„¤ì •
             _cameraSystem.SetBoundery(0, -maxY.y, maxX.x, maxY.y);
 
-            // Ä«¸Ş¶ó ÇÚµé·¯¸¦ Input°ú ¹ÙÀÎµå
+            // ì¹´ë©”ë¼ í•¸ë“¤ëŸ¬ë¥¼ Inputê³¼ ë°”ì¸ë“œ
             _inputSystem.OnInputDragEvent += _cameraSystem.HandleCameraMovement;
             _inputSystem.OnCloseUpDownEvent += _cameraSystem.HandleCameraCloseUpDown;
 
             //////////// Stage System
-            _stageSystem.OnStageStart += _waveSystem.SpawnEnemiesWave; // Stage°¡ ½ÃÀÛµÇ¸é WaveData¸¦ ¹ß»ıÇÏµµ·Ï ¼³Á¤
+            _stageSystem.OnStageStart += _waveSystem.SpawnEnemiesWave; // Stageê°€ ì‹œì‘ë˜ë©´ WaveDataë¥¼ ë°œìƒí•˜ë„ë¡ ì„¤ì •
 
-            _stageSystem.SetStageTypeStrategy(new StandardStageTypeStrategy()); // ÀÏ¹İ ¸ğµå·Î ½ºÅ×ÀÌÁö¸¦ ¼±ÅÃÇÏµµ·Ï ¼³Á¤
+            _stageSystem.SetStageTypeStrategy(new StandardStageTypeStrategy()); // ì¼ë°˜ ëª¨ë“œë¡œ ìŠ¤í…Œì´ì§€ë¥¼ ì„ íƒí•˜ë„ë¡ ì„¤ì •
             
             // WaveSystem
-            // ¸ÊÀÌ º¯°æµÇ¸é Spawn Àå¼Òµµ º¯°æµÇµµ·Ï º¯°æ
+            // ë§µì´ ë³€ê²½ë˜ë©´ Spawn ì¥ì†Œë„ ë³€ê²½ë˜ë„ë¡ ë³€ê²½
             _mapSystem.OnMapChanged += () => {
                 _waveSystem.SetSpawnPosition(_mapSystem.GetPath().First());
             };
 
             // EnemySystem
             _goldDropper.OnArrived += (enemyData) => {
-                _goldModel.goldObservable.Value += _goldPolicy.CalculateKillReward(enemyData);
+                _goldModel.TryEarnGold(1);
             };
             _mapSystem.OnMapChanged += () => {
                 _gameDataHub.SetPath(_mapSystem.GetPath());
             };
-            _enemySystem.OnEnemyDied += (enemyData) => { // °ñµå (»ı¼º, ÀÌµ¿) ÀÌÆåÆ®
+            _enemySystem.OnEnemyDied += (enemyData) => { // ê³¨ë“œ (ìƒì„±, ì´ë™) ì´í™íŠ¸
                 _goldDropper.SpawnAndMoveToTarget(enemyData);
-                _expModel.AddExp(_expPolicy.CalculateKillExperience(enemyData)); // °æÇèÄ¡ Ãß°¡
+                _expModel.AddExp(1); // ê²½í—˜ì¹˜ ì¶”ê°€
             };
-            _enemySystem.OnEnemyFinishedPath += (enemyData) => { // ¶óÀÌÇÁ ¼Ò¸ğ
-                _hpModel.curHpObservable.Value -= _hpPolicy.CalculateHpPenaltyOnLeak(enemyData);
-            };
-
-            // °ÔÀÓ End Ã³¸®
-            _hpModel.curHpObservable.OnValueChanged += (value) => {
-                if (value <= 0) {
-                    _uIFactory.InstanceUI<RewardView>(92);
-                    _rewardViewModel.ProcessFinalReward();
-                }
+            _enemySystem.OnEnemyFinishedPath += (enemyData) => { // ë¼ì´í”„ ì†Œëª¨
+                _hpModel.ConsumeHp(1);
             };
 
-            // UpgradeSystem
-            _expModel.levelObservable.OnValueChanged += _upgradeSystem.QueueUpgradeRequest;
+            // ê²Œì„ End ì²˜ë¦¬
+            _hpModel.RO_CurHpObservable
+                .ThrottleLastFrame(1)
+                .Subscribe(GameEnd)
+                .AddTo(this);
+
+
+            //// UpgradeSystem
+            _expModel.RO_LevelObservable
+                .Subscribe(_upgradeSystem.QueueUpgradeRequest)
+                .AddTo(this);
 
             // TowerSystem
-            // Ray¿¡ Tower°¡ Ãæµ¹ÇßÀ»¶§
+            // Rayì— Towerê°€ ì¶©ëŒí–ˆì„ë•Œ
             _inputSystem.OnRayHitEvent += _towerSystem.SelectTower;
-            // Up Event°¡ ¹ß»ıÇßÀ»¶§
+            // Up Eventê°€ ë°œìƒí–ˆì„ë•Œ
             
             _inputSystem.OnUpPointEvent += _towerSystem.OnEndDrag;
 
             //////////// Map System
-            //¸Ê »ı¼º
+            //ë§µ ìƒì„±
             MapTema[] temas = (MapTema[])Enum.GetValues(typeof(MapTema));
             MapTema tema = temas[UnityEngine.Random.Range(0, temas.Length)];
             _mapSystem.LoadMapTema(tema);
@@ -158,23 +162,29 @@ namespace GamePlay
 
 
         private void Start() {
-            // ÃÊ±âÈ­
+
+            //// ì´ˆê¸° íƒ€ì›Œ ê°€ê²© ì„¤ì •
+            _towerPurchaseModel.SetTowerPrice(10);
+
+            //// ì´ˆê¸° HP ì„¤ì •
+            _hpModel.SetMaxHp(20);
+            _hpModel.SetCurHp(20);
+
+            //// ì´ˆê¸° reroll íšŸìˆ˜ ì¶”ê°€
+            _selectedUpgradeModel.AddRerollCount(1);
             
-            // ÃÊ±â °ñµå ¼³Á¤
-            _goldModel.goldObservable.Value += _goldPolicy.GetPlayerStartGold();
-            // ÃÊ±â Å¸¿ö °¡°İ ¼³Á¤
-            _towerPurchaseModel.towerPriceObservable.Value = _towerPolicy.GetStartPrice();
-
-            // ÃÊ±â HP ¼³Á¤
-            int startHp = _hpPolicy.GetStartPlayerHp();
-            _hpModel.maxHpObservable.Value = startHp;
-            _hpModel.curHpObservable.Value = startHp;
-
-            // ÃÊ±â reroll È½¼ö Ãß°¡
-            _selectedUpgradeModel.observableRerollCount.Value = 1;
         }
  
-
+        /// <summary>
+        /// ê²Œì„ì´ ì¢…ë£Œ ë˜ëŠ” ì¡°ê±´
+        /// </summary>
+        /// <param name="curHp"></param>
+        public void GameEnd(int curHp) {
+            if (curHp <= 0) {
+                _uIFactory.InstanceUI<RewardView>(92);
+                _rewardViewModel.ProcessFinalReward();
+            }
+        }
 
     }
 }

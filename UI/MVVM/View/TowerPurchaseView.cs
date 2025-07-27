@@ -1,4 +1,4 @@
-
+﻿
 using UnityEngine;
 using Zenject;
 using System;
@@ -8,6 +8,7 @@ using TMPro;
 using CustomUtility;
 using System.Runtime.CompilerServices;
 using Data;
+using R3;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI
@@ -22,17 +23,22 @@ namespace UI
             RefAssert();
 #endif
             // 버튼 초기화
-            _viewModel.OnDataChanged += UpdateUI;
+            _viewModel.RO_TowerPriceObservable
+                .ThrottleLastFrame(1)
+                .Subscribe(UpdateUI)
+                .AddTo(this);
 
-            ButtonInit();
+            // 버튼 초기화
+            _button.ToObservableEventTrigger(GetType().Name, nameof(OnClickPurchase))
+                .OnPointerClickAsObservable()
+                .ThrottleFirstFrame(1)
+                .Subscribe(_ => OnClickPurchase())
+                .AddTo(this);
         }
         private void Start() {
-            _viewModel.Update();
+            _viewModel.Notify();
         }
-        private void OnDestroy() {
-            _viewModel.OnDataChanged -= UpdateUI;
-            _viewModel = null; // 참조 해제
-        }
+
 
 #if UNITY_EDITOR
         // 검증
@@ -45,17 +51,11 @@ namespace UI
         private void UpdateUI(int price) {
             _priceText.text = GoldStyle.GoldToString(price);
         }
-////////////////////////////////////////////////////////////////////////////////////
-        // your logic here
 
-        private void ButtonInit() {
-            _button.AddTrigger<bool>(EventTriggerType.PointerClick, _viewModel.PurchaseButtonClick, OnPurchaseButton, GetType().Name, nameof(ButtonInit));
-        }
+        private void OnClickPurchase() {
+            if (_viewModel.TryPurchase()) { // 구매 성공
 
-        private void OnPurchaseButton(bool isSuccess) {
-            if (isSuccess) { // 구매 성공 UI 이벤트
-
-            } else { // 구매 실패 UI 이벤트
+            } else { // 실패 
 
             }
         }

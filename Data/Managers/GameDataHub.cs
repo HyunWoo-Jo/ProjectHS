@@ -1,4 +1,4 @@
-using Unity.Collections;
+ï»¿using Unity.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using CustomUtility;
@@ -7,7 +7,7 @@ using System.Linq;
 using System;
 namespace Data
 {
-    public class GameDataHub : IEnemyDataService, IPositionService {
+    public class GameDataHub : IEnemyDataStore {
         private List<ObjectPoolItem> _enemyPoolItemList = new();
 
         // Data
@@ -16,7 +16,7 @@ namespace Data
         private NativeArray<float3> _worldPosition;
         private int2 _mapSize;
 
-        private List<SlotData> _slotDataList = new(); // Å¸¿ö ½½·Ô
+        private List<SlotData> _slotDataList = new(); // íƒ€ì›Œ ìŠ¬ë¡¯
         public List<ObjectPoolItem> GetEnemyPoolList() => _enemyPoolItemList;
 
 
@@ -25,14 +25,14 @@ namespace Data
             _enemiesData = data;
         }
 
-        // grid ¸¦ °¡Áö°í index¸¦ ¹İÈ¯ // ½ÇÆĞ½Ã -1
+        // grid ë¥¼ ê°€ì§€ê³  indexë¥¼ ë°˜í™˜ // ì‹¤íŒ¨ì‹œ -1
         public int GetIndex(int x, int y) {
-            // ÀÔ·Â ¹üÀ§ °Ë»ç
+            // ì…ë ¥ ë²”ìœ„ ê²€ì‚¬
             if (x < 0 || x >= _mapSize.x)
                 return -1;
             if (y < 0 || y >= _mapSize.y)
                 return -1;
-            // ÀÎµ¦½º °è»ê
+            // ì¸ë±ìŠ¤ ê³„ì‚°
             return y * _mapSize.x + x;
         }
         public void SetMapSize(int x, int y) {
@@ -41,35 +41,35 @@ namespace Data
         public int2 GetMapSize() => _mapSize;
 
         /// <summary>
-        /// enemiesData¸¦ º´ÇÕ, ObjectPoolÀ» À¯Áö
+        /// enemiesDataë¥¼ ë³‘í•©, ObjectPoolì„ ìœ ì§€
         /// </summary>
-        /// <returns> »õ·Î »ı¼ºµÈ ½ÃÀÛ ÀÎµ¦½º </returns>
+        /// <returns> ìƒˆë¡œ ìƒì„±ëœ ì‹œì‘ ì¸ë±ìŠ¤ </returns>
         public int MergeAliveEnemiesAndAppend(NativeArray<EnemyData> newWave) {
-            // ±âÁ¸ µ¥ÀÌÅÍ°¡ ¾ø´Ù¸é ¹Ù·Î ±³Ã¼
+            // ê¸°ì¡´ ë°ì´í„°ê°€ ì—†ë‹¤ë©´ ë°”ë¡œ êµì²´
             if (!_enemiesData.IsCreated) {
                 _enemiesData = new NativeArray<EnemyData>(newWave, Allocator.Persistent);
                 return 0;
             }
 
-            // »ì¾Æ ÀÖ´Â ±âÁ¸ Àû¸¸ ÀÓ½Ã List·Î ÇÊÅÍ¸µ
+            // ì‚´ì•„ ìˆëŠ” ê¸°ì¡´ ì ë§Œ ì„ì‹œ Listë¡œ í•„í„°ë§
             var aliveList = new List<EnemyData>(_enemiesData.Length);
             var alivePools = new List<ObjectPoolItem>(_enemiesData.Length);
             for (int i = 0; i < _enemiesData.Length; i++) {
                 if (!_enemiesData[i].isDead) {
                     aliveList.Add(_enemiesData[i]);
-                    alivePools.Add(_enemyPoolItemList[i]);     // poolµµ °°Àº ÀÎµ¦½º·Î º¸Á¸
+                    alivePools.Add(_enemyPoolItemList[i]);     // poolë„ ê°™ì€ ì¸ë±ìŠ¤ë¡œ ë³´ì¡´
 
                 }
             }
             int startIndex = aliveList.Count;
 
-            // »õ Wave µ¥ÀÌÅÍ µÚ¿¡ ºÙÀÌ±â
+            // ìƒˆ Wave ë°ì´í„° ë’¤ì— ë¶™ì´ê¸°
             aliveList.AddRange(newWave);          
 
-            // NativeArray ÇÒ´ç
+            // NativeArray í• ë‹¹
             var mergedArray = new NativeArray<EnemyData>(aliveList.ToArray(), Allocator.Persistent);
 
-            // 5) ±âÁ¸ ¹è¿­ Dispose & ÇÊµå °»½Å
+            // 5) ê¸°ì¡´ ë°°ì—´ Dispose & í•„ë“œ ê°±ì‹ 
             if (_enemiesData.IsCreated) _enemiesData.Dispose();
             _enemiesData = mergedArray;
             _enemyPoolItemList = alivePools;
@@ -94,7 +94,7 @@ namespace Data
 
         public EnemyData GetEnemyData(int index) {
             if(_enemiesData.Length <= index || -1 >= index) {
-                return new EnemyData { // Á×Àº µ¥ÀÌÅÍ ¹İÈ¯
+                return new EnemyData { // ì£½ì€ ë°ì´í„° ë°˜í™˜
                     isDead = true
                 };   
             }
@@ -123,7 +123,7 @@ namespace Data
 
         public SlotData GetSlotData(int index) => _slotDataList[index];
 
-        ~GameDataHub() { // ¼Ò¸ê
+        ~GameDataHub() { // ì†Œë©¸
             if (_enemiesData.IsCreated) _enemiesData.Dispose();
             if (_paths.IsCreated) _paths.Dispose();
             if(_worldPosition.IsCreated) _worldPosition.Dispose();

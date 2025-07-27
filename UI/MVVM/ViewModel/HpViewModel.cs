@@ -1,51 +1,23 @@
-
+﻿
 using Zenject;
 using System;
 using Data;
+using R3;
+using Domain;
 namespace UI
 {
-    public class HpViewModel : IInitializable, IDisposable {
-        [Inject] private HpModel _hpModel;   
+    public class HpViewModel {
+        [Inject] private HpModel _model;   
         
-        public event Action<int,int> OnHpChanged; // 데이터가 변경될떄 호출될 액션 (상황에 맞게 변수명을 변경해서 사용)
-        public event Action<int> OnChangedMaxHp; // 최대 체력 변경
-        public int CurHp => _hpModel.curHpObservable.Value;
-        public int MaxHP => _hpModel.maxHpObservable.Value;
+        public ReadOnlyReactiveProperty<int> RO_CurHpObservable => _model.RO_CurHpObservable;
+        public ReadOnlyReactiveProperty<int> RO_MaxHPObservable => _model.RO_MaxHpObservable;
 
         /// <summary>
-        /// UI 초기 갱신
+        /// 갱신 알림
         /// </summary>
-        public void Update() {
-            NotifyChangedHp(0);
-        }
+        public void Notify() => _model.Notify();
 
-        // Zenject에서 관리
-        public void Initialize() {
-            _hpModel.curHpObservable.OnValueChanged += NotifyChangedHp;
-            _hpModel.maxHpObservable.OnValueChanged += NotifyChangedHp;
-            _hpModel.maxHpObservable.OnValueChanged += ChangedMaxHp;
-        }
-        // Zenject에서 관리
-        public void Dispose() {
-            _hpModel.curHpObservable.OnValueChanged -= NotifyChangedHp;
-            _hpModel.maxHpObservable.OnValueChanged -= NotifyChangedHp;
-            _hpModel.maxHpObservable.OnValueChanged -= ChangedMaxHp;
-        }
 
-        /// <summary>
-        /// UI 갱신 알림 매개변수는 Bind 하기위해 사용이 됨 
-        /// </summary>
-        /// <param name="value"></param>
-        private void NotifyChangedHp(/*Observable에 Bind하기 위해 사용 되는 파라미터(사용 안함)*/int value) {
-            OnHpChanged?.Invoke(CurHp, MaxHP);
-        }
-
-        /// <summary>
-        /// 최대 체력 변경
-        /// </summary>
-        private void ChangedMaxHp(int value) {
-            OnChangedMaxHp?.Invoke(value);
-        }
 
     }
 } 

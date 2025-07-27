@@ -1,9 +1,10 @@
-using Data;
+﻿using Data;
 using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
+using Contracts;
 
 namespace UI
 {

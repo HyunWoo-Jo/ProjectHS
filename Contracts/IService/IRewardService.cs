@@ -1,8 +1,8 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace Contracts
 {
-    // °ÔÀÓÀÌ ³¡³ª¸é º¸»ó Ã³¸®¸¦ ÇØÁÖ´Â Service
+    // ê²Œì„ì´ ëë‚˜ë©´ ë³´ìƒ ì²˜ë¦¬ë¥¼ í•´ì£¼ëŠ” Service
     public interface IRewardService
     {
         public int CalculateRewardCrystal();

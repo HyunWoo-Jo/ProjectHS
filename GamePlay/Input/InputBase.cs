@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Data;
 using Unity.Mathematics;
 using UnityEngine.EventSystems;
@@ -31,30 +31,30 @@ namespace GamePlay
         public abstract Vector2 GetPosition();
 
         /// <summary>
-        /// Å¬¸¯ ±¸ÇöºÎ / ÇÊ¼ö·Î µé¾î°¡¾ß µÇ´Â ¸ñ·Ï: Å¬¸¯ ½ÃÀÛ (½Ã°£, À§Ä¡), »óÈ²¿¡ ¸Â´Â Å¬¸¯ Å¸ÀÔ 
+        /// í´ë¦­ êµ¬í˜„ë¶€ / í•„ìˆ˜ë¡œ ë“¤ì–´ê°€ì•¼ ë˜ëŠ” ëª©ë¡: í´ë¦­ ì‹œì‘ (ì‹œê°„, ìœ„ì¹˜), ìƒí™©ì— ë§ëŠ” í´ë¦­ íƒ€ì… 
         /// </summary>
         public abstract void UpdateInput();
 
         /// <summary>
-        /// È­¸éÀÇ ray¸¦ ½÷¼­ Layer¸¦ °ËÃâ
+        /// í™”ë©´ì˜ rayë¥¼ ì´ì„œ Layerë¥¼ ê²€ì¶œ
         /// </summary>
         protected bool TryRaycastAtScreenPos(LayerMask layer, float3 screenPos, out RaycastHit hitInfo) {
             Ray ray = Camera.main.ScreenPointToRay(screenPos);
             return Physics.Raycast(ray, out hitInfo, 1000f, layer);
         }
         /// <summary>
-        /// screen À§Ä¡¿¡ UI¸¦ °ËÃâ
+        /// screen ìœ„ì¹˜ì— UIë¥¼ ê²€ì¶œ
         /// </summary>
         protected bool TryUIRaycast(Vector2 screenPos, out RaycastResult hit) {
             var eventData = new PointerEventData(EventSystem.current) {
-                position = screenPos          // ¸¶¿ì½º¡¤ÅÍÄ¡ ÁÂÇ¥
+                position = screenPos          // ë§ˆìš°ìŠ¤Â·í„°ì¹˜ ì¢Œí‘œ
             };
 
             var results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(eventData, results);
 
             if (results.Count > 0) {
-                hit = results[0];              // ÃÖ»ó´Ü UI
+                hit = results[0];              // ìµœìƒë‹¨ UI
                 return true;
             }
 

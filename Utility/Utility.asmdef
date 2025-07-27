@@ -2,7 +2,8 @@
     "name": "Utility",
     "rootNamespace": "CustomUtility",
     "references": [
-        "Zenject"
+        "Zenject",
+        "R3.Unity"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

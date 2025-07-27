@@ -1,14 +1,14 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace UI
 {
     /// <summary>
-    /// Pointer°¡ Up µÉ¶§ È£ÃâÇÏ°Ô ÇÏ´Â ÀÎÅÍÆäÀÌ½º·Î UI¿¡ »ç¿ë
+    /// Pointerê°€ Up ë ë•Œ í˜¸ì¶œí•˜ê²Œ í•˜ëŠ” ì¸í„°í˜ì´ìŠ¤ë¡œ UIì— ì‚¬ìš©
     /// </summary>
     public interface IPointerUP
     {
         /// <summary>
-        /// Pointer°¡ Up µÉ¶§ È£Ãâ
+        /// Pointerê°€ Up ë ë•Œ í˜¸ì¶œ
         /// </summary>
         void OnPointerUP();
     }

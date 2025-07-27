@@ -1,4 +1,4 @@
-using Data;
+ï»¿using Data;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Zenject;
@@ -10,7 +10,7 @@ namespace GamePlay
 
         [Inject] private GameObjectPoolManager _poolManager;
         [Inject(Id = "Projectile")] private IAttackStrategy _attackStrategy;
-        [SerializeField] private Transform _stickPivotTr; // stickÀÇ ±âÁØÁ¡
+        [SerializeField] private Transform _stickPivotTr; // stickì˜ ê¸°ì¤€ì 
 
         private LookAtTarget _lookAtTarget;
 
@@ -24,21 +24,21 @@ namespace GamePlay
         }
 
         private void Start() {
-            // pool¿¡ µî·Ï (ÀÌ¹Ì µî·Ï µÇ¾îÀÖ´Ù¸é ½ºÅµ)
+            // poolì— ë“±ë¡ (ì´ë¯¸ ë“±ë¡ ë˜ì–´ìˆë‹¤ë©´ ìŠ¤í‚µ)
             _poolManager.RegisterPool<ProjectileObject>(PoolType.MagicBullet);
         }
         private void AimLookAtEnemy() {
             if (targetIndex != -1) {
-                EnemyData enemyData = enemyDataService.GetEnemyData(targetIndex);
+                EnemyData enemyData = enemyDataStore.GetEnemyData(targetIndex);
                 _lookAtTarget.AimLookAtEnemy(enemyData.position);
             }
         }
 
-        public override void AttackLogic() { // °ø°İÀÌ °¡´ÉÇÒ¶§ È£Ãâ 
-            curAttackTime = 0; // ½Ã°£ ÃÊ±âÈ­
-            // ¾Ö´Ï¸ŞÀÌ¼Ç È£Ãâ
+        public override void AttackLogic() { // ê³µê²©ì´ ê°€ëŠ¥í• ë•Œ í˜¸ì¶œ 
+            curAttackTime = 0; // ì‹œê°„ ì´ˆê¸°í™”
+            // ì• ë‹ˆë©”ì´ì…˜ í˜¸ì¶œ
             anim.SetTrigger(ShootAnimHashKey);
-            // È­»ì ¼ÒÈ¯
+            // í™”ì‚´ ì†Œí™˜
             _attackStrategy.Execute(towerData, targetIndex, PoolType.MagicBullet, _stickPivotTr.transform.position);
         }
 

@@ -1,35 +1,22 @@
-using Data;
+Ôªøusing Data;
 using Zenject;
 using System;
 using System.Diagnostics;
+using R3;
+using Domain;
 namespace UI
 {
-    public class CrystalViewModel : IInitializable, IDisposable
+    public class CrystalViewModel 
     {
-        [Inject] private ICrystalRepository _repo; // model
-        public event Action<int> OnDataChanged; // µ•¿Ã≈Õ∞° ∫Ø∞Êµ…ãö »£√‚µ… æ◊º«
-        public int Crystal => _repo.GetValue();
+        [Inject] private CrystalModel _model; // model
+
+        public ReadOnlyReactiveProperty<int> RO_CrystalObservable => _model.RO_CrystalObservable;
+
+
 
         /// <summary>
-        /// µ•¿Ã≈Õ ∫Ø∞Ê æÀ∏≤
+        /// Îç∞Ïù¥ÌÑ∞ Î≥ÄÍ≤Ω ÏïåÎ¶º
         /// </summary>
-        private void NotifyViewDataChanged(int value) {
-            OnDataChanged?.Invoke(value);
-        }
-
-        public void Update() {
-            NotifyViewDataChanged(Crystal);
-        }
-
-        // zenjectø°º≠ ∞¸∏Æ
-
-        public void Initialize() {
-            _repo.AddChangedListener(NotifyViewDataChanged);
-        }
-
-        // zenjectø°º≠ ∞¸∏Æ
-        public void Dispose() {
-            _repo.RemoveChangedListener(NotifyViewDataChanged);
-        }
+        public void Notify() => _model.Notify();
     }
 } 

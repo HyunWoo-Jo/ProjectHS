@@ -1,11 +1,12 @@
-using GamePlay;
+ï»¿using GamePlay;
 using UnityEngine;
 using Zenject;
+using Domain;
 namespace Core
 {
 
     /// <summary>
-    /// Normal ³­ÀÌµµ¿¡ ¸Â´Â Á¤Ã¥À» Bind
+    /// Normal ë‚œì´ë„ì— ë§ëŠ” ì •ì±…ì„ Bind
     /// </summary>
     public class NormarInstaller : MonoInstaller{
 
@@ -14,6 +15,7 @@ namespace Core
             Container.Bind<IGoldPolicy>().To<GoldPolicy>().AsCached();
             Container.Bind<IHpPolicy>().To<HpPolicy>().AsCached();
             Container.Bind<IExpPolicy>().To<ExpPolicy>().AsCached();
+
             Container.Bind<ITowerPricePolicy>().To<TowerPricePolicy>().AsCached();
             Container.Bind<IRewardPolicy>().To<RewardPolicy>().AsCached();
         }

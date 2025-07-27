@@ -1,15 +1,15 @@
-using Codice.Client.BaseCommands;
+ï»¿using Codice.Client.BaseCommands;
+using R3.Triggers;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.EventSystems;
-
 namespace CustomUtility
 {
 
 #if UNITY_EDITOR
-    // ÁøÀÔÁ¡ Ã¼Å©¿ë Å¬·¹½º
+    // ì§„ì…ì  ì²´í¬ìš© í´ë ˆìŠ¤
     public class ButtonEditorTracker : MonoBehaviour
     {
 
@@ -30,20 +30,17 @@ namespace CustomUtility
 
 
     public static class EventHelper {
-        public static void AddTrigger(this EventTrigger trigger, EventTriggerType type, Action action, string className, string methodName) {
-            EventTrigger.Entry entry = new() {
-                eventID = type
-            };
-            entry.callback.AddListener(e => { action?.Invoke(); });
-            trigger.triggers.Add(entry);
-
+        // ê¸°ì¡´ EventTriggerë¥¼ ObservableEventTriggerë¡œ ë³€ê²½
+        public static ObservableEventTrigger ToObservableEventTrigger(this EventTrigger trigger, string className, string methodName) {
 #if UNITY_EDITOR
-            // ÁøÀÔÁ¡ Ã¼Å©
+            // ì§„ì…ì  ì²´í¬
             trigger.gameObject.AddEventTracker(className, methodName);
 #endif
+            return trigger.gameObject.GetComponent<ObservableEventTrigger>() ?? trigger.gameObject.AddComponent<ObservableEventTrigger>();
+           
         }
-        public static void AddTrigger<T>(this EventTrigger trigger, EventTriggerType type, Func<T> func, Action<T> action, string className, string methodName) where T : notnull {
-            if (func is null)                         // func null ¹æÁö
+        public static void AddEventTracker<T>(this EventTrigger trigger, EventTriggerType type, Func<T> func, Action<T> action, string className, string methodName) where T : notnull {
+            if (func is null)                         // func null ë°©ì§€
                 throw new ArgumentNullException(nameof(func));
        
             EventTrigger.Entry entry = new() {
@@ -56,10 +53,10 @@ namespace CustomUtility
             
             });
             trigger.triggers.Add(entry);
-
+            
 
 #if UNITY_EDITOR
-            // ÁøÀÔÁ¡ Ã¼Å©
+            // ì§„ì…ì  ì²´í¬
             trigger.gameObject.AddEventTracker(className, methodName);
 #endif
 
@@ -67,7 +64,7 @@ namespace CustomUtility
 
         public static void AddEventTracker(this GameObject obj, string className, string methodName) {
 #if UNITY_EDITOR
-            // ÁøÀÔÁ¡ Ã¼Å©
+            // ì§„ì…ì  ì²´í¬
             var tracker = obj.GetComponent<ButtonEditorTracker>() ?? obj.AddComponent<ButtonEditorTracker>();
             tracker.AddEvent(className, methodName);
 #endif

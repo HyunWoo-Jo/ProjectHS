@@ -1,10 +1,10 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEditor;
 using System.IO;
 using UnityEditor.VersionControl;
 namespace CA.UI {
     /// <summary>
-    /// MVP UI ÀÚµ¿ »ı¼º ÄÚµå
+    /// MVP UI ìë™ ìƒì„± ì½”ë“œ
     /// </summary>
     public class VVM_Generator : EditorWindow {
 
@@ -31,7 +31,7 @@ namespace CA.UI {
             }
         }
         /// <summary>
-        /// ³»¿ë ÀÛ¼º
+        /// ë‚´ìš© ì‘ì„±
         /// </summary>
         private void SetContext() {
 
@@ -50,23 +50,21 @@ namespace UI
 #if UNITY_EDITOR // Assertion
             RefAssert();
 #endif
-            // ¹öÆ° ÃÊ±âÈ­
-            _viewModel.OnDataChanged += UpdateUI;
+            // ë²„íŠ¼ ì´ˆê¸°í™”
+           
 
         }}
-
-        private void OnDestroy() {{
-            _viewModel.OnDataChanged -= UpdateUI;
-            _viewModel = null; // ÂüÁ¶ ÇØÁ¦
+        private void Start() {{
+            _viewModel.Notify();
         }}
 
 #if UNITY_EDITOR
-        // °ËÁõ
+        // ê²€ì¦
         private void RefAssert() {{
 
         }}
 #endif
-        // UI °»½Å
+        // UI ê°±ì‹ 
         private void UpdateUI() {{
             
         }}
@@ -83,13 +81,12 @@ namespace UI
 {{
     public class {_vvmName}ViewModel 
     {{   
-        public event Action OnDataChanged; // µ¥ÀÌÅÍ°¡ º¯°æµÉ‹š È£ÃâµÉ ¾×¼Ç (»óÈ²¿¡ ¸Â°Ô º¯¼ö¸íÀ» º¯°æÇØ¼­ »ç¿ë)
 
         /// <summary>
-        /// µ¥ÀÌÅÍ º¯°æ ¾Ë¸²
+        /// ë°ì´í„° ë³€ê²½ ì•Œë¦¼
         /// </summary>
-        private void NotifyViewDataChanged() {{
-            OnDataChanged?.Invoke();
+        private void Notify() {{
+
         }}
 
     }}
@@ -98,7 +95,7 @@ namespace UI
 
         }
         /// <summary>
-        /// »ı¼º
+        /// ìƒì„±
         /// </summary>
         private void GenerateScript() {
             string path = $"{Application.dataPath}/Scripts/UI/MVVM/";

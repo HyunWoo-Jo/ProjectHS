@@ -1,4 +1,4 @@
-
+﻿
 using UnityEngine;
 using Zenject;
 using System;
@@ -8,6 +8,7 @@ using Data;
 using UnityEngine.EventSystems;
 using CustomUtility;
 using Contracts;
+using R3;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI
@@ -21,19 +22,18 @@ namespace UI
 #if UNITY_EDITOR // Assertion
             RefAssert();
 #endif
-            // 버튼 초기화
-            _viewModel.OnDataChanged += UpdateCostUI;
+            // UI Bind
+            _viewModel.RO_CostObservable
+                .Subscribe(UpdateCostUI)
+                .AddTo(this);
 
-            ButtonInit();
+            // 버튼 초기화
+            string className = GetType().Name;
+            this.gameObject.AddEventTracker(className, nameof(OnPointerUP));
             // Event 영역에 Handler Bind
             _eventArea.OnPointerUpEvent += OnPointerUP;
         }
 
-        private void OnDestroy() {
-            _viewModel.OnDataChanged -= UpdateCostUI;
-            _eventArea.OnPointerUpEvent -= OnPointerUP;
-            _viewModel = null; // 참조 해제
-        }
 
 #if UNITY_EDITOR
         // 검증
@@ -42,12 +42,7 @@ namespace UI
             Assert.IsNotNull(_eventArea);
         }
 #endif
-        // 버튼 초기화
-        private void ButtonInit() {
-            string className = GetType().Name;
-            this.gameObject.AddEventTracker(className, nameof(OnPointerUP));
-            // Input Strategy를 통해 OnPointerUP에서 호출이 일어남
-        }
+
 
         // UI 갱신
         private void UpdateCostUI(int cost) {

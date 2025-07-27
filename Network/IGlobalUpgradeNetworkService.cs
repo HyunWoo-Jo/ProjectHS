@@ -1,3 +1,4 @@
+ï»¿using Contracts;
 using Cysharp.Threading.Tasks;
 using Data;
 using System;
@@ -7,12 +8,13 @@ using UnityEngine;
 namespace Network
 {
     /// <summary>
-    /// ¾÷±×·¹ÀÌµå Á¤º¸¸¦ ¼öÁ¤ÇÏ´Â ¼­ºñ½º
+    /// ì—…ê·¸ë ˆì´ë“œ ì •ë³´ë¥¼ ìˆ˜ì •í•˜ëŠ” ì„œë¹„ìŠ¤
     /// </summary>
-    public interface IGlobalUpgradeNetworkService
-    {
-        UniTask GetAllUpgradeTableAsync(GlobalUpgradeDataSO tableSO);
-        UniTask GetAllUpgradeLevelAsync(Action<Dictionary<string, int>> complate);
+    public interface IGlobalUpgradeNetworkService {
+     
+        UniTask GetAllUpgradeTableAsync(GlobalUpgradeTableSO tableSO);
+        UniTask<int> GetUpgradeLevelAsync(string key);
+        UniTask<Dictionary<string, int>> GetAllUpgradeLevelAsync();
         void SetUpgradeAsync<T>(string key, T value);
     }
 }

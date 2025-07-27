@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace CustomUtility {
     public enum VarType {
@@ -7,7 +7,7 @@ namespace CustomUtility {
     }
 
     /// <summary>
-    /// int ¶Ç´Â float ÇÏ³ª¸¸ ´ã´Â variant.
+    /// int ë˜ëŠ” float í•˜ë‚˜ë§Œ ë‹´ëŠ” variant.
     /// </summary>ant {
     public class ValueVariant {
         private readonly VarType _type;
@@ -63,7 +63,7 @@ namespace CustomUtility {
                 vv = new ValueVariant((float)d);
                 return true;
 
-                // Áö¿øÇÏÁö ¾Ê´Â Å¸ÀÔ
+                // ì§€ì›í•˜ì§€ ì•ŠëŠ” íƒ€ì…
                 default:
                 vv = default;
                 UnityEngine.Debug.Log(src.GetType());

@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Network;
 using Data;
 using Zenject;
@@ -6,17 +6,21 @@ using Cysharp.Threading.Tasks;
 using UI;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
+using Domain;
 namespace GamePlay
 {
     public class InitSceneManager : MonoBehaviour
     {
         [Inject] private NetworkManager _networkManager; // Network 
-        [Inject] private ICrystalRepository _crystalRepository; // Å©¸®½ºÅ» repo
-        [Inject] private IGlobalUpgradeRepository _globalUpgradeRepository; // ¾÷±×·¹ÀÌµå repo
+        [Inject] private CrystalModel _crystalModel;
+        [Inject] private GlobalUpgradeModel _globalUpgradeModel;
+
         [SerializeField] private InitSceneUI _initSceneUI;
+        
+
         private bool isClosed = false;
         private void Awake() {
-#if UNITY_EDITOR // °ËÁõ
+#if UNITY_EDITOR // ê²€ì¦
             Assert.IsNotNull(_initSceneUI);
 #endif
 
@@ -28,40 +32,34 @@ namespace GamePlay
             isClosed = true;
         }
 
-        // ³×Æ®¿öÅ© ÃÊ±âÈ­ ±îÁö ´ë±â
+        // ë„¤íŠ¸ì›Œí¬ ì´ˆê¸°í™” ê¹Œì§€ ëŒ€ê¸°
         private async void InitLogicAsync() {
-            // ¿¬°á È®ÀÎ
+            
+            // ì—°ê²° í™•ì¸
             await CheckCnnectedLoop();
-            // UpgradeTable ÀĞ±â
-            await GetUgradeTableLoop();
-            // UserData ÀĞ±â
-            await GetUserDataLoop();
-            // ¸ŞÀÎ ·Îºñ·Î ÀÌµ¿
+            // ì§€ì—°
+            await UniTask.Delay(500);
+
+            await _crystalModel.LoadData();
+
+            await _globalUpgradeModel.AsyncLoadData();
+
+            // ë©”ì¸ ë¡œë¹„ë¡œ ì´ë™
             await SceneManager.LoadSceneAsync("MainLobbyScene");
             
         }
         private async UniTask CheckCnnectedLoop() {
-            // Login ½Ãµµ
+            // Login ì‹œë„
             _initSceneUI.UpdateTextFromThread("Check Cnnected Network");
             while (true) {
                 var result = await _networkManager.IsConnectedAsync();
                 if (result) {
-                    
+
                     break;
                 }
                 if (isClosed) break;
                 await UniTask.Delay(100);
             }
-        }
-        private async UniTask GetUgradeTableLoop() {
-            // upgradeTable ·Îµå
-            _initSceneUI.UpdateTextFromThread("Update Table");
-            // ³»ºÎ¿¡¼­ ¹öÀü Ã¼Å©¸¦ ÁøÇà(´Ù¸¦°æ¿ì¿¡¸¸ ¾÷µ¥ÀÌÆ®)
-            await _globalUpgradeRepository.LoadValue();
-        }
-        private async UniTask GetUserDataLoop() {
-            _initSceneUI.UpdateTextFromThread("Update User Data");
-            await _crystalRepository.LoadValue();
         }
     }
 }

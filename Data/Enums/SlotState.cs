@@ -1,11 +1,11 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace Data
 {
     public enum SlotState
     {
-        PlaceAble, // »ç¿ë °¡´É
-        Blocked, // ÁöÇü, Àå½Ä ¶§¹®¿¡ »ç¿ë ºÒ°¡
+        PlaceAble, // ì‚¬ìš© ê°€ëŠ¥
+        Blocked, // ì§€í˜•, ì¥ì‹ ë•Œë¬¸ì— ì‚¬ìš© ë¶ˆê°€
 
     }
 }

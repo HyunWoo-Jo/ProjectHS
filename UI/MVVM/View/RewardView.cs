@@ -1,4 +1,4 @@
-
+﻿
 using UnityEngine;
 using Zenject;
 using System;
@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 using CustomUtility;
 using UnityEngine.SocialPlatforms;
 using static UnityEditor.Profiling.HierarchyFrameDataView;
+using R3;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI
@@ -23,9 +24,17 @@ namespace UI
 #if UNITY_EDITOR // Assertion
             RefAssert();
 #endif
-            // 버튼 초기화
+            // UI Bind
             _viewModel.OnDataChanged += UpdatCrystalUI;
-            InitButton();
+
+            // 버튼 초기화
+            _enterButton.ToObservableEventTrigger(GetType().Name, nameof(OnClickButton))
+                .OnPointerDownAsObservable()
+                .Take(1)
+                .Subscribe(_ => OnClickButton())
+                .AddTo(this);
+
+            
             UpdatCrystalUI(_viewModel.RewardCrystal);
         }
 
@@ -49,12 +58,9 @@ namespace UI
             Assert.IsNotNull(_enterButton);
         }
 #endif
-        // 버튼 초기화
-        private void InitButton() {
-            _enterButton.AddTrigger(EventTriggerType.PointerClick, EnterButton, GetType().Name, nameof(EnterButton));
-        }
 
-        private void EnterButton() {
+
+        private void OnClickButton() {
             if (_isMove) return;
             _viewModel.ChangeScene();
         }

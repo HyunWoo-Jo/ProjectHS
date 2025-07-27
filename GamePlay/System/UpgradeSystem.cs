@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Data;
 using Zenject;
 using System.Collections.Generic;
@@ -6,14 +6,15 @@ using System.Linq;
 using UI;
 using System;
 using Contracts;
+using Domain;
 namespace GamePlay
 {
-    public class UpgradeSystem : MonoBehaviour, IUpgradeService {
+    public class UpgradeSystem : MonoBehaviour, IUpgradeSystem {
         [Inject] private IUIFactory _uiFactory;
         [Inject] private GameDataHub _gameDataHub;
         [Inject] private IGlobalUpgradeRepository _globalUpgradeRepository;
         [Inject] private SelectedUpgradeModel _selectedUpgradeModel;
-        [SerializeField] private UpgradeDataSO[] _upgradeDataList; // ¾÷±×·¹ÀÌµå µ¥ÀÌÅÍ ¸ñ·Ï Resources¿¡¼­ ÀĞ¾î¿È
+        [SerializeField] private UpgradeDataSO[] _upgradeDataList; // ì—…ê·¸ë ˆì´ë“œ ë°ì´í„° ëª©ë¡ Resourcesì—ì„œ ì½ì–´ì˜´
         private int _remainingUpgradeSelections = 0;
         private void Awake() { // Load
             _upgradeDataList = Resources.LoadAll<UpgradeDataSO>("UpgradeData");
@@ -22,25 +23,26 @@ namespace GamePlay
         }
 
         /// <summary>
-        /// ·£´ıÇÑ ¾÷±×·¹ÀÌµå UI¸¦ »ı¼º
+        /// ëœë¤í•œ ì—…ê·¸ë ˆì´ë“œ UIë¥¼ ìƒì„±
         /// </summary>
         public void QueueUpgradeRequest(int level) {
             if (level <= 0) return;
             _remainingUpgradeSelections++;
+            // ì¤‘ì²© ìƒì„± ë°©ì§€
             if(_remainingUpgradeSelections == 1) {
                 ShowRandomUpgradeSelection();
             }
         }
         /// <summary>
-        /// ·£´ıÇÑ ¾÷±×·¹ÀÌµå UI¸¦ »ı¼º
+        /// ëœë¤í•œ ì—…ê·¸ë ˆì´ë“œ UIë¥¼ ìƒì„±
         /// </summary>
         private void ShowRandomUpgradeSelection() {
             var randUpgleList = GetRandomUpgradeDataList(3);
-            for (int i = 0; i < _selectedUpgradeModel.observableUpgradeDatas.Length; i++) {
-                // ¸ğµ¨¿¡ ¾÷±×·¹ÀÌµå °»½Å
-                _selectedUpgradeModel.observableUpgradeDatas[i].Value = randUpgleList.Count > i ? randUpgleList[i] : null;
+            for (int i = 0; i < _selectedUpgradeModel.SlotLength; i++) {
+                // ëª¨ë¸ì— ì—…ê·¸ë ˆì´ë“œ ê°±ì‹ 
+                _selectedUpgradeModel.SetUpgradeData(i, randUpgleList[i]);
             }
-            _uiFactory.InstanceUI<UpgradeView>(40); // UI »ı¼º
+            _uiFactory.InstanceUI<UpgradeView>(40); // UI ìƒì„±
         }
 
         
@@ -48,30 +50,29 @@ namespace GamePlay
 
 
         /// <summary>
-        /// Áßº¹¾øÀÌ »ç¿ë °¡´ÉÇÑ ¾÷±×·¹ÀÌµå¸¸ °¡Áö°í¿À´Âµ¥ count °³¼öº¸´Ù ÀûÀ» ¼ö ÀÖÀ½
+        /// ì¤‘ë³µì—†ì´ ì‚¬ìš© ê°€ëŠ¥í•œ ì—…ê·¸ë ˆì´ë“œë§Œ ê°€ì§€ê³ ì˜¤ëŠ”ë° count ê°œìˆ˜ë³´ë‹¤ ì ì„ ìˆ˜ ìˆìŒ
         /// </summary>
         /// <param name="count"></param>
         /// <returns></returns>
-        private List<UpgradeDataSO> GetRandomUpgradeDataList(int count) {
-            var ableUpgradeList = _upgradeDataList.Where((data) => data.CheckUnlock()).OrderBy(_ => UnityEngine.Random.value).Take(count).ToList(); // Áßº¹¾øÀÌ »ç¿ë°¡´ÉÇÑ °Í¸¸ °¡Áö°í¿È
+        public List<UpgradeDataSO> GetRandomUpgradeDataList(int count) {
+            var ableUpgradeList = _upgradeDataList.Where((data) => data.CheckUnlock()).OrderBy(_ => UnityEngine.Random.value).Take(count).ToList(); // ì¤‘ë³µì—†ì´ ì‚¬ìš©ê°€ëŠ¥í•œ ê²ƒë§Œ ê°€ì§€ê³ ì˜´
             return ableUpgradeList;
         }
 
-        public void Reroll(int index) {
-            var list = GetRandomUpgradeDataList(1);
-            if (list.Count > 0) {
-                _selectedUpgradeModel.observableUpgradeDatas[index].Value = list[0];
-            }
-            // model ¾÷µ¥ÀÌÆ®
-            _selectedUpgradeModel.observableRerollCount.Value -= 1;
+
+        public void ConsumeRemainingCount() {
+            _remainingUpgradeSelections--;
         }
 
-        public void ApplyUpgrade(int index) {
-            _selectedUpgradeModel.observableUpgradeDatas[index].Value.ApplyUpgrade();
-            _remainingUpgradeSelections--;
-            if(_remainingUpgradeSelections > 0) {
+        /// <summary>
+        /// ë‚¨ì€ ì—…ê·¸ë ˆì´ë“œ ì¶œë ¥
+        /// </summary>
+        public bool TryShowRemainUpgradeSelection() {
+            if (_remainingUpgradeSelections > 0) {
                 ShowRandomUpgradeSelection();
+                return true;
             }
+            return false;
         }
     }
 }

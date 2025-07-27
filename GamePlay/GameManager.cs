@@ -1,4 +1,4 @@
-using Data;
+ï»¿using Data;
 using GamePlay;
 using System;
 using System.Linq;
@@ -8,13 +8,13 @@ using CustomUtility;
 using Zenject;
 using UI;
 using UnityEngine.SceneManagement;
-
+using Contracts;
 namespace GamePlay {
     /*
-    °ÔÀÓ »óÅÂ °ü¸®	    ·Îµù Áß / °ÔÀÓ Áß / ÀÏ½ÃÁ¤Áö / Å¬¸®¾î µî
-    ¾À ÀüÈ¯ Ã³¸®	    ¾À ÀÌµ¿ ¿äÃ» Ã³¸®, Transition UI ¿¬°á µî
-    °ÔÀÓ ½ÃÀÛ/³¡ Ã³¸®	°ÔÀÓ ÃÊ±âÈ­, ½ÃÀÛ Á¶°Ç Ã¼Å©, Å¬¸®¾î/½ÇÆĞ Á¶°Ç Ã¼Å©
-    µ¥ÀÌÅÍ ·Îµù	        SaveData, PlayerData µî ºÒ·¯¿À±â
+    ê²Œì„ ìƒíƒœ ê´€ë¦¬	    ë¡œë”© ì¤‘ / ê²Œì„ ì¤‘ / ì¼ì‹œì •ì§€ / í´ë¦¬ì–´ ë“±
+    ì”¬ ì „í™˜ ì²˜ë¦¬	    ì”¬ ì´ë™ ìš”ì²­ ì²˜ë¦¬, Transition UI ì—°ê²° ë“±
+    ê²Œì„ ì‹œì‘/ë ì²˜ë¦¬	ê²Œì„ ì´ˆê¸°í™”, ì‹œì‘ ì¡°ê±´ ì²´í¬, í´ë¦¬ì–´/ì‹¤íŒ¨ ì¡°ê±´ ì²´í¬
+    ë°ì´í„° ë¡œë”©	        SaveData, PlayerData ë“± ë¶ˆëŸ¬ì˜¤ê¸°
     */
     public class GameManager : MonoBehaviour {
         public enum GameState {
@@ -34,7 +34,7 @@ namespace GamePlay {
         public Vector2Int MapSize { get; private set; } = new Vector2Int(20, 20);
 
         /// <summary>
-        /// °ÔÀÓ »óÅÂ º¯°æ
+        /// ê²Œì„ ìƒíƒœ ë³€ê²½
         /// </summary>
         /// <param name="state"></param>
         public void ChangeGameState(GameState state) {
@@ -42,19 +42,19 @@ namespace GamePlay {
         }
 
         private void Awake() {
-            // Scene ÀüÈ¯½Ã ÀÌº¥Æ®°¡ ¹ß»ıµÇµµ·Ï µî·Ï
+            // Scene ì „í™˜ì‹œ ì´ë²¤íŠ¸ê°€ ë°œìƒë˜ë„ë¡ ë“±ë¡
             SceneManager.sceneLoaded += LoadSceneEffect;
 
-            Application.targetFrameRate = 120; // Å¸°Ù ÇÁ·¹ÀÓ ¼³Á¤
+            Application.targetFrameRate = 120; // íƒ€ê²Ÿ í”„ë ˆì„ ì„¤ì •
 
         }
 
         /// <summary>
-        /// ¾À ÀüÈ¯ÀÌ ÀÏ¾î³¯¶§ ÀÌÆåÆ® ¹ß»ı
+        /// ì”¬ ì „í™˜ì´ ì¼ì–´ë‚ ë•Œ ì´í™íŠ¸ ë°œìƒ
         /// </summary>
         private void LoadSceneEffect(Scene scene, LoadSceneMode mode) {
             if (SceneManager.GetActiveScene().name != SceneName.LoadScene.ToString() && 
-                _loadManager.GetPreSceneName() != _loadManager.GetNextSceneName()) { // ·Îµå ¾ÀÀÌ ¾Æ´Ò°æ¿ì , Ã³À½ ·ÎµåÇÑ ¾ÀÀÌ ¾Æ´Ñ°æ¿ì ÀÌÆåÆ® ½ÇÇà
+                _loadManager.GetPreSceneName() != _loadManager.GetNextSceneName()) { // ë¡œë“œ ì”¬ì´ ì•„ë‹ê²½ìš° , ì²˜ìŒ ë¡œë“œí•œ ì”¬ì´ ì•„ë‹Œê²½ìš° ì´í™íŠ¸ ì‹¤í–‰
                 IWipeUI wipeUI = _uiFactory.InstanceUI<WipeUI>(100);
                 wipeUI.Wipe(WipeDirection.FillRight, 0.5f, true);
 

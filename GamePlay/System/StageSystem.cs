@@ -1,30 +1,24 @@
-using Data;
+ï»¿using Data;
 using System;
 using UnityEngine;
 using Zenject;
-
+using Domain;
+using R3;
 namespace GamePlay
 {
     /// <summary>
-    /// Enemy »ı¼º°ú Stage 
+    /// Enemy ìƒì„±ê³¼ Stage 
     /// </summary>
     [DefaultExecutionOrder(80)]
     public class StageSystem : MonoBehaviour
     {
         [Inject] private WaveStatusModel _waveStatusModel;
-        [Inject] private StageSettingsModel _stageSettingsModel;
+        [Inject] private StageSettings _stageSettings;
 
 
-        public event Action<StageType, int> OnStageStart; // ½ºÅ×ÀÌÁö°¡ ½ÃÀÛµÉ¶§ ¹ß»ıµÇ´Â Event
-        public event Action<int> OnStageEnd; // ½ºÅ×ÀÌÁö°¡ ³¡³¯¶§ ¹ß»ıµÇ´Â Event
-        public int StageLevel {
-            get { return _waveStatusModel.waveLevelObservable.Value; }
-            set { _waveStatusModel.waveLevelObservable.Value = value; }
-        }
-        public float WaveTime {
-            get { return _waveStatusModel.waveTimeObservable.Value; }
-            set { _waveStatusModel.waveTimeObservable.Value = value; }
-        }
+        public event Action<StageType, int> OnStageStart; // ìŠ¤í…Œì´ì§€ê°€ ì‹œì‘ë ë•Œ ë°œìƒë˜ëŠ” Event
+        public int WaveLevel => _waveStatusModel.WaveLevel;
+        public float WaveTime => _waveStatusModel.WaveTime;
 
         private IStageTypeStrategy _stageTypeStrategy;
         private IStageEndStrategy _stageEndStrategy;
@@ -33,7 +27,7 @@ namespace GamePlay
         public StageType CurStageType { get; private set;}
 
         /// <summary>
-        /// ½ºÅ×ÀÌÁö Á¾·ù¸¦ Á¤ÇÏ´Â Àü·« ¼³Á¤
+        /// ìŠ¤í…Œì´ì§€ ì¢…ë¥˜ë¥¼ ì •í•˜ëŠ” ì „ëµ ì„¤ì •
         /// </summary>
         /// <param name="stageTypeStrategy"></param>
         public void SetStageTypeStrategy(IStageTypeStrategy stageTypeStrategy) {
@@ -41,13 +35,13 @@ namespace GamePlay
         }
 
         /// <summary>
-        /// Stage Á¾·á Á¶°Ç ¼³Á¤
+        /// Stage ì¢…ë£Œ ì¡°ê±´ ì„¤ì •
         /// </summary>
         /// <param name="stageType"></param>
         private void SetStageEndType(StageType stageType) {
             CurStageType = stageType;
 
-            // Á¾·á Á¶°Ç ¼³Á¤
+            // ì¢…ë£Œ ì¡°ê±´ ì„¤ì •
             switch (stageType) {
                 case StageType.Standard:
                 _stageEndStrategy = new AllEnemiesDefeatedStageEndStrategy();
@@ -59,42 +53,34 @@ namespace GamePlay
         }
 
         /// <summary>
-        /// Stage°¡ ½ÃÀÛ µÇ¾úÀ»¶§ È£Ãâ
+        /// Stageê°€ ì‹œì‘ ë˜ì—ˆì„ë•Œ í˜¸ì¶œ
         /// </summary>
-        public void StartStage() {
+        public void StartStage(int level) {
             if(_stageTypeStrategy == null) {
-                Debug.LogError("stageTypeStrategy Àü·« ¼³Á¤ÀÌ ¾ÈµÇ¾îÀÖÀ½");
+                Debug.LogError("stageTypeStrategy ì „ëµ ì„¤ì •ì´ ì•ˆë˜ì–´ìˆìŒ");
                 return;
             }
-            SetStageEndType(_stageTypeStrategy.GetStageType(StageLevel)); // Á¾·á Á¶°Ç ¼³Á¤
-            OnStageStart?.Invoke(CurStageType, StageLevel); // Event ½ÇÇà
-        }
-        /// <summary>
-        /// Stage°¡ Á¾·áµÇ¾úÀ»¶§ È£Ãâ
-        /// </summary>
-        private void EndStage() {
-            OnStageEnd?.Invoke(StageLevel); // Event ½ÇÇà
-            WaveTime = _stageSettingsModel.stageDelayTime; // ³²Àº ½Ã°£ ÃÊ±âÈ­
-            ++StageLevel; // ´ÙÀ½ ½ºÅ×ÀÌÁö
+            SetStageEndType(_stageTypeStrategy.GetStageType(level)); // ì¢…ë£Œ ì¡°ê±´ ì„¤ì •
+            OnStageStart?.Invoke(CurStageType, level); // Event ì‹¤í–‰
         }
 
 
         private void Start() {
-            WaveTime = 0; // ±âº» ½Ã°£À¸·Î ¼³Á¤
+            Bind();
         }
+
+        private void Bind() {
+            _waveStatusModel.RO_WaveLevelObservable
+                .ThrottleLastFrame(1)
+                .Subscribe(StartStage)
+                .AddTo(this);
+        }
+
 
         private void Update() {
             if (GameSettings.IsPause) return;
-            float time = WaveTime;
-            // ½Ã°£ °è»ê (ÃßÈÄ °ÔÀÓ ¼Óµµ, ÀÏ½ÃÁ¤Áö µîÀÌ Ãß°¡ µÉ ¼ö ÀÖÀ½)
-            time -= Time.deltaTime;
-
-            WaveTime = time;
-            if (time <= 0f) {
-                EndStage();
-                StartStage();
-            }
-
+            float time = Time.deltaTime;
+            _waveStatusModel.ConsumeWaveTime(time);
         }
 
     }

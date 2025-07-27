@@ -1,4 +1,4 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using UnityEngine.EventSystems;
 using Data;
 using UI;
@@ -7,23 +7,23 @@ namespace GamePlay
     public class PcInputStrategy : InputBase {
         public override void UpdateInput() {
 
-            //// ≈¨∏Ø √≥∏Æ
-            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) { // UI ¿ß ≈¨∏Ø¿Ã æ∆¥“∞ÊøÏ                
+            //// ÌÅ¥Î¶≠ Ï≤òÎ¶¨
+            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) { // UI ÏúÑ ÌÅ¥Î¶≠Ïù¥ ÏïÑÎãêÍ≤ΩÏö∞                
                 inputType = InputType.First;
                 clickStartTime = Time.time;
                 firstFramePosition = GetPosition();
-                if (TryRaycastAtScreenPos(towerMask,Input.mousePosition, out RaycastHit hit)){ // Tower¿Œ∞° √º≈©
+                if (TryRaycastAtScreenPos(towerMask,Input.mousePosition, out RaycastHit hit)){ // TowerÏù∏Í∞Ä Ï≤¥ÌÅ¨
                     inputTargetType = InputTargetType.Tower;
                     hitObject = hit.collider.gameObject;
                 } else {
                     inputTargetType = InputTargetType.Ground;
                 }
-            } else if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject()) { // Push¡ﬂ
+            } else if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject()) { // PushÏ§ë
                 inputType = InputType.Push;
             }
             if (Input.GetMouseButtonUp(0) && (inputType == InputType.First || inputType == InputType.Push)) { // UP 
                 inputType = InputType.End;
-                // UI∏È OnPointerUp »£√‚ Ω√µµ
+                // UIÎ©¥ OnPointerUp Ìò∏Ï∂ú ÏãúÎèÑ
                 if (TryUIRaycast(Input.mousePosition, out RaycastResult hit)) {
                     hit.gameObject.GetComponent<IPointerUP>()?.OnPointerUP();
                 }
@@ -32,10 +32,10 @@ namespace GamePlay
 
             }
 
-            //// »Æ¥Î, √‡º“ √≥∏Æ
+            //// ÌôïÎåÄ, Ï∂ïÏÜå Ï≤òÎ¶¨
             float wheel = Input.GetAxisRaw("Mouse ScrollWheel");
             if (Mathf.Abs(wheel) > float.Epsilon) {
-                closeUpDownSize = wheel * 200f; // πŒ∞®µµ
+                closeUpDownSize = wheel * 200f; // ÎØºÍ∞êÎèÑ
             } else {
                 closeUpDownSize = 0;
             }

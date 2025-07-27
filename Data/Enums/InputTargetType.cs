@@ -1,8 +1,8 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace Data
 {
-    public enum InputTargetType { // ¹¹¸¦ ÅÍÄ¡Çß³ª È®ÀÎ
+    public enum InputTargetType { // ë­ë¥¼ í„°ì¹˜í–ˆë‚˜ í™•ì¸
         Ground,
         Tower,
     }

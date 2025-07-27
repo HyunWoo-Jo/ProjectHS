@@ -1,8 +1,8 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace Data
 {
-    // µî±Þ
+    // ë“±ê¸‰
     public enum Rarity 
     {
         Common,

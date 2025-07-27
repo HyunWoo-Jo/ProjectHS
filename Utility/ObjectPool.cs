@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,10 +6,10 @@ namespace CustomUtility {
     public interface IObjectPool {
         internal void RepayItem(GameObject item, int index);
         public T BorrowItem<T> () where T : MonoBehaviour;
-        public void Clear(); // »ı¼ºµÈ ¿ÀºêÁ§Æ® ÀüºÎ Á¦°Å
+        public void Clear(); // ìƒì„±ëœ ì˜¤ë¸Œì íŠ¸ ì „ë¶€ ì œê±°
     }
     public static class ObjectPoolExtensions { 
-        // Builder È®Àå ¸Å¼­µå
+        // Builder í™•ì¥ ë§¤ì„œë“œ
         public static ObjectPoolBuilder<T> DontDestroy<T>(this ObjectPoolBuilder<T> builder) where T : MonoBehaviour {
             GameObject.DontDestroyOnLoad(builder.pool.ownerObj);
             builder.pool.isDontDestroy = true;
@@ -20,13 +20,13 @@ namespace CustomUtility {
             return builder;
         }
         /// <summary>
-        /// ÀÚµ¿ ¿Â¿ÀÇÁ ¿©ºÎ (true ºô¸®±â, ¹İ³³½Ã ¿ÀºêÁ§Æ®°¡ SetActive°¡ ÀÚµ¿À¸·Î µÊ)
+        /// ìë™ ì˜¨ì˜¤í”„ ì—¬ë¶€ (true ë¹Œë¦¬ê¸°, ë°˜ë‚©ì‹œ ì˜¤ë¸Œì íŠ¸ê°€ SetActiveê°€ ìë™ìœ¼ë¡œ ë¨)
         /// <returns></returns>
         public static ObjectPoolBuilder<T> AutoActivate<T>(this ObjectPoolBuilder<T> builder, bool isActivation) where T: MonoBehaviour {
             builder.pool.isAutoActivateOnBorrow = isActivation;
             return builder;
         }
-        /// ºÎ¸ğ ¼³Á¤
+        /// ë¶€ëª¨ ì„¤ì •
         public static ObjectPoolBuilder<T> Parent<T>(this ObjectPoolBuilder<T> builder, Transform parentTr) where T : MonoBehaviour {
            builder.pool.ownerObj.transform.SetParent(parentTr);
             return builder;
@@ -61,13 +61,13 @@ namespace CustomUtility {
         internal GameObject ownerObj;
         internal GameObject itemObj;
         internal Queue<T> item_que;
-        internal List<T> index_T_list; // Get Component¸¦ ÁÙÀÌ°í ºü¸£°Ô ¹İÈ¯ÇÏ±âÀ§ÇÑ µ¥ÀÌÅÍ
+        internal List<T> index_T_list; // Get Componentë¥¼ ì¤„ì´ê³  ë¹ ë¥´ê²Œ ë°˜í™˜í•˜ê¸°ìœ„í•œ ë°ì´í„°
         public bool isStatic;
         internal bool isDontDestroy;
-        internal bool isAutoActivateOnBorrow = false; // ÀÚµ¿ ¿Â¿ÀÇÁ ¿©ºÎ
+        internal bool isAutoActivateOnBorrow = false; // ìë™ ì˜¨ì˜¤í”„ ì—¬ë¶€
         private int index = 0;
         
-        // Builder¸¦ ÅëÇØ »ı¼º
+        // Builderë¥¼ í†µí•´ ìƒì„±
         internal ObjectPool() {
         }
 

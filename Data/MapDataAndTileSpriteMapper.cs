@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Text;
@@ -17,7 +17,7 @@ namespace Data
     }
 
     /// <summary>
-    /// TileType°ú Sprite¸¦ ¸ÅÄª
+    /// TileTypeê³¼ Spriteë¥¼ ë§¤ì¹­
     /// </summary>
     public class TileSpriteMapper {
 
@@ -44,12 +44,12 @@ namespace Data
             IsLoad = false;
             string label = tema.ToString() + "Sprite";
 
-            Debug.Log("Load ½ÃÀÛ");
+            Debug.Log("Load ì‹œì‘");
 
 
             _dataManager.LoadAssetsByLabelAsync<Sprite>(label).ContinueWith((spriteList) => {
                 foreach (Sprite sprite in spriteList) {
-                    Match match = Regex.Match(sprite.name, @"\((\d+)\)"); // ÀÌ¸§À¸·Î ¸ÅÇÎ
+                    Match match = Regex.Match(sprite.name, @"\((\d+)\)"); // ì´ë¦„ìœ¼ë¡œ ë§¤í•‘
                     if (match.Success) {
                         string numberStr = match.Groups[1].Value;
                         int number = int.Parse(numberStr);
@@ -57,11 +57,11 @@ namespace Data
                         _spriteDic.Add((TileType)number, sprite);
 
                     } else {
-                        Debug.Log("¸ÅÄª ½ÇÆĞ :" + sprite.name);
+                        Debug.Log("ë§¤ì¹­ ì‹¤íŒ¨ :" + sprite.name);
                     }
                 }
                 loadAction?.Invoke();
-                Debug.Log("·Îµù ¿Ï·á");
+                Debug.Log("ë¡œë”© ì™„ë£Œ");
             });
         }
         public void ReleaseTema(MapTema tema) {

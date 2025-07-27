@@ -5,7 +5,8 @@
         "Zenject",
         "Data",
         "Utility",
-        "UniTask"
+        "UniTask",
+        "Contracts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

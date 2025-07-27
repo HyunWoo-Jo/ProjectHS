@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Unity.Mathematics;
 using System;
 namespace Data
@@ -9,19 +9,19 @@ namespace Data
     [Serializable]
     public struct EnemyData
     {
-        // ÇöÀç Å©±â 31 ¹ÙÀÌÆ®
-        // Å©±â¸¦ ´õ ´Ã¸± »ı°¢ÀÌ Á¸ÀçÇÏ¸é ºĞ¸®ÇØ¼­ ÀúÀå
-        public float3 position; // À§Ä¡ 
-        public float speed; // ¼Óµµ 
-        public int maxHp; // ÃÖ´ë Ã¼·Â 
-        public int curHp; // ÇöÀç Ã¼·Â (½ÇÁ¦ UI, Á×À½ ÆÇº°¿¡ »ç¿ë)
-        public int nextTempHp; // µ¥¹ÌÁö Ã³¸® ÈÄ ÀÓ½Ã Ã¼·Â (ÅõÃ´ÀÇ °æ¿ì ´ë¹ÌÁö°¡ Áï½Ã Àû¿ë µÇ°Ô È°¿ë) 
+        // í˜„ì¬ í¬ê¸° 31 ë°”ì´íŠ¸
+        // í¬ê¸°ë¥¼ ë” ëŠ˜ë¦´ ìƒê°ì´ ì¡´ì¬í•˜ë©´ ë¶„ë¦¬í•´ì„œ ì €ì¥
+        public float3 position; // ìœ„ì¹˜ 
+        public float speed; // ì†ë„ 
+        public int maxHp; // ìµœëŒ€ ì²´ë ¥ 
+        public int curHp; // í˜„ì¬ ì²´ë ¥ (ì‹¤ì œ UI, ì£½ìŒ íŒë³„ì— ì‚¬ìš©)
+        public int nextTempHp; // ë°ë¯¸ì§€ ì²˜ë¦¬ í›„ ì„ì‹œ ì²´ë ¥ (íˆ¬ì²™ì˜ ê²½ìš° ëŒ€ë¯¸ì§€ê°€ ì¦‰ì‹œ ì ìš© ë˜ê²Œ í™œìš©) 
 
-        public bool isDead; // Á×À½ ¿©ºÎ
-        public bool isSpawn; // »ı¼º ¿©ºÎ
-        public bool isObj; // ObjectÁ¸Àç ¿©ºÎ
+        public bool isDead; // ì£½ìŒ ì—¬ë¶€
+        public bool isSpawn; // ìƒì„± ì—¬ë¶€
+        public bool isObj; // Objectì¡´ì¬ ì—¬ë¶€
 
-        public int currentPathIndex; // ¾î¶² Path IndexÀ§Ä¡¿¡ ÀÖ³ª
+        public int currentPathIndex; // ì–´ë–¤ Path Indexìœ„ì¹˜ì— ìˆë‚˜
         
         
     }

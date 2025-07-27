@@ -1,6 +1,5 @@
-using Contracts;
-using Data;
-using UnityEngine;
+ï»¿using Contracts;
+using Domain;
 using Zenject;
 namespace GamePlay
 {
@@ -8,9 +7,9 @@ namespace GamePlay
         [Inject] private ITowerSystem _towerSystem;
         [Inject] private GoldModel _goldModel;
         public bool TrySellTower() {
-            // Å¸¿ö »èÁ¦¿¡ ¼º°øÇÏ¸é °ñµå Ãß°¡
+            // íƒ€ì›Œ ì‚­ì œì— ì„±ê³µí•˜ë©´ ê³¨ë“œ ì¶”ê°€
             if (!_towerSystem.TryRemoveTower(out int cost)) return false;
-            _goldModel.goldObservable.Value += cost;
+            _goldModel.TryEarnGold(cost);
             return true;
         }
     }

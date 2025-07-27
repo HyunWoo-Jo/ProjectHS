@@ -1,10 +1,11 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using Contracts;
 namespace Data
 {
     [CreateAssetMenu(fileName = "UpgradeDataSO", menuName = "Scriptable Objects/UpgradeDataSO")]
-    public class UpgradeDataSO : ScriptableObject
+    public class UpgradeDataSO : ScriptableObject, IUpgradeData
     {   
         public Rarity rarity;
         public Sprite sprite;
@@ -13,26 +14,30 @@ namespace Data
         [SerializeField] private List<UnlockModifier> _unlockModifierList = new();
         [SerializeField] private List<UpgradeModifier> _upgradeModifierList = new();
 
+
+        public int Rarity() => (int)rarity;
+
+        public Sprite Sprite() => sprite;
+
+        public string UpgradeName() => upgradeName;
+
+        public string Description() => description;
         /// <summary>
-        /// Unlock µÇ¾ú´ÂÁö È®ÀÎ
+        /// ì—…ê·¸ë ˆì´ë“œ ì ìš©
         /// </summary>
-        /// <returns></returns>
+        public void ApplyUpgrade() {
+            foreach (var upgrade in _upgradeModifierList) {
+                upgrade.Apply(); // ì—…ê·¸ë ˆì´ë“œ ì ìš©
+            }
+        }
+        /// <summary>
+        /// Unlock ë˜ì—ˆëŠ”ì§€ í™•ì¸
+        /// </summary>
         public bool CheckUnlock() {
-            foreach(var unlock in _unlockModifierList) {
-                if (!unlock.IsSatisfied()) return false; // ¸ğµç Á¶°ÇÀÌ ÂüÀÏ¶§¸¸ true
+            foreach (var unlock in _unlockModifierList) {
+                if (!unlock.IsSatisfied()) return false; // ëª¨ë“  ì¡°ê±´ì´ ì°¸ì¼ë•Œë§Œ true
             }
             return true;
         }
-
-        /// <summary>
-        /// ¾÷±×·¹ÀÌµå Àû¿ë
-        /// </summary>
-        public void ApplyUpgrade() {
-
-            foreach(var upgrade in _upgradeModifierList) {
-                upgrade.Apply(); // ¾÷±×·¹ÀÌµå Àû¿ë
-            }
-        }
-
     }
 }

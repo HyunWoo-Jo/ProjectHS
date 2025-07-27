@@ -1,9 +1,9 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Data;
 namespace GamePlay
 {
     /// <summary>
-    /// ½ºÅ×ÀÌÁö Á¾·ù¸¦ ¼±ÅÃÇÏ´Â Àü·«
+    /// ìŠ¤í…Œì´ì§€ ì¢…ë¥˜ë¥¼ ì„ íƒí•˜ëŠ” ì „ëµ
     /// </summary>
     public interface IStageTypeStrategy
     {

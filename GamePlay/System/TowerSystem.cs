@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
 using Data;
 using Zenject;
@@ -9,6 +9,7 @@ using CustomUtility;
 using ModestTree;
 using System;
 using UI;
+using Domain;
 namespace GamePlay
 {
     [DefaultExecutionOrder(80)]
@@ -24,11 +25,10 @@ namespace GamePlay
         [SerializeField] private float3 _towerOffset = new Vector3(0f, 0.75f, 0f);
 
         // UI
+        [Inject] private TowerSaleModel _towerSaleModel;
+        
         private GameObject _sellTowerViewObj;
 
-        // Model
-
-        [Inject] private TowerSaleModel _saleModel;
 
 
         private List<string> _towerKeyList = new List<string> { // Addressable Key
@@ -38,58 +38,57 @@ namespace GamePlay
 
         private TowerBase _seletedTower;
         
-        [SerializeField] private SpriteRenderer _towerShadowObjRenderer; // Å¸¿öÀÇ ±×¸²ÀÚ¸¦ Ç¥Çö
+        [SerializeField] private SpriteRenderer _towerShadowObjRenderer; // íƒ€ì›Œì˜ ê·¸ë¦¼ìë¥¼ í‘œí˜„
         private bool _isOnShadow = false;
-        
+
+
         private void Awake() {
 #if UNITY_EDITOR
             Assert.IsNotNull(_towerShadowObjRenderer);
 #endif
-            // Tower ·Îµù
+            // Tower ë¡œë”©
             _dataManager.LoadAssetsByLabelAsync<GameObject>(_towerLabel).ContinueWith(towerList => {
-                foreach (var prefab in towerList) { // Å¸¿ö µî·Ï
-                    _towerPrefabDictionary[prefab.name] = prefab; 
+                foreach (var prefab in towerList) { // íƒ€ì›Œ ë“±ë¡
+                    _towerPrefabDictionary[prefab.name] = prefab;
                 }
             });
-            // Sell UI »ı¼º
+            // Sell UI ìƒì„±
             _sellTowerViewObj = _uIFactory.InstanceUI<SellTowerView>(0).gameObject;
             _sellTowerViewObj.SetActive(false);
         }
 
-        private void OnDestroy() {
-            _dataManager.ReleaseAssetsByLabel(_towerLabel);
-        }
-        // tower »ı¼º
-        // ¼º°ø true ½ÇÆĞ false
-        public bool TryAddTower() {
-            // ºñ¾îÀÖ´Â ½½·Î È®ÀÎ
+
+        public int SerchEmptySlot() {
             var slotList = _gameDataHub.GetSlotList();
             int index = -1;
-            // ºñ¾îÀÖ´Â ½½·Ô °Ë»ö
+            // ë¹„ì–´ìˆëŠ” ìŠ¬ë¡¯ ê²€ìƒ‰
             foreach (var slotData in slotList) {
                 ++index;
-                if (slotData.slotState == SlotState.PlaceAble && !slotData.IsUsed()) { // »ç¿ë °¡´É, ºñ¾îÀÖ´Â ½½·ÔÀÌ¸é
+                if (slotData.slotState == SlotState.PlaceAble && !slotData.IsUsed()) { // ì‚¬ìš© ê°€ëŠ¥, ë¹„ì–´ìˆëŠ” ìŠ¬ë¡¯ì´ë©´
                     break;
                 }
             }
-            if (index == -1) {
-                return false;
-            }
-            // RandomÇÑ Tower »ı¼º
-            string key = _towerKeyList[UnityEngine.Random.Range(0, _towerKeyList.Count)];
-            GameObject towerPrefab = _towerPrefabDictionary[key];
-           
-            var towerObj = GameObject.Instantiate(towerPrefab); // »ı¼º
-            _container.InjectGameObject(towerObj);
-
-            // µî·Ï
-            RegisterTowerToSlot(towerObj, index);
-            
-            return true;
+            return index;
         }
 
         /// <summary>
-        /// Å¸¿ö À§Ä¡ º¯°æ
+        /// Tower ì¶”ê°€ 
+        /// </summary>
+        /// <param name="index"> ì¸ë±ìŠ¤ ì˜ì—­ì— ì¶”ê°€ </param>
+        public void AddTower(int index) {
+            string key = _towerKeyList[UnityEngine.Random.Range(0, _towerKeyList.Count)];
+            GameObject towerPrefab = _towerPrefabDictionary[key];
+           
+            var towerObj = GameObject.Instantiate(towerPrefab); // ìƒì„±
+            _container.InjectGameObject(towerObj);
+
+            // ë“±ë¡
+            RegisterTowerToSlot(towerObj, index);
+            
+        }
+
+        /// <summary>
+        /// íƒ€ì›Œ ìœ„ì¹˜ ë³€ê²½
         /// </summary>
         public void SwapTower(int index1, int index2) {
             var slotList = _gameDataHub.GetSlotList();
@@ -103,7 +102,7 @@ namespace GamePlay
         }
 
         /// <summary>
-        /// Å¸¾î Á¦°Å ½Ãµµ
+        /// íƒ€ì–´ ì œê±° ì‹œë„
         /// </summary>
         /// <param name="tower"></param>
         /// <returns></returns>
@@ -119,54 +118,54 @@ namespace GamePlay
             return true;
         }
 
-        // Å¸¿ö¸¦ ¼±ÅÃ ÇßÀ»¶§ È£ÃâµÊ
+        // íƒ€ì›Œë¥¼ ì„ íƒ í–ˆì„ë•Œ í˜¸ì¶œë¨
         public void SelectTower(GameObject hitObject) {
            
             if (_seletedTower == null || hitObject.GetInstanceID() != _seletedTower.GetInstanceID()) {
                 _seletedTower = hitObject.GetComponent<TowerBase>();
             }
             if (_seletedTower == null) return;
-            // ¼±ÅÃÇÑ Å¸¿ö À§Ä¡ º¯°æ
+            // ì„ íƒí•œ íƒ€ì›Œ ìœ„ì¹˜ ë³€ê²½
             UpdateDragTowerPosition();
-            // shadow Ç¥½Ã
+            // shadow í‘œì‹œ
             UpdateTowerShadow();
-            // UI Ç¥½Ã
+            // UI í‘œì‹œ
             OnShowSelaUI();
         }
 
-        // Æ÷ÀÎÅÍ°¡ Up µÇ¾úÀ»¶§ È£Ãâ
-        // Æ÷ÀÎÅÍ ¹æÇâ¿¡¼­ TowerÀÇ À§Ä¡°¡ º¯°æÀÌ µÉ ¼ö ÀÖµµ·Ï ¼³Á¤
+        // í¬ì¸í„°ê°€ Up ë˜ì—ˆì„ë•Œ í˜¸ì¶œ
+        // í¬ì¸í„° ë°©í–¥ì—ì„œ Towerì˜ ìœ„ì¹˜ê°€ ë³€ê²½ì´ ë  ìˆ˜ ìˆë„ë¡ ì„¤ì •
         public void OnEndDrag() {
-            // UI ¿ÀÇÁ
+            // UI ì˜¤í”„
             _sellTowerViewObj?.SetActive(false);
             if (_seletedTower != null) {
-                // ¹èÄ¡ 
+                // ë°°ì¹˜ 
                 int index = PositionToIndex(_seletedTower.transform.position);
-                bool isSwap = false; // swapÀ» Çß³ª È®ÀÎ¿ë
+                bool isSwap = false; // swapì„ í–ˆë‚˜ í™•ì¸ìš©
                 if (index != -1) {
-                    // »õ·Î¿î ½½·Ô »óÅÂ È®ÀÎ
+                    // ìƒˆë¡œìš´ ìŠ¬ë¡¯ ìƒíƒœ í™•ì¸
                     SlotData slotData = _gameDataHub.GetSlotData(index);
-                    // ÀÌ¿ë °¡´ÉÇÑ ½½·Ô¿¡, »ç¿ëÁßÀÌ ¾Æ´Ò °æ¿ì
+                    // ì´ìš© ê°€ëŠ¥í•œ ìŠ¬ë¡¯ì—, ì‚¬ìš©ì¤‘ì´ ì•„ë‹ ê²½ìš°
                     if (slotData.slotState == SlotState.PlaceAble && !slotData.IsUsed()) {
                         RelocateTower(index);
                     } else if (slotData.slotState == SlotState.PlaceAble && slotData.IsUsed()) {
-                        SwapTower(index, _seletedTower.index); // Å¸¿ö À§Ä¡ º¯°æ
+                        SwapTower(index, _seletedTower.index); // íƒ€ì›Œ ìœ„ì¹˜ ë³€ê²½
                         isSwap = true;
                     } 
                 }
                 if (!isSwap) _seletedTower.transform.position = IndexToTowerPosition(_seletedTower.index);
            
-                // ¼±ÅÃ Å¸¿ö Á¤º¸ Á¦°Å
+                // ì„ íƒ íƒ€ì›Œ ì •ë³´ ì œê±°
                 _seletedTower.isStop = false;
                 _seletedTower = null;
             }
-            // ±×¸²ÀÚ Á¦°Å
+            // ê·¸ë¦¼ì ì œê±°
             _towerShadowObjRenderer.gameObject.SetActive(false);
             _isOnShadow = false;
         }
         #region private
         /// <summary>
-        /// Drag Æ÷Áö¼Ç º¯°æ
+        /// Drag í¬ì§€ì…˜ ë³€ê²½
         /// </summary>
         private void UpdateDragTowerPosition() {
             _seletedTower.isStop = true;
@@ -175,24 +174,24 @@ namespace GamePlay
             _seletedTower.transform.position = newPos;
         }
         /// <summary>
-        /// Tower ±×¸²ÀÚ Ç¥½Ã
+        /// Tower ê·¸ë¦¼ì í‘œì‹œ
         /// </summary>
         private void UpdateTowerShadow() {
-            // shadow Ç¥½Ã 
+            // shadow í‘œì‹œ 
             if (!_isOnShadow) {
-                // Sprite °»½Å
+                // Sprite ê°±ì‹ 
                 _towerShadowObjRenderer.sprite = _seletedTower.GetTowerBaseSprite();
                 _isOnShadow = true;
             }
-            // À§Ä¡ Á¤º¸¸¦ index Á¤º¸·Î º¯È¯
+            // ìœ„ì¹˜ ì •ë³´ë¥¼ index ì •ë³´ë¡œ ë³€í™˜
             int index = PositionToIndex(_seletedTower.transform.position);
             var slotList = _gameDataHub.GetSlotList();
 
-            // »ç¿ë °¡´ÉÇÑ ½½·Ô¿¡¸¸ »ı¼º
+            // ì‚¬ìš© ê°€ëŠ¥í•œ ìŠ¬ë¡¯ì—ë§Œ ìƒì„±
             if (index != -1 && slotList[index].slotState == SlotState.PlaceAble) {
                 _towerShadowObjRenderer.gameObject.SetActive(true);
                 float3 shadowPos = _gameDataHub.GetIndexToWorldPosition(index) + _towerOffset;
-                // ±×¸²ÀÚ »ı¼º
+                // ê·¸ë¦¼ì ìƒì„±
                 _towerShadowObjRenderer.transform.position = shadowPos;
             } else {
                 _towerShadowObjRenderer.gameObject.SetActive(false);
@@ -200,36 +199,36 @@ namespace GamePlay
         }
 
         /// <summary>
-        /// ¼±ÅÃÇÑ Å¸¿öÀÇ À§Ä¡ º¯°æ
+        /// ì„ íƒí•œ íƒ€ì›Œì˜ ìœ„ì¹˜ ë³€ê²½
         /// </summary>
         private void RelocateTower(int index) {
             var slotList = _gameDataHub.GetSlotList();
-            // ±âÁ¸ ½½·Ô Á¦°Å
+            // ê¸°ì¡´ ìŠ¬ë¡¯ ì œê±°
             slotList[_seletedTower.index].SetTowerData(null);
-            // Å¸¿ö µ¥ÀÌÅÍ ¼Â
+            // íƒ€ì›Œ ë°ì´í„° ì…‹
             RegisterTowerToSlot(_seletedTower, index);
         }
 
 
         private void OnShowSelaUI() {
             _sellTowerViewObj?.SetActive(true);
-            _saleModel.costObservable.Value = _seletedTower.Price;
+            _towerSaleModel.SetTowerCost(_seletedTower.Price);
         }
 
 
         /// <summary>
-        /// Å¸¿ö µ¥ÀÌÅÍ¸¦ Slot¿¡ µî·Ï
+        /// íƒ€ì›Œ ë°ì´í„°ë¥¼ Slotì— ë“±ë¡
         /// </summary>
         private void RegisterTowerToSlot(GameObject towerObj, int index) {
             TowerBase towerBase = towerObj.GetComponent<TowerBase>();
             RegisterTowerToSlot(towerBase, index);
         }
         /// <summary>
-        /// Å¸¿ö µ¥ÀÌÅÍ¸¦ Slot¿¡ µî·Ï
+        /// íƒ€ì›Œ ë°ì´í„°ë¥¼ Slotì— ë“±ë¡
         /// </summary>
         private void RegisterTowerToSlot(TowerBase towerBase, int index) {
             SlotData slotData = _gameDataHub.GetSlotData(index);
-            // ¹èÄ¡
+            // ë°°ì¹˜
             slotData.SetTowerData(towerBase.GetTowerData());
             towerBase.transform.position = IndexToTowerPosition(index);
             towerBase.index = index;
@@ -237,17 +236,17 @@ namespace GamePlay
 
 
         /// <summary>
-        /// PositionÀ» index·Î º¯È¯
+        /// Positionì„ indexë¡œ ë³€í™˜
         /// </summary>
         /// <param name="pos"></param>
-        /// <returns> ½ÇÆĞ½Ã -1À» ¹İÈ¯ </returns>
+        /// <returns> ì‹¤íŒ¨ì‹œ -1ì„ ë°˜í™˜ </returns>
         private int PositionToIndex(Vector3 pos) {
             Vector2Int grid = GridUtility.WorldToGridPosition(pos);
             return _gameDataHub.GetIndex(grid.x, grid.y);
         }
 
         /// <summary>
-        /// Index Á¤º¸¸¦ Tower PositionÀ¸·Î º¯°æ
+        /// Index ì •ë³´ë¥¼ Tower Positionìœ¼ë¡œ ë³€ê²½
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>

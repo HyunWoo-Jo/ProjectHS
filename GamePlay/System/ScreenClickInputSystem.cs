@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,14 +9,14 @@ using UnityEditor.Experimental.GraphView;
 namespace GamePlay
 {
     /// <summary>
-    /// UI°¡ ¾Æ´Ñ È­¸é Å¬¸¯À¸·Î µé¾î¿À´Â ÀÎÇ²À» Á¦¾îÇÏ´Â System
+    /// UIê°€ ì•„ë‹Œ í™”ë©´ í´ë¦­ìœ¼ë¡œ ë“¤ì–´ì˜¤ëŠ” ì¸í’‹ì„ ì œì–´í•˜ëŠ” System
     /// </summary>
     [DefaultExecutionOrder(80)]
     public class ScreenClickInputSystem : MonoBehaviour
     {
         private IInputStrategy _inputStrategy;
-        public event Action<Vector2> OnInputDragEvent; // µå·¡±× ÀÌº¥Æ®
-        public event Action<float> OnCloseUpDownEvent; // È®´ë Ãà¼Ò ÀÌº¥Æ®
+        public event Action<Vector2> OnInputDragEvent; // ë“œë˜ê·¸ ì´ë²¤íŠ¸
+        public event Action<float> OnCloseUpDownEvent; // í™•ëŒ€ ì¶•ì†Œ ì´ë²¤íŠ¸
         public event Action<GameObject> OnRayHitEvent; 
 
         public event Action OnUpPointEvent; 
@@ -40,22 +40,22 @@ namespace GamePlay
         private void Update() {
             if (GameSettings.IsPause) return;
             if (_inputStrategy == null) {
-                Debug.LogError("SetInputStrategy ¸¦ ¹İµå½Ã È£ÃâÇØ¾ßÇÔ"); // ¿¹¿Ü
+                Debug.LogError("SetInputStrategy ë¥¼ ë°˜ë“œì‹œ í˜¸ì¶œí•´ì•¼í•¨"); // ì˜ˆì™¸
                 return;
             }
             _inputStrategy.UpdateInput(); // Update
             
             InputType inputType = _inputStrategy.GetInputType();
             InputTargetType inputTargetType = _inputStrategy.GetInputTargetType();
-            if (inputType != InputType.None) { // Å¬¸¯           
-                if (inputTargetType == InputTargetType.Ground) { // Ground ÀÏ°æ¿ì
-                    // Drag ÀÌº¥Æ® Á¶°Ç È®ÀÎ
+            if (inputType != InputType.None) { // í´ë¦­           
+                if (inputTargetType == InputTargetType.Ground) { // Ground ì¼ê²½ìš°
+                    // Drag ì´ë²¤íŠ¸ ì¡°ê±´ í™•ì¸
                     Vector2 direction = _inputStrategy.GetPosition() - _inputStrategy.GetFirstFramePosition();
                     if (_screenHeight * _groundDragThresholdPct <= direction.magnitude) {
                         OnInputDragEvent?.Invoke(direction);
                     }
-                } else if (inputTargetType == InputTargetType.Tower) { // TowerÀÎ °æ¿ì
-                    // È÷Æ® ÀÌº¥Æ® ¹ß»ı                                                                    
+                } else if (inputTargetType == InputTargetType.Tower) { // Towerì¸ ê²½ìš°
+                    // íˆíŠ¸ ì´ë²¤íŠ¸ ë°œìƒ                                                                    
                     GameObject hitObj = _inputStrategy.GetHitObject();
                     OnRayHitEvent?.Invoke(hitObj);
                     HandleEdgeMove(_inputStrategy.GetPosition());
@@ -63,12 +63,12 @@ namespace GamePlay
                 
 
             }
-            // ÅÍÄ¡¸¦ ¶­À» °æ¿ì
+            // í„°ì¹˜ë¥¼ ë•Ÿì„ ê²½ìš°
             if(inputType == InputType.End) {
                 OnUpPointEvent?.Invoke();
             }
 
-            // È®´ë, Ãà¼Ò Á¶°Ç È®ÀÎ
+            // í™•ëŒ€, ì¶•ì†Œ ì¡°ê±´ í™•ì¸
             float closeUpDownSize = _inputStrategy.GetCloseUpDownSizeSize();
             if (Math.Abs(closeUpDownSize) > math.EPSILON) {
                 OnCloseUpDownEvent?.Invoke(closeUpDownSize);
@@ -76,21 +76,21 @@ namespace GamePlay
 
         }
         private void HandleEdgeMove(Vector2 screenPos) {
-            // 0~1 Á¤±ÔÈ­
+            // 0~1 ì •ê·œí™”
             float px = screenPos.x / _screenWidth;  
             float py = screenPos.y / _screenHeight; 
 
             Vector2 dir = Vector2.zero;
 
-            if (px >= _edgeMovePct) dir.x = 1;   // ¿À¸¥ÂÊ
-            else if (px <= 1f - _edgeMovePct) dir.x = -1;  // ¿ŞÂÊ
+            if (px >= _edgeMovePct) dir.x = 1;   // ì˜¤ë¥¸ìª½
+            else if (px <= 1f - _edgeMovePct) dir.x = -1;  // ì™¼ìª½
 
-            if (py >= _edgeMovePct) dir.y = 1;   // À§
-            else if (py <= 1f - _edgeMovePct) dir.y = -1;  // ¾Æ·¡
+            if (py >= _edgeMovePct) dir.y = 1;   // ìœ„
+            else if (py <= 1f - _edgeMovePct) dir.y = -1;  // ì•„ë˜
 
-            if (dir == Vector2.zero) return;           // °æ°è ¾ÈÀÌ¶ó¸é Á¾·á
+            if (dir == Vector2.zero) return;           // ê²½ê³„ ì•ˆì´ë¼ë©´ ì¢…ë£Œ
 
-            // ÀÌº¥Æ®·Î Àü´Ş
+            // ì´ë²¤íŠ¸ë¡œ ì „ë‹¬
             OnInputDragEvent?.Invoke(dir.normalized);
         }
     }

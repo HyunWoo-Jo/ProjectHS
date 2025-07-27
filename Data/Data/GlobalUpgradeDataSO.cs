@@ -1,26 +1,29 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using CustomUtility;
 using UnityEditor.Graphs;
 using System;
+using Contracts;
+
 namespace Data
 {
-    [Serializable]
-    public class GlobalUpgradeData {
-        [ReadEditor] public int StartPrice; // ½ÃÀÛ ºñ¿ë
-        [ReadEditor] public int PriceIncrement; // ´Ü°è¿¡ µû¸¥ °¡°İ Áõ°¡·®
-        [ReadEditor] public int ValueIncrement; // ´Ü°è¿¡ µû¸¥ ¼öÄ¡Áõ°¡·®
-    }
+    
 
     
     [CreateAssetMenu(fileName = "GlobalUpgradeDataSO", menuName = "Scriptable Objects/GlobalUpgradeDataSO")]
-    public class GlobalUpgradeDataSO : ScriptableObject
+    public class GlobalUpgradeTableSO : ScriptableObject
     {
+        [Serializable]
+        public class GlobalUpgradeTable {
+            [ReadEditor] public int StartPrice; // ì‹œì‘ ë¹„ìš©
+            [ReadEditor] public int PriceIncrement; // ë‹¨ê³„ì— ë”°ë¥¸ ê°€ê²© ì¦ê°€ëŸ‰
+            [ReadEditor] public int ValueIncrement; // ë‹¨ê³„ì— ë”°ë¥¸ ìˆ˜ì¹˜ì¦ê°€ëŸ‰
+        }
         [ReadEditor] public string Version;
         // Hp
-        public GlobalUpgradeData HP;
-        public GlobalUpgradeData Power;
-        public GlobalUpgradeData InitGold;
-        public GlobalUpgradeData Exp;
+        public GlobalUpgradeTable HP;
+        public GlobalUpgradeTable Power;
+        public GlobalUpgradeTable InitGold;
+        public GlobalUpgradeTable Exp;
         private int _hash;
 
         public int GetPriceIncrement(GlobalUpgradeType type) {

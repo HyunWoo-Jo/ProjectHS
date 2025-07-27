@@ -1,15 +1,16 @@
-using System;
+ï»¿using System;
 using UnityEngine;
 using CustomUtility;
+using R3;
 namespace Data
 {
     [Serializable]
     public class TowerData 
     {
         public GameObject towerObj;
-        public int attackPower; // °ø°İ·Â
-        public float range; // °ø°İ ¹üÀ§
-        public float attackTime; // ¾îÅÃ °£°İ
-        public ObservableValue<float> attackSpeed = new(1f); // ºü¸¦¼ö·Ï °ø°İÀÌ »¡¶óÁü (TowerÀÇ Anim Speed¿Í ¹ÙÀÎµù)
+        public int attackPower; // ê³µê²©ë ¥
+        public float range; // ê³µê²© ë²”ìœ„
+        public float attackTime; // ì–´íƒ ê°„ê²©
+        public ReactiveProperty<float> attackSpeed = new(1f); // ë¹ ë¥¼ìˆ˜ë¡ ê³µê²©ì´ ë¹¨ë¼ì§ (Towerì˜ Anim Speedì™€ ë°”ì¸ë”©)
     }
 }

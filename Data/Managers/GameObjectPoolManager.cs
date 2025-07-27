@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
 using CustomUtility;
 using Zenject;
@@ -7,7 +7,7 @@ namespace Data
 
 
     /// <summary>
-    /// ObjectPoolµéÀ» °ü¸®ÇÏ´Â Manager
+    /// ObjectPoolë“¤ì„ ê´€ë¦¬í•˜ëŠ” Manager
     /// </summary>
     public class GameObjectPoolManager : MonoBehaviour
     {
@@ -15,8 +15,8 @@ namespace Data
         [Inject] private DiContainer _diContainer;
         private Dictionary<PoolType, IObjectPool> _poolDictionary = new Dictionary<PoolType, IObjectPool>(); // pool
         private Dictionary<PoolType, string> _prefabKeyDictionary = new Dictionary<PoolType, string>(); // addressable key
-        private Dictionary<PoolType, float> _refTimerDictionary = new Dictionary<PoolType, float>(); // ÂüÁ¶ ½Ã°£
-        private Dictionary<PoolType, int> _refCountDictionary = new Dictionary<PoolType, int>(); // ÂüÁ¶ Ä«¿îÆ®
+        private Dictionary<PoolType, float> _refTimerDictionary = new Dictionary<PoolType, float>(); // ì°¸ì¡° ì‹œê°„
+        private Dictionary<PoolType, int> _refCountDictionary = new Dictionary<PoolType, int>(); // ì°¸ì¡° ì¹´ìš´íŠ¸
 
         private const float LimitTime = 60f;
 
@@ -24,14 +24,14 @@ namespace Data
             AddKey();
         }
         private void OnDestroy() {
-            // ·ÎµåµÈ ¿ÀºêÁ§Æ® ¸ğµå ¹İÈ¯
+            // ë¡œë“œëœ ì˜¤ë¸Œì íŠ¸ ëª¨ë“œ ë°˜í™˜
             foreach (var keyValue in _prefabKeyDictionary) {
                 _dataManager.ReleaseAsset(keyValue.Value);
             }
         }
         private void Update() {
 
-            // ÀÏÁ¤ ½Ã°£ »ç¿ë¾ÈÇÏ¸é »èÁ¦
+            // ì¼ì • ì‹œê°„ ì‚¬ìš©ì•ˆí•˜ë©´ ì‚­ì œ
             foreach (var keyValue in _poolDictionary) {
                 var poolType = keyValue.Key;
                 var timer = _refTimerDictionary[poolType];
@@ -50,7 +50,7 @@ namespace Data
             _refTimerDictionary[poolType] = 0f;
             _refCountDictionary[poolType]++;
             T item = _poolDictionary[poolType].BorrowItem<T>();
-            _diContainer.InjectGameObject(item.gameObject); // ÀÇÁ¸ ÁÖÀÔ
+            _diContainer.InjectGameObject(item.gameObject); // ì˜ì¡´ ì£¼ì…
             return item;
         }
 
@@ -64,9 +64,9 @@ namespace Data
             poolItem.Repay();
         }
 
-        // µî·Ï
+        // ë“±ë¡
         public void RegisterPool<T>(PoolType poolType, Transform parentTr = null) where T : MonoBehaviour {
-            if (!_poolDictionary.ContainsKey(poolType)) { // Á¸ÀçÇÏÁö ¾ÊÀ¸¸é µî·Ï
+            if (!_poolDictionary.ContainsKey(poolType)) { // ì¡´ì¬í•˜ì§€ ì•Šìœ¼ë©´ ë“±ë¡
                 string key = _prefabKeyDictionary[poolType];
                 GameObject prefab = _dataManager.LoadAssetSync<GameObject>(key);
                 var builder = ObjectPoolBuilder<T>.Instance(prefab).AutoActivate(true);
@@ -78,7 +78,7 @@ namespace Data
             }
         }
 
-        // Key µî·Ï
+        // Key ë“±ë¡
         public void AddKey() { // Key
            _prefabKeyDictionary.Add(PoolType.Arrow, "Arrow.prefab");
            _prefabKeyDictionary.Add(PoolType.MagicBullet, "MagicBullet.prefab");

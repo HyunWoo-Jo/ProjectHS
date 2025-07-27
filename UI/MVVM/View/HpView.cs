@@ -1,4 +1,4 @@
-
+﻿
 using UnityEngine;
 using Zenject;
 using System;
@@ -7,6 +7,7 @@ using TMPro;
 using Unity.VisualScripting.YamlDotNet.Core.Tokens;
 using UnityEngine.Assertions;
 using DG.Tweening;
+using R3;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI
@@ -21,18 +22,22 @@ namespace UI
 #if UNITY_EDITOR // Assertion
             RefAssert();
 #endif
-            // 버튼 초기화
-            _viewModel.OnHpChanged += UpdateHpUI;
-            _viewModel.OnChangedMaxHp += UpdateMaxHp;
+            // UI Bind
+            _viewModel.RO_MaxHPObservable
+                .ThrottleLastFrame(1)
+                .Subscribe(UpdateMaxHp)
+                .AddTo(this);
+            
+            _viewModel.RO_CurHpObservable
+                .ThrottleLastFrame(1)
+                .Subscribe(UpdateHpUI)
+                .AddTo(this);
 
-            _viewModel.Update();
-            _preHp = _viewModel.CurHp;
+
+            _viewModel.Notify();
         }
 
         private void OnDestroy() {
-            _viewModel.OnHpChanged -= UpdateHpUI;
-            _viewModel.OnChangedMaxHp -= UpdateMaxHp;
-            _viewModel = null; // 참조 해제
             DOTween.Kill(this.transform);
         }
 
@@ -47,7 +52,8 @@ namespace UI
 ////////////////////////////////////////////////////////////////////////////////////
         // your logic here
 
-        private void UpdateHpUI(int curHp, int maxHp) {
+        private void UpdateHpUI(int curHp) {
+            int maxHp = _viewModel.RO_MaxHPObservable.CurrentValue;
             _text.text = $"{(curHp > 0 ? curHp : 0)}/{(maxHp > 0 ? maxHp : 0)}";
             _fillImage.fillAmount = maxHp > 0 ? (float)curHp / maxHp : 0f;
             HpAnimation(curHp);

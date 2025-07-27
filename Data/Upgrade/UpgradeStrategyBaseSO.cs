@@ -1,7 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Data
-{
+namespace Data {
  
     public abstract class UpgradeStrategyBaseSO : ScriptableObject
     {

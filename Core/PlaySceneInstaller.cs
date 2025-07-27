@@ -1,15 +1,16 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Zenject;
 using Data;
 using GamePlay;
 using UI;
 using Contracts;
 using System.Linq;
+using Domain;
 namespace Core
 {
     public class PlaySceneInstaller : MonoInstaller
     {
-        [SerializeField] private GameObject _systemBase; // SystemÀ» °¡Áö°í ÀÖ´Â Å¬·¹½º
+        [SerializeField] private GameObject _systemBase; // Systemì„ ê°€ì§€ê³  ìˆëŠ” í´ë ˆìŠ¤
 
         public override void InstallBindings() {
             Container.BindInterfacesAndSelfTo<GameDataHub>().AsCached().NonLazy();
@@ -17,16 +18,17 @@ namespace Core
 
 
             // Settings
-            Container.Bind<StageSettingsModel>().AsCached();
+            Container.Bind<StageSettings>().AsCached();
 
 
-            // Play Scene¿¡¼­¸¸ »ç¿ëµÇ´Â  Model
-            Container.Bind<TowerPurchaseModel>().AsCached();
-            Container.Bind<WaveStatusModel>().AsCached(); // Wave Á¤º¸
+            // Play Sceneì—ì„œë§Œ ì‚¬ìš©ë˜ëŠ”  Model
+
             Container.Bind<GoldModel>().AsCached();
             Container.Bind<ExpModel>().AsCached();
             Container.Bind<HpModel>().AsCached();
-            Container.Bind<SelectedUpgradeModel>().AsCached();
+
+            Container.Bind<TowerPurchaseModel>().AsCached();
+            Container.Bind<WaveStatusModel>().AsCached();
             Container.Bind<TowerSaleModel>().AsCached();
 
             // System
@@ -45,20 +47,24 @@ namespace Core
             Container.Bind<ITowerPurchaseService>().To<TowerPurchaseService>().AsCached();
             Container.Bind<IRewardService>().To<RewardService>().AsCached();
             Container.Bind<ISellTowerService>().To<SellTowerService>().AsCached();
+            Container.Bind<IUpgradeService>().To<UpgradeService>().AsCached();
 
-            // Play Scene¿¡¼­¸¸ »ç¿ëµÇ´Â  View Model
-            Container.BindInterfacesAndSelfTo<TowerPurchaseViewModel>().AsCached();
-            Container.BindInterfacesAndSelfTo<WaveStatusViewModel>().AsCached();
+
+            // Play Sceneì—ì„œë§Œ ì‚¬ìš©ë˜ëŠ”  View Model
             Container.BindInterfacesAndSelfTo<GoldViewModel>().AsCached();
             Container.BindInterfacesAndSelfTo<ExpViewModel>().AsCached();
             Container.BindInterfacesAndSelfTo<HpViewModel>().AsCached();
-            Container.BindInterfacesAndSelfTo<PausePanelViewModel>().AsCached();
-            Container.BindInterfacesAndSelfTo<UpgradeViewModel>().AsCached();
-            Container.BindInterfacesAndSelfTo<RewardViewModel>().AsCached();
-            Container.BindInterfacesAndSelfTo<SellTowerViewModel>().AsCached();
 
+            Container.Bind<TowerPurchaseViewModel>().AsCached();
+            Container.Bind<WaveStatusViewModel>().AsCached();  
+            Container.Bind<SellTowerViewModel>().AsCached();
+            Container.Bind<PausePanelViewModel>().AsCached();
 
-            // So ÀÇÁ¸ ÁÖÀÔ
+            Container.Bind<RewardViewModel>().AsCached();
+            Container.Bind<SelectedUpgradeModel>().AsCached();
+            Container.Bind<UpgradeViewModel>().AsCached();
+
+            // So ì˜ì¡´ ì£¼ì…
             Resources.LoadAll<UpgradeStrategyBaseSO>("UpgradeData").ToList().ForEach(Container.QueueForInject);
             Resources.LoadAll<UnlockStrategyBaseSO>("UpgradeData").ToList().ForEach(Container.QueueForInject);
 

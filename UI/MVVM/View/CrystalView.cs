@@ -1,11 +1,10 @@
-
+﻿
 using UnityEngine;
 using TMPro;
 using Zenject;
 using ModestTree;
-using static UnityEditor.Profiling.HierarchyFrameDataView;
-using Cysharp.Threading.Tasks;
-
+using R3;
+using System;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI
@@ -15,23 +14,24 @@ namespace UI
         [Inject] private CrystalViewModel _viewModel;
 
         [SerializeField] private TextMeshProUGUI _text;
+
         private void Awake() {
 #if UNITY_EDITOR // Assertion
             RefAssert();
 #endif
-            // 버튼 초기화
-         
-            _viewModel.OnDataChanged += UpdateUI;
+            // UI Bind
+
+            _viewModel.RO_CrystalObservable
+                .ThrottleLastFrame(1)
+                .ObserveOnMainThread()
+                .Subscribe(UpdateUI)
+                .AddTo(this);
         }
 
         private void Start() {
-            _viewModel.Update();
+            _viewModel.Notify();
         }
 
-        private void OnDestroy() {
-            _viewModel.OnDataChanged -= UpdateUI;
-            _viewModel = null; // 참조 해제
-        }
 
 #if UNITY_EDITOR
         // 검증
@@ -40,8 +40,7 @@ namespace UI
         }
 #endif
         // UI 갱신
-        private async void UpdateUI(int value) {
-            await UniTask.SwitchToMainThread(); // 메인쓰레드로 전환
+        private void UpdateUI(int value) {
             _text.text = value.ToString();
         }
 ////////////////////////////////////////////////////////////////////////////////////

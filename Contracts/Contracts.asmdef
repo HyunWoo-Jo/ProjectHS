@@ -2,7 +2,7 @@
     "name": "Contracts",
     "rootNamespace": "Contracts",
     "references": [
-        "GUID:43f884ac021a63f428b5d9347564300e"
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

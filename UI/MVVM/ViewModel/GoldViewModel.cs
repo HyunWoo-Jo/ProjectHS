@@ -1,39 +1,23 @@
-
+﻿
 using Zenject;
 using System;
 using Data;
+using R3;
+using Domain;
 namespace UI
 {
-    public class GoldViewModel : IInitializable, IDisposable
+    public class GoldViewModel
     {   
-        public event Action<int> OnDataChanged; // 데이터가 변경될떄 호출될 액션 (상황에 맞게 변수명을 변경해서 사용)
         [Inject] private GoldModel _model;
 
-        public int Gold => _model.goldObservable.Value;
+        public ReadOnlyReactiveProperty<int> RO_GoldObservable => _model.RO_GoldObservable;
        
         /// <summary>
         /// 데이터 변경 알림
         /// </summary>
-        public void Update() {
-            OnDataChanged?.Invoke(Gold);
-        }
-
-        public void GoldChanged(int value) {
-            OnDataChanged?.Invoke(value);
-        }
+        public void Notify() => _model.Notify();
       
 
-        /// <summary>
-        /// Jenject에서 관리
-        /// </summary>
-        public void Initialize() {
-            _model.goldObservable.OnValueChanged += GoldChanged;
-        }
-        /// <summary>
-        /// Jenject에서 관리
-        /// </summary>
-        public void Dispose() {
-            _model.goldObservable.OnValueChanged -= GoldChanged;
-        }
+       
     }
 } 

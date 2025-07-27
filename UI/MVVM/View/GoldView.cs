@@ -1,4 +1,4 @@
-
+﻿
 using UnityEngine;
 using Zenject;
 using System;
@@ -6,6 +6,7 @@ using TMPro;
 using ModestTree;
 using Data;
 using System.Diagnostics;
+using R3;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI
@@ -18,17 +19,17 @@ namespace UI
 #if UNITY_EDITOR // Assertion
             RefAssert();
 #endif
-            // 버튼 초기화
-            _viewModel.OnDataChanged += UpdateUI;
-
+            // UI Bind
+            _viewModel.RO_GoldObservable
+                .ThrottleLastFrame(1)
+                .Subscribe(UpdateUI)
+                .AddTo(this);
+            
         }
         private void Start() {
-            _viewModel.Update();
+            _viewModel.Notify();
         }
-        private void OnDestroy() {
-            _viewModel.OnDataChanged -= UpdateUI;
-            _viewModel = null; // 참조 해제
-        }
+
 
 #if UNITY_EDITOR
         // 검증

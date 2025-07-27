@@ -1,10 +1,13 @@
-
+﻿
 using UnityEngine;
 using Zenject;
 using Data;
 using CustomUtility;
 using TMPro;
 using ModestTree;
+using R3;
+using System;
+using Contracts;
 ////////////////////////////////////////////////////////////////////////////////////
 // Auto Generated Code
 namespace UI {
@@ -22,44 +25,14 @@ namespace UI {
             RefAssert();
 #endif
             _cards = GetComponentsInChildren<UpgradeCard_UI>();
-            
-            // 버튼 초기화
-            _viewModel.OnDataChanged += UpdateUI;
 
-            _viewModel.OnRerollCountChanged += UpdateRerollUI;
+            Bind();
+            ButtonInit();
 
-            string className = GetType().Name;
-            for (int i = 0; i < _cards.Length; i++) {
-                int index = i;
-                // 버튼 초기화
-                _cards[i].Button.AddTrigger(
-                    UnityEngine.EventSystems.EventTriggerType.PointerClick,
-                    () => {
-                        Selecte(index);
-                    },
-                    className,
-                    nameof(Selecte)
-                );
-                // 리롤 버튼 초기화
-                _cards[i].RerollButton.AddTrigger(
-                    UnityEngine.EventSystems.EventTriggerType.PointerClick,
-                    () => {
-                        Reroll(index);
-                    },
-                    className, 
-                    nameof(Reroll)
-                );
-
-                UpdateUI(i); // card 개수 만큼 UI 초기화 호출
-            }
-            UpdateRerollUI(_viewModel.RerollCount);
+            // UI 갱신
+            _viewModel.Notify();
         }
-
-        private void OnDestroy() {
-            _viewModel.OnDataChanged -= UpdateUI;
-            _viewModel.OnRerollCountChanged -= UpdateRerollUI;
-            _viewModel = null; // 참조 해제
-        }
+        
 
 #if UNITY_EDITOR
         // 검증
@@ -67,17 +40,57 @@ namespace UI {
             Assert.IsNotNull(_rerollText);
         }
 #endif
+
+
+        /// <summary>
+        /// Bind
+        /// </summary>
+        private void Bind() {
+            for (int i = 0; i < _cards.Length; i++) {
+                int capturedIndex = i;
+                _viewModel.GetRO_UpgradeDataObservable(i)
+                    .ThrottleLastFrame(1)
+                    .Subscribe(data => UpdateUI(capturedIndex, data))
+                    .AddTo(this);
+            }
+            _viewModel.RO_RerollCountObservable
+              .Subscribe(UpdateRerollUI)
+              .AddTo(this);
+        }
+
+        /// <summary>
+        /// 버튼 초기화
+        /// </summary>
+        private void ButtonInit() {
+            string className = GetType().Name;
+            for (int i = 0; i < _cards.Length; i++) {
+                int capturedIndex = i;
+                // 버튼 초기화
+                _cards[i].Button.ToObservableEventTrigger(className, nameof(Selecte))
+                    .OnPointerClickAsObservable()
+                    .Take(1)
+                    .Subscribe(_ => Selecte(capturedIndex))
+                    .AddTo(this);
+
+                // 리롤 버튼 초기화
+                _cards[i].RerollButton.ToObservableEventTrigger(className, nameof(Reroll))
+                    .OnPointerClickAsObservable()
+                    .ThrottleFirst(TimeSpan.FromSeconds(1))
+                    .Subscribe(_ => Reroll(capturedIndex))
+                    .AddTo(this);
+
+            }
+        }
+
         // UI 갱신
-        private void UpdateUI(int index) {
-            if (_cards.Length <= index) return;
-            UpgradeDataSO upgradeData = _viewModel.GetUpgradeData(index);
+        private void UpdateUI(int index, IUpgradeData upgradeData) {
             UpgradeCard_UI card = _cards[index];
             if (upgradeData != null) {
-                card.SetSprite(upgradeData.sprite);
-                card.SetName(upgradeData.upgradeName);
-                card.SetNameColor(_style.GetColor(upgradeData.rarity));
+                card.SetSprite(upgradeData.Sprite());
+                card.SetName(upgradeData.UpgradeName());
+                card.SetNameColor(_style.GetColor((Rarity)upgradeData.Rarity()));
 
-                card.SetDescription(upgradeData.description);
+                card.SetDescription(upgradeData.Description());
                 card.gameObject.SetActive(true);
 
             } else {

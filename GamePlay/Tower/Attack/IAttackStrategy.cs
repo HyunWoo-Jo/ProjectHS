@@ -1,10 +1,10 @@
-using Data;
+ï»¿using Data;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace GamePlay
 {
-    // °ø°Ý Ã³¸® Á¤ÇÏ´Â Àü·«
+    // ê³µê²© ì²˜ë¦¬ ì •í•˜ëŠ” ì „ëžµ
     public interface IAttackStrategy {
         public void Execute(TowerData towerData, int targetIndex, PoolType poolType, float3 startPos);
     }

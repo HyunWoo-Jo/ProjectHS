@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Zenject;
 using System;
 using System.Threading.Tasks;
@@ -8,18 +8,20 @@ using System.Collections;
 using Data;
 using Cysharp.Threading.Tasks;
 using Firebase.Database;
+using UnityEditor.VersionControl;
+using Contracts;
 namespace Network
 {
     /// <summary>
-    /// Network¸¦ °ü¸®ÇÏ´Â Å¬·¹½º
+    /// Networkë¥¼ ê´€ë¦¬í•˜ëŠ” í´ë ˆìŠ¤
     /// </summary>
     public class NetworkManager : MonoBehaviour, IUserNetworkService, IGlobalUpgradeNetworkService, INetworkService
     {
         [Inject] private INetworkLogic _networkLogic;
         private bool isClosed = false;
-        private void Awake() { // ½ÃÀÛ½Ã ³×Æ®¿öÅ© Á¢¼Ó ½Ãµµ
-            _networkLogic.Initialize(); // ÃÊ±âÈ­
-            LoginAsync(); // ·Î±×ÀÎ ½Ãµµ
+        private void Awake() { // ì‹œì‘ì‹œ ë„¤íŠ¸ì›Œí¬ ì ‘ì† ì‹œë„
+            _networkLogic.Initialize(); // ì´ˆê¸°í™”
+            LoginAsync(); // ë¡œê·¸ì¸ ì‹œë„
 
         }
 
@@ -32,8 +34,8 @@ namespace Network
             try {
                 await _networkLogic.GuestLoginAsync();
             } catch  {
-                // ·Î±×ÀÎ ½ÇÆĞ ³×Æ®¿öÅ© ¹®Á¦ÀÏ È®·üÀÌ ³ôÀ½
-                await Task.Delay(1000); // 1ÃÊ ¸¶´Ù ÀçÁ¢¼Ó ½Ãµµ
+                // ë¡œê·¸ì¸ ì‹¤íŒ¨ ë„¤íŠ¸ì›Œí¬ ë¬¸ì œì¼ í™•ë¥ ì´ ë†’ìŒ
+                await UniTask.Delay(1000); // 1ì´ˆ ë§ˆë‹¤ ì¬ì ‘ì† ì‹œë„
                 if (isClosed) return;
                 LoginAsync();
                 return;
@@ -42,7 +44,7 @@ namespace Network
         public async UniTask<bool> IsConnectedAsync() {
             return await _networkLogic.IsConnectedAsync();
         }
-        
+
 
 
 
@@ -50,13 +52,15 @@ namespace Network
 
 
         ////////////// User Service   
-        public async UniTask GetUserCrystalAsync(Action<int> completeAction) {
-            await _networkLogic.GetUserCrystal().ContinueWith(task => {
-                if (task.Exists) {
-                    completeAction?.Invoke(Convert.ToInt32(task.Value));
-                }
-            });
-           
+        public async UniTask<int> GetUserCrystalAsync() {
+            var task = await _networkLogic.GetUserCrystal();
+
+            if (task.Exists) {
+                return Convert.ToInt32(task.Value);
+            }
+
+            // ê°’ì´ ì—†ì„ ê²½ìš° ê¸°ë³¸ê°’ ë°˜í™˜ (ë˜ëŠ” ì˜ˆì™¸ ì²˜ë¦¬)
+            return 0;
         }
 
         public async UniTask SaveUseCrystalAsync(int userCrystal) {
@@ -66,13 +70,13 @@ namespace Network
         ///////// Upgrade Service
         
         /// <summary>
-        /// ScritableObject Upgrade TableÀ» °»½ÅÇÔ
+        /// ScritableObject Upgrade Tableì„ ê°±ì‹ í•¨
         /// </summary>
-        public UniTask GetAllUpgradeTableAsync(GlobalUpgradeDataSO tableSO) {
-            // ¹öÀü Ã¼Å©
+        public UniTask GetAllUpgradeTableAsync(GlobalUpgradeTableSO tableSO) {
+            // ë²„ì „ ì²´í¬
             return _networkLogic.GetVersion().ContinueWith(task => {
                 if (task.Exists) {        
-                    // ¹öÀüÀÌ ´Ù¸¦ °æ¿ì¸¸ tableÀ» ÀĞ¾î¿È (ÃßÈÄ °ËÁõ ·ÎÁ÷µµ Ãß°¡)
+                    // ë²„ì „ì´ ë‹¤ë¥¼ ê²½ìš°ë§Œ tableì„ ì½ì–´ì˜´ (ì¶”í›„ ê²€ì¦ ë¡œì§ë„ ì¶”ê°€)
                     if ((string)task.Value != tableSO.Version) {
                         _networkLogic.GetUpgradeTable().ContinueWith(task => {
                             if (task.Exists) {
@@ -83,31 +87,43 @@ namespace Network
                 }
             });
         }
-        public UniTask GetAllUpgradeLevelAsync(Action<Dictionary<string, int>> complate) {
-
-            return _networkLogic.GetAllUpgrade().ContinueWith(task => {
-                if (task.Exists) {
-                    var objDict = task.Value as IDictionary<string, object>;
-                    if (objDict == null) {
-                        Debug.LogError("º¯È¯ ½ÇÆĞ");
-                        return;
-                    }
-                    var intDict = new Dictionary<string, int>();
-                    foreach (var kvp in objDict) {
-                        try {
-                            intDict[kvp.Key] = Convert.ToInt32(kvp.Value); // long to int32·Î º¯È¯ (Firebase´Â ±âº» longÇü)
-                        } catch (Exception e) {
-                            Debug.LogWarning($"Å° {kvp.Key} º¯È¯ ½ÇÆĞ: {e.Message}");
-                        }
-                    }
-                    complate?.Invoke(intDict);
+        public async UniTask<Dictionary<string, int>> GetAllUpgradeLevelAsync() {
+            DataSnapshot snapshot = await _networkLogic.GetAllUpgrade();
+            if (snapshot.Exists) {
+                var objDict = snapshot.Value as IDictionary<string, object>;
+                if (objDict == null) {
+                    Debug.LogError("ë³€í™˜ ì‹¤íŒ¨");
+                    return null;
                 }
-            });
+                var intDict = new Dictionary<string, int>();
+                foreach (var kvp in objDict) {
+                    try {
+                        intDict[kvp.Key] = Convert.ToInt32(kvp.Value); // long to int32ë¡œ ë³€í™˜ (FirebaseëŠ” ê¸°ë³¸ longí˜•)
+                    } catch (Exception e) {
+                        Debug.LogWarning($"í‚¤ {kvp.Key} ë³€í™˜ ì‹¤íŒ¨: {e.Message}");
+                    }
+                }
+                return intDict;
+            }
+            return null;
         }
 
         public void SetUpgradeAsync<T>(string key, T value) {
             _networkLogic.SetUpgrade(key, value);
         }
+
+        /// <summary>
+        /// ì‹¤íŒ¨ì‹œ -1
+        /// </summary>
+        public async UniTask<int> GetUpgradeLevelAsync(string key) {
+            var snapshot = await _networkLogic.GetUpgradeLevel(key);
+            if (snapshot.Exists) {
+                return Convert.ToInt32(snapshot.Value);
+            }
+            return -1;
+        }
+
+
 
         //////////////
     }
