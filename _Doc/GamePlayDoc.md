@@ -63,11 +63,11 @@ Policy 목록은 다음과 같습니다.</br>
 
 | 클래스                                              | 설명                      |
 | ------------------------------------------------ | ----------------------- |
-| [`ExpPolicy`](../GamePlay/_Policy/ExpPolicy.cs) | 경험치 정책 |
-| [`GoldPolicy`](../GamePlay/_Policy/GoldPolicy.cs) | 골드 정책 |
-| [`HpPolicy`](../GamePlay/_Policy/HpPolicy.cs) | Hp 정책 |
-| [`RewardPolicy`](../GamePlay/_Policy/RewardPolicy.cs) | 보상 정책 |
-| [`TowerPricePolicy`](../GamePlay/_Policy/TowerPricePolicy.cs) | 타워 정책 |
+| [`ExpPolicy`](../Domain/_Policy/ExpPolicy.cs) | 경험치 정책 |
+| [`GoldPolicy`](../Domain/_Policy/GoldPolicy.cs) | 골드 정책 |
+| [`HpPolicy`](../Domain/_Policy/HpPolicy.cs) | Hp 정책 |
+| [`RewardPolicy`](../Domain/_Policy/RewardPolicy.cs) | 보상 정책 |
+| [`TowerPricePolicy`](../Domain/_Policy/TowerPricePolicy.cs) | 타워 정책 |
 
 
 ---
